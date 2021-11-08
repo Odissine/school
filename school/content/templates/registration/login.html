@@ -1,0 +1,24 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - Accueil{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="testbox">
+<h2>IDENTIFICATION</h2>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</ul>
+{% endif %}
+<form method="POST" action="">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-success">Connexion</button>
+    </div>
+</form>
+</div>
+{% endblock %}

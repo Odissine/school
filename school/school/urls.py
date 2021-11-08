@@ -16,11 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from account.views import home_view
-
+from django.conf.urls.static import static
+from main.views import IndexPageView
 
 urlpatterns = [
+    # Admin DJANGO
     path('admin/', admin.site.urls),
-    path('', home_view, name='home'),
+
+    # Index du site
+    path('', IndexPageView.as_view(), name='index'),
+    path('', include("django.contrib.auth.urls")),
+
+    path('i18n/', include('django.conf.urls.i18n')),
+
     path('account/', include(('account.urls', 'account'), namespace='account')),
+    path('games/', include(('games.urls', 'games'), namespace='games')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

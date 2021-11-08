@@ -1,0 +1,33 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - Accueil{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+<div>Bienvenue {{ user.first_name }} !</div>
+{% endif %}
+{% if request.user|has_group:"CP" %}
+    <p>CP</p>
+{% endif  %}
+{% if request.user|has_group:"CE1" %}
+    <p>CE1</p>
+{% endif  %}
+{% if request.user|has_group:"CE2" %}
+    <p>CE2</p>
+{% endif  %}
+{% if request.user|has_group:"CM1" %}
+    <p>CM1</p>
+{% endif  %}
+{% if request.user|has_group:"CM2" %}
+    <p>CM2</p>
+{% endif  %}
+{% if request.user|has_group:"ADMIN" %}
+    <p>ADMIN</p>
+{% endif  %}
+{% if request.user|has_group:"ELEVE" %}
+    <p>ELEVE</p>
+{% endif  %}
+{% if request.user|has_group:"ENSEIGNANT" %}
+    <p>ENSEIGNANT</p>
+{% endif  %}
+{% endblock %}

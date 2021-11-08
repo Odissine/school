@@ -1,0 +1,26 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - Accueil{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="testbox">
+<h2>Création du compte</h2>
+<form method="POST">
+    {% csrf_token %}
+    {% if form.errors %}
+       {% for field in form %}
+           {% for error in field.errors %}
+              <div class="alert alert-danger">
+                   <strong>{{ error|escape }}</strong>
+              </div>
+           {% endfor %}
+       {% endfor %}
+    {% endif %}
+    {{ form|crispy }}
+
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-success">CREER MON COMPTE</button>
+    </div>
+</form>
+{% endblock %}

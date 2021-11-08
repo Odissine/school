@@ -1,0 +1,50 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - Accueil{% endblock %}
+{% load static %}
+
+{% block content %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+    <style type="text/css">
+        p {
+            font-family: 'Baloo 2', cursive;
+            font-size:1rem;
+            color: #FFF;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Baloo 2', cursive;
+        }
+        h1 {
+            font-size:3rem;
+        }
+        h2 {
+            font-size:2rem;
+        }
+        @media print {
+          .new-page {
+            page-break-before: always;
+          }
+        }
+
+    </style>
+<p style="margin-top:100px;">
+<h1>{{ error|length }}</h1>
+{% for val in error %}
+
+    {% for key, value in val.items %}
+        {% if key == 'title' %}
+            {{ value }}<br/>
+        {% endif %}
+        {% if key == 'date' %}
+            {{ value }}<br/>
+        {% endif %}
+        {% if key == 'photos' %}
+            {{ value }}.jpeg<br>
+        {% endif %}
+    {% endfor %}
+    </p>
+{% endfor %}
+{% endblock %}

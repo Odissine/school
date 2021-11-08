@@ -1,0 +1,19 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - Accueil{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% if user.is_authenticated %}
+    {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+    <div class="testbox">
+    <p>Es-tu sur de vouloir supprimer ce mot : {{ word }} ?</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <a href="{% url 'games:word' %}">Annuler</a>
+        <input type="submit" name="Confirmer"/>
+    </form>
+    </div>
+    {% endif  %}
+{% endif  %}
+{% endblock %}

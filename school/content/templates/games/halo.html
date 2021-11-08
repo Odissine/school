@@ -1,0 +1,64 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - HALO{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="container" style="padding-top:60px;">
+  {% if image %}
+  <div class="scene">
+    <div class="magic" style=""></div>
+  </div>
+  {% else %}
+
+    <div class="row">
+    {% for image in images %}
+      {% if forloop.counter0|divisibleby:3 and not forloop.first %}
+        <div class="w-100" ></div>
+      {% endif %}
+      <div class="col">
+        <div class="image-cropper-halo">
+            <a href="?p={{ image.pk }}"><img src="{{ image.image.url }}" /></a>
+          </div></div>
+    {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endif %}
+<script>
+$(document).ready(function() {
+  var $magic = $(".magic"),
+      $scene = $(".scene"),
+      magicWHalf = $magic.width() / 2;
+
+  $scene.on("mousemove", function(e) {
+    var x = e.pageX - this.offsetLeft;
+    var y = e.pageY - this.offsetTop;
+    $magic.css({ left: x - magicWHalf, top: y - magicWHalf });
+  });
+  {% if image %}
+    var width_scene = $(".scene").width();
+    var height_scene = $(".scene").height();
+    var ratio_scene = width_scene/height_scene;
+
+    var width_img = {{ image.image.width }};
+    var height_img = {{ image.image.height }};
+    var ratio_img = width_img/height_img;
+
+    var style = "background: url('{{ image.image.url }}') 50% 50% no-repeat fixed;"
+
+    if (width_scene >= width_img) {
+      style = style + "background-size: auto !important;";
+    } else {
+      style = style + "background-size: auto 100% !important;";
+    }
+
+    $(".magic").attr("style", style);
+    console.log("Img", ratio_img);
+    console.log("Scene", ratio_scene);
+  {% endif %}
+
+});
+
+</script>
+{% endblock %}

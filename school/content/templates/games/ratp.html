@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load auth_extras %}
+{% load static %}
+{% load define_action %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr-FR">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+    </head>
+<body>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+{% if infos == "404" %}
+    <div>ERREUR</div>
+{% else %}
+    <div class="h1">Prochains passages en gare de <span style="color:red;">{{ station|capfirst }}</span> </div>
+    {% for info in infos %}
+    <div class="h2 p-3">{{ info.message }}<br/>Terminus : {{ info.destination }}</div>
+    {% endfor %}
+{% endif %}
+</body>
+</html>
+{% endblock %}
+
