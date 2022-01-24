@@ -31,20 +31,22 @@
 
     <div class="mot-box">
         <div class="row">
-            <div class="col-10 offset text-center fs-2" id="scoreActuel">Ton meilleur score est : {{ letterScore }}</div>
+            <div class="col-12 offset text-center fs-2" id="scoreActuel">Ton meilleur score est : {{ letterScore }}</div>
         </div>
         <div class="row mb-3">
             <div class="col-12 p-5 pb-0 text-center">
                 <input disabled style="background-color:#EEE !important;" type="text" class="form-control-lg form-control word-input rounded-pill" id="word" value="" />
             </div>
-            <div class="col-12 p-5 text-center">
+            <div class="col-12 p-5 pb-0 text-center">
                 <input type="text" id="wordFind" class="form-control-lg form-control mot-input rounded-pill" />
             </div>
-            <button type="submit" value="">
-            <div class="col-2">
+            <div class="col-12 p-5 pb-0 text-center">
+                <button type="button" class="text-center btn btn-success btn-labeled my-2 py-3 fs-1" style="width:100%">SUIVANT</button>
+            </div>
+            <div class="col-12">
                 <div class="row" style="font-size:3.8rem"><div class="text-center" id="timer">01 : 00</div></div>
                 <div class="row">
-                    <div>
+                    <div class="text-center">
                         <select class="custom-select h1 text-center" style="width:200px !important;" onchange="window.location.href=?l=" id="dynamic-select">
                             <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
                             <!-- 
