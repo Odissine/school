@@ -10,7 +10,7 @@ CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 SECRET_KEY = 'django-insecure-omf4=vg)fg2r*e(gk5-ydqn(=5r+7*sj!pj!@j(380j1pg#-a('
 
 DEBUG = True
-ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118']
 
 SITE_ID = 1
 
@@ -86,12 +86,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
+    #
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },

@@ -17,7 +17,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
 
 from . import core
-from .models import Word, WordFind, LetterScore, Halo, AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
+from .models import Word, WordFind, WordScore, LetterScore, Halo, AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
 from .forms import WordForm, HaloForm
 from school import settings
 from .journal import *
@@ -252,6 +252,48 @@ def saveLetterProgress(request):
         new_score = score.score
 
     return JsonResponse({"Score": new_score, "Level": level})
+
+
+# JEUX DE MOT UNIQUE ----------------------------------------------------------------------------
+@login_required()
+def wordOne(request):
+    # Filtre par Niveau
+    if request.GET.get('l', ''):
+        level = request.GET.get('l', '')
+    else:
+        level = "1"
+
+    user = request.user
+    wordScore = WordScore.objects.filter(user=user, level=level).first()
+    if not wordScore:
+        wordScore = 0
+    else:
+        wordScore = wordScore.score
+
+    context = {'level': level,
+               'wordOneScore': wordScore,
+               }
+    return render(request, './games/word_one.html', context)
+
+
+@login_required()
+def saveWordOneProgress(request):
+    level = request.POST.get("level")
+    count = request.POST.get("score")
+    user = request.user
+    score = WordScore.objects.filter(level=level, user=user).first()
+    if not score:
+        instance = WordScore.objects.create(level=level, user=user, score=count)
+        new_score = instance.score
+    elif score.score < int(count):
+        score.score = int(count)
+        score.save()
+        new_score = count
+    else:
+        new_score = score.score
+
+    return JsonResponse({"Score": new_score, "Level": level})
+
 
 # HALO
 @login_required()

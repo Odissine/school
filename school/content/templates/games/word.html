@@ -27,17 +27,10 @@
       <div class="col-3 text-center"></div>
       {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
           <div class="col-3 text-center">
-          {% else %}
+      {% else %}
           <div class="col-4 text-center">
-          {% endif %}
+      {% endif %}
             <span class="h5">Mot</span><br><em class="h6">(1ere lettre en Majuscule)</em>
-          </div>
-      {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-          <div class="col-3 text-center">
-          {% else %}
-          <div class="col-4 text-center">
-          {% endif %}
-            <span class="h5">MOT</span><br><em class="h6">(Toutes les lettres en Majuscule)</em>
           </div>
       <div class="col-2"></div>
     </div>
@@ -51,29 +44,18 @@
             <img src="{{ word.image.url }}" />
           </div>
         </div>
-        <div class="col-3">
+        <div class="col-5">
           <input type="text" disabled class="form-control-lg form-control mot-input rounded-pill" name="word-min" id="word-min-{{ word.pk }}" value="{{ word.name }}" data-id="word" />
         </div>
           {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-          <div class="col-3">
+          <div class="col-5">
           {% else %}
-          <div class="col-4">
+          <div class="col-6">
           {% endif %}
           {% if word in word_done_list %}
           <input disabled style="background-color:#1A5728 !important;" type="text" class="form-control-lg form-control mot-input rounded-pill" name="word-first-maj"  id="word-first-maj-{{ word.pk }}" onchange="testFirstMaj({{ word.pk }});" data-id="wordmin" value="{{ word }}"/>
           {% else %}
           <input type="text" class="form-control-lg form-control mot-input rounded-pill" name="word-first-maj"  id="word-first-maj-{{ word.pk }}" onchange="testFirstMaj({{ word.pk }});" data-id="wordmin" />
-          {% endif %}
-        </div>
-        {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-        <div class="col-3">
-        {% else %}
-        <div class="col-4">
-        {% endif %}
-          {% if word in word_done_list %}
-          <input disabled style="background-color:#1A5728 !important;" type="text" class="form-control-lg form-control mot-input rounded-pill" name="word-maj" id="word-maj-{{ word.pk }}" onchange="testMaj({{ word.pk }});" data-id="wordmaj" value="{{ word|upper }}" />
-          {% else %}
-          <input type="text" class="form-control-lg form-control mot-input rounded-pill" name="word-maj" id="word-maj-{{ word.pk }}" onchange="testMaj({{ word.pk }});" data-id="wordmaj" />
           {% endif %}
         </div>
         {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
@@ -86,6 +68,7 @@
     </form>
   </div>
 <script>
+
 function testFirstMaj(idMot) {
   result = false;
   var valWordMin = document.getElementById('word-min-' + idMot).value
@@ -116,7 +99,7 @@ function testMaj(idMot) {
   var inputMaj = document.getElementById('word-maj-' + idMot);
 
   if (valWordMaj != "") {
-    if (valWordMin.localeCompare(valWordMaj)) {
+    if (valWordMin === valWordMaj) {
       // TRUE
       result = true;
       inputMaj.style.setProperty("background-color", "#1A5728", "important");
@@ -136,10 +119,9 @@ $(document).on("change", "input[data-id='wordmin'], input[data-id='wordmaj']", f
   var id = $(this).attr('id');
   id = id.split("-").pop();
   console.log('id:', id);
-  console.log(testMaj(id))
   console.log(testFirstMaj(id))
 
-  if (testMaj(id) && testFirstMaj(id)) {
+  if (testFirstMaj(id)) {
     let csrfTokenValue = document.querySelector('[name=csrfmiddlewaretoken]').value;
     let formData = new FormData();
     formData.append('word', id);

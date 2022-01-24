@@ -4,6 +4,10 @@ from .forms import RegisterForm, UserLoginForm
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+
+class MyChangeFormPassword(PasswordChangeForm):
+    pass
 
 
 def home_view(request):
@@ -64,3 +68,11 @@ def logout_view(request):
 @login_required
 def login_success(request):
     return render(request, './account/success.html')
+    
+
+# def password_reset(self, request):
+#     instance_user = get_object_or_404(User, id=int(user_id))
+#     form_edit_password = MyChangeFormPassword(instance_user)
+#     context={'form_edit_password': form_edit_password}
+# 
+#    return render(request, './account/password.html', context)

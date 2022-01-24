@@ -14,6 +14,8 @@ urlpatterns = [
     # WORD
     path('word/', views.word, name='word'),
     path('save_word/', views.saveWordProgress, name='save_word_progress'),
+    path('word_one/', views.wordOne, name='word_one'),
+    path('save_word_one/', views.saveWordOneProgress, name='save_word_progress_one'),
 
     # LETTER
     path('letter/', views.letter, name='letter'),

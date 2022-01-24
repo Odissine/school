@@ -58,6 +58,16 @@ class Word(models.Model):
         storage.delete(path)
 
 
+class WordScore(models.Model):
+    objects = models.Manager()
+    score = models.IntegerField()
+    level = models.CharField(max_length=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __int__(self):
+        return self.score
+
+
 class WordFind(models.Model):
     objects = models.Manager()
     word = models.ForeignKey(Word, on_delete=models.CASCADE)

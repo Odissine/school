@@ -1,7 +1,7 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
 {% load auth_extras %}
-{% block title %}School @ ENDTG - LETTRE{% endblock %}
+{% block title %}School @ ENDTG - MOTS{% endblock %}
 {% block content %}
 {% if user.is_authenticated %}
 
@@ -24,7 +24,7 @@
     </div>
     <form>
         <input type="hidden" value="" id="inputScore" name="inputScore">
-        <input type="hidden" value="{{ letterScore }}" id="inputBestScore" name="inputBestScore">
+        <input type="hidden" value="{{ wordOneScore }}" id="inputBestScore" name="inputBestScore">
         <input type="hidden" value="{{ level }}" id="inputLevel">
         {% csrf_token %}
     </form>
@@ -34,19 +34,25 @@
             <div class="col-10 offset text-center fs-2" id="scoreActuel">Ton meilleur score est : {{ letterScore }}</div>
         </div>
         <div class="row mb-3">
-            <div class="col-10 p-5 text-center">
-                <div class="key_up" id="letter"></div>
+            <div class="col-12 p-5 pb-0 text-center">
+                <input disabled style="background-color:#EEE !important;" type="text" class="form-control-lg form-control word-input rounded-pill" id="word" value="" />
             </div>
+            <div class="col-12 p-5 text-center">
+                <input type="text" id="wordFind" class="form-control-lg form-control mot-input rounded-pill" />
+            </div>
+            <button type="submit" value="">
             <div class="col-2">
                 <div class="row" style="font-size:3.8rem"><div class="text-center" id="timer">01 : 00</div></div>
                 <div class="row">
                     <div>
                         <select class="custom-select h1 text-center" style="width:200px !important;" onchange="window.location.href=?l=" id="dynamic-select">
                             <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
+                            <!-- 
                             <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
                             <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
                             <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
                             <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
+                            -->
                         </select>
                     </div>
                 </div>
@@ -63,6 +69,7 @@ $(document).ready(function(){
     var on = false;
     var reset = false;
     var count = 0;
+    var mots = ["Coucou", "Azerty","Alix"]
     var alphabet = "abcdefghijklmnopqrstuvwxyz";
     var alphabet2 = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
     var alphabet3 = "1234567890";
@@ -89,11 +96,13 @@ $(document).ready(function(){
         Start();
         count = 0;
         randomCharacter = alphabet[Math.floor(Math.random() * alphabet.length)];
-        $("#letter").html(randomCharacter);
+        randomWord = mots[Math.floor(Math.random() * mots.length)]
+        $("#word").val(randomWord);
         $("#count").html(count);
         $("#score").html(count);
 
     });
+
     $('body').keypress(function(e) {
         if (secondes == 0 && minutes == 0) {
             console.log('STOP');
