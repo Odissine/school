@@ -1,22 +1,28 @@
 from django.contrib import admin
-from .models import LetterScore, Word, WordFind, Halo, AdditionScore
+from .models import LetterScore, WordOne, Halo, AdditionScore, WordScore
 
 # LETTER
 @admin.register(LetterScore)
-class WordAdmin(admin.ModelAdmin):
+class LetterScoreAdmin(admin.ModelAdmin):
     list_display = ['score', 'level', 'user']
 
 
 # WORDS
-@admin.register(Word)
-class WordAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'level', 'image', 'group']
+@admin.register(WordOne)
+class WordOneFindAdmin(admin.ModelAdmin):
+    list_display = ['name', 'level', 'get_groups']
     prepopulated_fields = {'slug': ('name',)}
+    search_fields = ['name']
+    list_filter = ['level']
+    ordering = ['name', 'level']
+
+    def get_groups(self, obj):
+        return ",".join([g.name for g in obj.group.all()])
 
 
-@admin.register(WordFind)
-class WordFindAdmin(admin.ModelAdmin):
-    list_display = ['word', 'user']
+@admin.register(WordScore)
+class WordScoreAdmin(admin.ModelAdmin):
+    list_display = ['score', 'level', 'user']
 
 
 @admin.register(Halo)
@@ -30,4 +36,4 @@ class AdditionScoreAdmin(admin.ModelAdmin):
     list_display = ['score', 'user']
 
 
-admin.register(WordFind, WordFindAdmin, AdditionScore, Halo, LetterScore)
+admin.register(AdditionScore, Halo, LetterScore, WordOne, WordScore)
