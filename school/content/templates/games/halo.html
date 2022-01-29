@@ -6,9 +6,11 @@
 {% if user.is_authenticated %}
 <div class="container" style="padding-top:60px;">
   {% if image %}
-  <div class="scene">
-    <div class="magic" style=""></div>
-  </div>
+  <canvas id="scene">
+    <div class="scene">
+      <div class="magic" style=""></div>
+    </div>
+  </canvas>
   {% else %}
 
     <div class="row">
@@ -26,16 +28,32 @@
 </div>
 {% endif %}
 <script>
+
 $(document).ready(function() {
   var $magic = $(".magic"),
       $scene = $(".scene"),
       magicWHalf = $magic.width() / 2;
+  $("#scene").css({width: $(window).width(), height: $(window).height()});
+  $("#scene").attr('width',$(window).width());
+  $("#scene").attr('height', $(window).height());
+
+  $("#scene").click(function(e) {
+    var x = e.pageX - this.offsetLeft;
+    var y = e.pageY - this.offsetTop;
+
+    var ctx= this.getContext("2d"); /*c.getContext("2d");*/
+    ctx.beginPath();
+    ctx.arc(x, y, 10,0, 2*Math.PI);
+    ctx.strokeStyle = 'red';
+    ctx.stroke();
+   });
 
   $scene.on("mousemove", function(e) {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
     $magic.css({ left: x - magicWHalf, top: y - magicWHalf });
   });
+
   {% if image %}
     var width_scene = $(".scene").width();
     var height_scene = $(".scene").height();
@@ -54,8 +72,6 @@ $(document).ready(function() {
     }
 
     $(".magic").attr("style", style);
-    console.log("Img", ratio_img);
-    console.log("Scene", ratio_scene);
   {% endif %}
 
 });

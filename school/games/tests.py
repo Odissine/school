@@ -1,3 +1,6 @@
-from .models import Halo
+from .models import WordOne
 
-Halo.objects.all().delete()
+
+def word_allready_present(word):
+    word_test = WordOne.objects.filter(name=word)
+    print(word_test)

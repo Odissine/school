@@ -30,36 +30,46 @@
     </form>
 
     <div class="mot-box">
-        <div class="row">
-            <div class="col-12 offset text-center fs-2" id="scoreActuel">Ton meilleur score est : {{ letterScore }}</div>
+        <div class="row mb-2">
+            <div class="col-4 h1 px-5">Jeux de mots</div>
+            <div class="col-8 offset text-end h2" id="scoreActuel">Ton meilleur score est de {{ wordOneScore }} mots à la minute</div>
         </div>
         <div class="row mb-3">
-            <div class="col-12 p-5 pb-0 text-center">
-                <input disabled style="background-color:#EEE !important;" type="text" class="form-control-lg form-control word-input rounded-pill" id="word" value="" />
+            <div class="col-7 px-5">
+                <div class="row mb-2">
+                    <input disabled style="background-color:#EEE !important;" type="text" class="form-control-lg form-control word-input" id="word" value="" />
+                </div>
+                <div class="row mb-2">
+                    <input type="text" id="wordFind" class="form-control-lg form-control mot-input" />
+                </div>
+                <div class="row mb-2">
+                    <button type="button" class="text-center btn btn-success btn-labeled my-2 py-3 fs-1" style="width:100%" id="nextWord">SUIVANT</button>
+                </div>
             </div>
-            <div class="col-12 p-5 pb-0 text-center">
-                <input type="text" id="wordFind" class="form-control-lg form-control mot-input rounded-pill" />
-            </div>
-            <div class="col-12 p-5 pb-0 text-center">
-                <button type="button" class="text-center btn btn-success btn-labeled my-2 py-3 fs-1" style="width:100%">SUIVANT</button>
-            </div>
-            <div class="col-12">
+            <div class="col-5 px-5">
                 <div class="row" style="font-size:3.8rem"><div class="text-center" id="timer">01 : 00</div></div>
                 <div class="row">
                     <div class="text-center">
                         <select class="custom-select h1 text-center" style="width:200px !important;" onchange="window.location.href=?l=" id="dynamic-select">
                             <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
-                            <!-- 
                             <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
                             <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
+                            <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
+                            <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
+                            <option {% if level == '6' %} selected {% endif %} value="6">Niveau 6</option>
+                            <!--
                             <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
                             <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
                             -->
                         </select>
                     </div>
                 </div>
-                <div class="row" id="play"><button type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span>Démarrer</button></div>
-                <div class="row" style="font-size:5rem"><div id="count" class="text-center">0</div></div>
+                <div class="row" id="play">
+                    <button type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span>Démarrer</button>
+                </div>
+                <div class="row" style="font-size:5rem">
+                    <div id="count" class="text-center">0</div>
+                </div>
             </div>
         </div>
     </div>
@@ -71,76 +81,72 @@ $(document).ready(function(){
     var on = false;
     var reset = false;
     var count = 0;
-    var mots = ["Coucou", "Azerty","Alix"]
-    var alphabet = "abcdefghijklmnopqrstuvwxyz";
-    var alphabet2 = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
-    var alphabet3 = "1234567890";
-    var alphabet4 = ",;.?:()\"'";
-    var alphabet5 = "èéïîêâäùûüöôà";
+    var mots = {{ word_list|safe }}
+
     var level = document.querySelector('#inputLevel').value;
-    if (level == '2') {
-        alphabet = alphabet + alphabet2;
-    }
-    if (level == '3') {
-        alphabet = alphabet + alphabet2 + alphabet3;
-    }
-    if (level == '4') {
-        alphabet = alphabet + alphabet2 + alphabet3 + alphabet4;
-    }
-    if (level == '5') {
-        alphabet = alphabet + alphabet2 + alphabet3 + alphabet4 + alphabet5;
-    }
-    var randomCharacter = "";
+    var randomWord = "";
+    var tempWord = [];
 
     $("#play").click(function(){
         minutes = 1;
         secondes = 0;
         Start();
         count = 0;
-        randomCharacter = alphabet[Math.floor(Math.random() * alphabet.length)];
         randomWord = mots[Math.floor(Math.random() * mots.length)]
         $("#word").val(randomWord);
+        $("#wordFind").val("");
         $("#count").html(count);
         $("#score").html(count);
-
     });
 
-    $('body').keypress(function(e) {
-        if (secondes == 0 && minutes == 0) {
-            console.log('STOP');
+    $("#wordFind").keyup(function(event) {
+        if (event.keyCode === 13) {
+            $("#nextWord").click();
+        }
+    });
+
+    $("#nextWord").click(function(){
+        if (secondes == 0 && minutes == 0 || mots.length == tempWord.length) {
+            // console.log('STOP');
         } else {
-            var letter_press = String.fromCharCode( e.which );
-            $('#letter').addClass("key_press");
-            if (randomCharacter != "") {
-                if (letter_press == randomCharacter) {
-                    $('#letter').addClass("key_ok");
-                    $('#letter').removeClass("key_ko");
-                    randomCharacter = alphabet[Math.floor(Math.random() * alphabet.length)]
-                    $("#letter").html(randomCharacter);
+            var word_find = $('#wordFind').val();
+
+            if (randomWord != "") {
+                if (word_find == randomWord) {
+                    tempWord.push(randomWord);
+                    $('#nextWord').addClass("word_ok");
+                    $('#nextWord').removeClass("word_ko");
+                    randomWord = mots[Math.floor(Math.random() * mots.length)]
+                    // console.log(mots.length);
+                    // console.log(tempWord.length);
+                    if (mots.length <= tempWord.length) {
+                        tempWord = [];
+                    }
+                    while (tempWord.includes(randomWord)) {
+                        randomWord = mots[Math.floor(Math.random() * mots.length)];
+                    }
+                    $("#word").val(randomWord);
                     count++;
                     $("#count").html(count);
                     $("#score").html(count);
+                    $("#wordFind").val("");
+                    $("#wordFind").focus();
+
                 } else {
-                    if (count > 0) { count--; }
+                    // if (count > 0) { count--; }
                     $("#count").html(count);
                     $("#score").html(count);
-                    $('#letter').addClass("key_ko");
-                    $('#letter').removeClass("key_ok");
-
+                    $('#nextWord').addClass("word_ko");
+                    $('#nextWord').removeClass("word_ok");
+                    $("#wordFind").focus();
                 }
             }
         }
-
-    });
-    $('body').keyup(function(e) {
-        var letter_press = String.fromCharCode( e.which );
-        $('#letter').addClass("key_up");
-        $('#letter').removeClass("key_press");
     });
 
     function chrono(){
         secondes -= 1;
-        if (secondes <= 0 && minutes <= 0) {
+        if (secondes <= 0 && minutes <= 0 || mots.length == tempWord.length) {
             Stop();
             minutes = 0;
             secondes = 0;
@@ -194,6 +200,7 @@ $(document).ready(function(){
             $('#letter').addClass("key_up");
             $('#letter').removeClass("key_press");
             $('#inputScore').val(count);
+            $("#word").val("");
             Save();
         }
     }
@@ -201,14 +208,14 @@ $(document).ready(function(){
     function Save(){
         var level = document.querySelector('#inputLevel').value;
         var score = document.querySelector('#inputScore').value;
-        console.log(level);
-        console.log(score);
+        // console.log(level);
+        // console.log(score);
         let csrfTokenValue = document.querySelector('[name=csrfmiddlewaretoken]').value;
         let formData = new FormData();
         formData.append('level', level);
         formData.append('score', score);
 
-        const request = new Request('{% url "games:save_letter_progress" %}', {
+        const request = new Request('{% url "games:save_word_progress_one" %}', {
           method: 'POST',
           body: formData,
           headers: {'X-CSRFToken': csrfTokenValue},  // On ajoute le token dans l'en-tête

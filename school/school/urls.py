@@ -22,13 +22,13 @@ from main.views import IndexPageView
 urlpatterns = [
     # Admin DJANGO
     path('admin/', admin.site.urls),
+    path("select2/", include("django_select2.urls")),
 
     # Index du site
     path('', IndexPageView.as_view(), name='index'),
     path('', include("django.contrib.auth.urls")),
 
     path('i18n/', include('django.conf.urls.i18n')),
-
     path('account/', include(('account.urls', 'account'), namespace='account')),
     path('games/', include(('games.urls', 'games'), namespace='games')),
 ]

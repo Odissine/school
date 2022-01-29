@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
     <style>
          @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Cookie&family=PT+Mono&display=swap');
     </style>
+
     <title>{% block title %}SCHOOL @ {% endblock %}</title>
 </head>
 <body class="dark">
@@ -21,7 +23,13 @@
 	<script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/toastr.min.js' %}"></script>
     <script src="{% static 'js/select-menu.js' %}"></script>
-    <nav class="navbar navbar-expand-lg navbar-light bg-school fixed-top">
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+    </script>
+    <nav class="navbar navbar-expand-lg navbar-light bg-school sticky-top">
         <div class="container-fluid">
             <a href="{% url 'index' %}"><img src="{% static 'img/logo.png' %}" width="30" />&nbsp</a>
             <a class="navbar-brand" href="{% url 'index' %}">ENDTG</a>
@@ -31,7 +39,7 @@
                 </button>
             </div>
             <div class="collapse navbar-collapse" id="navbarScroll">
-                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 400px;">
                     <!--
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Accueil</a>
@@ -41,10 +49,10 @@
                     </li>
                     -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Jeux</a>
+                        <a class="nav-link dropdown-toggle h5" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Jeux</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                             <li><a class="dropdown-item" href="{% url 'games:letter' %}">Lettres</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:word' %}">Mots</a></li>
+                            <li><a class="dropdown-item" href="{% url 'games:word_one' %}">Mots</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:addition' %}">Addition</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:addition_posee' %}">Addition Posée</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:soustraction' %}">Soustraction</a></li>
@@ -64,14 +72,16 @@
                     -->
                 </ul>
                 {% if user.is_authenticated %}
-                <span class="nav-text">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                <div class="nav-text h4">{{ request.user.first_name }} {{ request.user.last_name }}</div>
                 <ul class="nav navbar-nav d-flex">
                     {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                            <li><a class="dropdown-item" href="{% url 'games:create_word' %}">Créé un mots</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:create_halo' %}">Créé un halo</a></li>
+                            <li><a class="dropdown-item" href="{% url 'games:create_word_list' %}">Ajouter des mots</a></li>
+                            <li><a class="dropdown-item" href="{% url 'games:create_halo' %}">Créer un halo</a></li>
+                            <li><a class="dropdown-item" href="{% url 'account:user_list' %}">Liste des utilisateurs</a></li>
                             <!--
                             <li><a class="dropdown-item" href="#">Another action</a></li>
                             <li><hr class="dropdown-divider"></li>
@@ -80,12 +90,12 @@
                         </ul>
                     </li>
                     {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account:logout' %}"><i class="bi bi-box-arrow-right"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account:logout' %}"><i class="bi bi-lock"></i></a></li>
                 </ul>
                 {% else %}
                 <ul class="nav navbar-nav d-flex">
                     <li class="nav-item"><a class="nav-link" href="{% url 'account:register' %}"><i class="bi bi-person"></i></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'account:login' %}"><i class="bi bi-unlock"></i></a></li>
                 </ul>
                 {% endif %}
             </div>
@@ -100,9 +110,7 @@
                     <strong class="me-auto">Information</strong>
                     <i class="bi-info-circle"></i>
                 </div>
-                <div class="toast-body">
-                    {{ message }}
-                </div>
+                <div class="toast-body">{{ message }}</div>
             </div>
         </div>
     </div>

@@ -17,18 +17,19 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
 
 from . import core
-from .models import Word, WordFind, WordScore, LetterScore, Halo, AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
-from .forms import WordForm, HaloForm
+from .models import WordOne, WordScore, LetterScore, Halo, AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
+from .forms import HaloForm, WordFormOneList
 from school import settings
 from .journal import *
 
-def group_required(*group_names):
 
+def group_required(*group_names):
     def in_groups(u):
         if u.is_authenticated:
             if bool(u.groups.filter(name__in=group_names)) | u.is_superuser:
                 return True
         return False
+
     return user_passes_test(in_groups)
 
 
@@ -40,7 +41,6 @@ def cp_view_bis(request, pk):
     return render(request, './games/word.html')
 '''
 
-
 '''
 AUTRE SOLUTION DE DECORATEUR GROUP DANS LA VUE
 @group_required('CP')
@@ -51,166 +51,97 @@ def cp_mots(request):
 
 # JEUX DE MOTS ----------------------------------------------------------------------------
 @login_required()
-def word(request):
-
-    # Filtre par Classe
-    classe = request.user.groups.first()
-    user = request.user
-    wordDone = WordFind.objects.filter(user=user)
-    word_done_list = []
-    for word_done in wordDone:
-        word_done_list.append(word_done.word)
-
-    if classe.name == "ADMIN" or classe.name == "ENSEIGNANT":
-        word_list = Word.objects.all()
-    else:
-        word_list = Word.objects.filter(group=classe)
-
+def wordOne(request):
     # Filtre par Niveau
     if request.GET.get('l', ''):
         level = request.GET.get('l', '')
     else:
         level = "1"
 
-    word_list = word_list.filter(level=level).order_by('slug')
+    user = request.user
+    wordScore = WordScore.objects.filter(user=user, level=level).first()
+    if int(level) < 4:
+        filterLevel = level
+    else:
+        filterLevel = int(level) - 3
 
-    if classe.name == "ADMIN" or classe.name == "ENSEIGNANTS":
-        classe = "toutes les classes :)"
+    wordList = WordOne.objects.filter(level=filterLevel)
+    wordListFormatted = []
+    for elem in wordList:
+        if int(level) < 4:
+            wordListFormatted.append(str(elem.name.lower()))
+        else:
+            wordListFormatted.append(str(elem.name.capitalize()))
+    wordListFormatted = json.dumps(wordListFormatted)
+
+    if not wordScore:
+        wordScore = 0
+    else:
+        wordScore = wordScore.score
 
     context = {'level': level,
-               'classe': classe,
-               'words': word_list,
-               'word_done_list': word_done_list,
+               'wordOneScore': wordScore,
+               'word_list': wordListFormatted,
                }
-    return render(request, './games/word.html', context)
+    return render(request, './games/word_one.html', context)
 
 
 @login_required()
-def saveWordProgress(request):
-    id = request.POST.get("word")
-    word = Word.objects.get(pk=id)
+def saveWordOneProgress(request):
+    level = request.POST.get("level")
+    count = request.POST.get("score")
     user = request.user
-    progress = WordFind.objects.filter(word=word, user=user)
-    print(id, word, user, progress)
-    if not progress:
-        instance = WordFind.objects.create(word=word, user=user)
-
-    count = WordFind.objects.filter(user=user).count()
-
-    classe = request.user.groups.first()
-    if classe.name == "ADMIN" or classe.name == "ENSEIGNANT":
-        count_total = Word.objects.all().count()
+    score = WordScore.objects.filter(level=level, user=user).first()
+    if not score:
+        instance = WordScore.objects.create(level=level, user=user, score=count)
+        new_score = instance.score
+    elif score.score < int(count):
+        score.score = int(count)
+        score.save()
+        new_score = count
     else:
-        count_total = Word.objects.filter(group=classe).count()
+        new_score = score.score
 
-    message = "Bravo ! Tu as trouvé " + str(count) + " mots sur " + str(count_total)
-    messages.success(request, message)
-    return JsonResponse({"Mots": message})
+    return JsonResponse({"Score": new_score, "Level": level})
 
 
-# ADMIN ----------------------------------------------------------------------------
 @login_required()
-@group_required('ADMIN')
-@group_required('ENSEIGNANT')
-def createWord(request):
-    form = WordForm()
+@group_required('ADMIN', 'ENSEIGNANT')
+def createWordOneList(request):
+    form = WordFormOneList()
     if request.method == 'POST':
-        form = WordForm(request.POST, request.FILES)
+        form = WordFormOneList(request.POST)
         if form.is_valid():
-            document = form.save(commit=False)
-            document.name = request.POST['name']
-            document.save()
-            message = "Mot ["+request.POST['name'] + "] ajouté avec succès !"
-            messages.success(request, message)
-            return redirect('games:create_word')
+            mots = request.POST['mots'].splitlines()
+            groupe = request.POST['group']
+            level = request.POST['level']
+            nb_mot = 0
+            for mot in mots:
+                # document = form.save(commit=False)
+                if level == "":
+                    if len(mot) < 5:
+                        level = 1
+                    elif len(mot) < 8:
+                        level = 2
+                    else:
+                        level = 3
 
+                mot_existe = WordOne.objects.filter(name=mot, level=level)
+
+                if len(mot_existe) == 0:
+                    nb_mot += 1
+                    wordModel = WordOne()
+                    wordModel.name = mot
+                    wordModel.level = level
+                    wordModel.save()
+                    wordModel.group.set(groupe)
+
+            message = str(nb_mot) + " mots ont été ajoutés avec succès (sur " + str(len(mots)) + ")"
+            messages.success(request, message)
+
+            return redirect('games:create_word_list')
     context = {'form': form}
-    return render(request, 'games/createWord.html', context)
-
-
-@login_required()
-@group_required('ADMIN')
-@group_required('ENSEIGNANT')
-def createHalo(request):
-    form = HaloForm()
-    if request.method == 'POST':
-        form = HaloForm(request.POST, request.FILES)
-        if form.is_valid():
-            img_url = request.POST['url']
-
-            if img_url != "":
-                response = requests.get(img_url)
-                if response.status_code == 200:
-                    photo = Halo()  # set any other fields, but don't commit to DB (ie. don't save())
-                    filename = urlparse(img_url).path.split('/')[-1]
-                    extension = filename.split(".")[-1].lower()
-                    name = "halo/" + slugify(request.POST['name']) + "." + extension
-                    photo.image.save(name, ContentFile(response.content), save=False)
-                    photo.image.name = name
-                    photo.name = request.POST['name']
-                    photo.save()
-            else:
-                document = form.save(commit=False)
-                document.name = request.POST['name']
-                document.save()
-
-            message = "Image ["+request.POST['name'] + "] ajoutée avec succès !"
-            messages.success(request, message)
-            return redirect('games:create_halo')
-
-    context = {'form': form}
-    return render(request, 'games/createHalo.html', context)
-
-
-@login_required()
-@group_required('ADMIN')
-@group_required('ENSEIGNANT')
-def updateWord(request, pk):
-    word = Word.objects.get(id=pk)
-    form = WordForm(instance=word)
-    if request.method == 'POST':
-        form = WordForm(request.POST, request.FILES, instance=word)
-        if form.is_valid():
-            word.level = form.cleaned_data.get('level')
-            word.name = form.cleaned_data.get('name')
-            if not request.FILES.get('image'):
-                print("## ImageField = None")
-                print(os.path.join(settings.MEDIA_ROOT, word.image.name))
-
-            document = form.save(commit=False)
-            # document.name = request.POST['name']
-            # if not form.data['image'] is None:
-
-            # auto_delete_file_on_change(request, instance=word)
-
-            # if request.FILES.get('image'):
-            #     print("On supprime le fichier")
-            #     word.delete_file()
-            # document.save()
-            word.save()
-            message = "Mot ["+request.POST['name'] + "] edité avec succès !"
-            messages.success(request, message)
-            return redirect('games:word')
-        else:
-            context = {'word': word, 'form': form}
-    else:
-        context = {'form': form}
-        return render(request, 'games/createWord.html', context)
-
-
-@login_required()
-@group_required('ADMIN')
-@group_required('ENSEIGNANT')
-def deleteWord(request, pk):
-    word = Word.objects.get(id=pk)
-    if request.method == 'POST':
-        word.delete()
-        message = "Mot ["+request.POST['mot'] + "] edité avec succès !"
-        messages.success(request, message)
-        return redirect('games:word')
-
-    context = {'word': word}
-    return render(request, 'games/deleteWord.html', context)
+    return render(request, 'games/createWordOneList.html', context)
 
 
 # JEUX DE LETTRE ----------------------------------------------------------------------------
@@ -254,48 +185,7 @@ def saveLetterProgress(request):
     return JsonResponse({"Score": new_score, "Level": level})
 
 
-# JEUX DE MOT UNIQUE ----------------------------------------------------------------------------
-@login_required()
-def wordOne(request):
-    # Filtre par Niveau
-    if request.GET.get('l', ''):
-        level = request.GET.get('l', '')
-    else:
-        level = "1"
-
-    user = request.user
-    wordScore = WordScore.objects.filter(user=user, level=level).first()
-    if not wordScore:
-        wordScore = 0
-    else:
-        wordScore = wordScore.score
-
-    context = {'level': level,
-               'wordOneScore': wordScore,
-               }
-    return render(request, './games/word_one.html', context)
-
-
-@login_required()
-def saveWordOneProgress(request):
-    level = request.POST.get("level")
-    count = request.POST.get("score")
-    user = request.user
-    score = WordScore.objects.filter(level=level, user=user).first()
-    if not score:
-        instance = WordScore.objects.create(level=level, user=user, score=count)
-        new_score = instance.score
-    elif score.score < int(count):
-        score.score = int(count)
-        score.save()
-        new_score = count
-    else:
-        new_score = score.score
-
-    return JsonResponse({"Score": new_score, "Level": level})
-
-
-# HALO
+# HALO -------------------------------------------------------------------------------------------
 @login_required()
 def halo(request):
     images = Halo.objects.all()
@@ -309,7 +199,7 @@ def halo(request):
     return render(request, './games/halo.html', context)
 
 
-# ADDITION
+# ADDITION -------------------------------------------------------------------------------------------
 @login_required()
 def addition(request):
     user = request.user
@@ -372,7 +262,7 @@ def saveAdditionPoseeProgress(request):
     return JsonResponse({"Score": new_score})
 
 
-# MULTIPLICATION
+# MULTIPLICATION -------------------------------------------------------------------------------------------
 @login_required()
 def multiplication(request):
     user = request.user
@@ -404,7 +294,7 @@ def saveMultiplicationProgress(request):
     return JsonResponse({"Score": new_score})
 
 
-# SOUSTRACTION
+# SOUSTRACTION -------------------------------------------------------------------------------------------
 @login_required()
 def soustraction(request):
     user = request.user
@@ -478,3 +368,37 @@ def ratp(request):
         context = {'infos': "404"}
     return render(request, './games/ratp.html', context)
     # return JsonResponse({"Data": data})
+
+
+@login_required()
+@group_required('ADMIN')
+@group_required('ENSEIGNANT')
+def createHalo(request):
+    form = HaloForm()
+    if request.method == 'POST':
+        form = HaloForm(request.POST, request.FILES)
+        if form.is_valid():
+            img_url = request.POST['url']
+
+            if img_url != "":
+                response = requests.get(img_url)
+                if response.status_code == 200:
+                    photo = Halo()  # set any other fields, but don't commit to DB (ie. don't save())
+                    filename = urlparse(img_url).path.split('/')[-1]
+                    extension = filename.split(".")[-1].lower()
+                    name = "halo/" + slugify(request.POST['name']) + "." + extension
+                    photo.image.save(name, ContentFile(response.content), save=False)
+                    photo.image.name = name
+                    photo.name = request.POST['name']
+                    photo.save()
+            else:
+                document = form.save(commit=False)
+                document.name = request.POST['name']
+                document.save()
+
+            message = "Image [" + request.POST['name'] + "] ajoutée avec succès !"
+            messages.success(request, message)
+            return redirect('games:create_halo')
+
+    context = {'form': form}
+    return render(request, 'games/createHalo.html', context)

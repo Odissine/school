@@ -3,6 +3,13 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .core import generate_username, generate_email
+from django_select2.forms import Select2Widget, ModelSelect2Widget, Select2MultipleWidget
+from django.forms import ModelMultipleChoiceField, ModelChoiceField
+
+
+class UsernameChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "%s %s" % (obj.first_name, obj.last_name)
 
 
 class RegisterForm(UserCreationForm):
@@ -26,14 +33,12 @@ class RegisterForm(UserCreationForm):
         fields = ('first_name', 'last_name', 'group', 'password1', 'password2')
 
 
-class UserLoginForm(AuthenticationForm):
-
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
-
-    username = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur", 'autofocus': 'None'}), label="", required=True)
+class UserLoginForm(forms.ModelForm):
+    # username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur", 'autofocus': 'None'}), label="", required=True)
+    # username = forms.ModelChoiceField(widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'form-control'}), queryset=User.objects.all(), label="Nom d'utilisateur", required=True, help_text="Merci d'indiquer votre nom d'utilisateur")
+    username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
-    username.widget.attrs.update({"autofocus": False})
+    # username.widget.attrs.update({"autofocus": False})
 
     def clean(self):
         username = self.cleaned_data.get('username')
@@ -42,3 +47,7 @@ class UserLoginForm(AuthenticationForm):
         if not user or not user.is_active:
             raise forms.ValidationError("Désolé, cet identifiant n'existe pas ! Essaye encore ... ou créé toi un compte :)")
         return self.cleaned_data
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']

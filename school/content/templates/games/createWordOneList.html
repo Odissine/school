@@ -5,15 +5,20 @@
 {% load crispy_forms_tags %}
 {% block content %}
 {% if user.is_authenticated %}
+{{ form.media.css }}
   {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
 <div class="testbox">
     <form action="" method="post" enctype="multipart/form-data">
-      {%csrf_token %}
-      {{ form|crispy }}
-      <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-success">Créer !</button>
-      </div>
+        <div class="">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-success">Créer !</button>
+            </span>
+        </div>
     </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    {{ form.media.js }}
 </div>
   {% endif  %}
 {% endif  %}

@@ -4,8 +4,19 @@
 {% block title %}School @ ENDTG - Accueil{% endblock %}
 {% block content %}
 {% if user.is_authenticated %}
-<div>Bienvenue {{ user.first_name }} !</div>
+<div class="mt-10 h1">Bienvenue {{ user.first_name }} !</div>
+<div class="d-flex flex-wrap justify-content-md-center">
+    <a href="{% url 'games:letter' %}" class="btn col-3 text-center h3 p-4 bg-danger m-2 rounded text-white fs-2">Lettres</a>
+    <a href="{% url 'games:word_one' %}" class="btn col-3 text-center h3 p-4 bg-warning m-2 rounded text-dark fs-2">Mots</a>
+    <a href="{% url 'games:addition' %}" class="btn col-3 text-center h3 p-4 bg-success m-2 rounded text-white fs-2">Additions</a>
+</div>
+<div class="d-flex flex-wrap justify-content-md-center">
+    <a href="{% url 'games:addition_posee' %}" class="btn col-3 text-center h3 p-4 bg-primary m-2 rounded text-white fs-2">Additions posées</a>
+    <a href="{% url 'games:soustraction' %}" class="btn col-3 text-center h3 p-4 bg-info m-2 rounded text-dark fs-2">Soustractions</a>
+    <a href="{% url 'games:multiplication' %}" class="btn col-3 text-center h3 p-4 bg-light m-2 rounded text-dark fs-2">Multiplications</a>
+</div>
 {% endif %}
+<!--
 {% if request.user|has_group:"CP" %}
     <p>CP</p>
 {% endif  %}
@@ -30,4 +41,5 @@
 {% if request.user|has_group:"ENSEIGNANT" %}
     <p>ENSEIGNANT</p>
 {% endif  %}
+-->
 {% endblock %}

@@ -6,14 +6,10 @@ from . import views
 
 urlpatterns = [
     # ADMIN
-    path('create_word/', views.createWord, name='create_word'),
+    path('create_word_list/', views.createWordOneList, name='create_word_list'),
     path('create_halo/', views.createHalo, name='create_halo'),
-    path('update_word/<str:pk>/', views.updateWord, name='update_word'),
-    path('delete_word/<str:pk>/', views.deleteWord, name='delete_word'),
 
     # WORD
-    path('word/', views.word, name='word'),
-    path('save_word/', views.saveWordProgress, name='save_word_progress'),
     path('word_one/', views.wordOne, name='word_one'),
     path('save_word_one/', views.saveWordOneProgress, name='save_word_progress_one'),
 

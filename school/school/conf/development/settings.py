@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_select2',
     'bootstrap5',
     'crispy_forms',
     'crispy_bootstrap5',
@@ -123,14 +124,15 @@ LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'UTC'
 USE_TZ = True
 
-STATIC_ROOT = os.path.join(CONTENT_DIR, 'static')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(CONTENT_DIR, 'static'),
+)
+STATIC_ROOT = os.path.join(CONTENT_DIR, 'assets')
 
 MEDIA_ROOT = os.path.join(CONTENT_DIR, 'media')
 MEDIA_URL = '/media/'
 
-STATICFILES_DIRS = [
-    os.path.join(CONTENT_DIR, 'assets'),
-]
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
