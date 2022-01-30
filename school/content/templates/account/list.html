@@ -7,21 +7,22 @@
 <div class="modal fade" tabindex="-1" id="modalChangePwd">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+                <form class="" action="{% url 'account:change-password' %}" method="POST">
                 <div class="modal-header bg-primary" style="color:white !important;">
                     <h5 class="modal-title">Changement de mot de passe</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
                 <div class="text-dark m-2" id="labelTitle"></div>
-                <form class="p-3 input-group mb-3" >
-
                     {% csrf_token %}
                     <input type="hidden" value="" id="idUser" name="idUser">
-                    <input class="form-control" type="text" name="password">
-                    <button class="btn btn-success" type="submit">Enregistrer</button>
-                </form>
+                    <div class="text-dark m-3">
+                    <input class="form-control px-3" type="text" name="password">
+                    </div>
                 <div class="modal-footer">
+                    <button class="btn btn-success" type="submit">Enregistrer</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -44,6 +45,7 @@
     <div class="d-grid gap-2">
         <button type="submit" class="btn btn-success">Filtrer</button>
     </div>
+</form>
     {% if list|length > 0 %}
     <table class="table table-striped table-dark">
     <thead>
@@ -65,7 +67,7 @@
         <td>{{ user.max_lettre }} ({{ user.moyenne_lettre }})</td>
         <td>{{ user.max_mot }} ({{ user.moyenne_mot }})</td>
         <td><label class="btn btn-default">
-            <input name="userPwd" value="{{ user.id }}" type="radio" vNom="{{ user.nom }}" vPrenom="{{ user.prenom }}"><i class="bi bi-envelope-o"></i>
+            <button class="btn btn-primary" name="userPwd" vId="{{ user.id }}" type="radio" vNom="{{ user.nom }}" vPrenom="{{ user.prenom }}"><i class="bi bi-check"></i></button>
             </label>
         </td>
     <tr>
@@ -75,7 +77,6 @@
     {% else %}
     <div>Aucune résultat</div>
     {% endif %}
-</form>
 </div>
 <script>
     $(document).ready(function(){
@@ -84,8 +85,10 @@
             var valueis = $(this).val();
             var prenom = $(this).attr("vPrenom");
             var nom = $(this).attr("vNom");
+            var id = $(this).attr("vId");
             console.log(valueis);
             $("#labelTitle").html("Modification du mot de passe de " + prenom + " " + nom);
+            $("#idUser").val(id);
         });
     });
 </script>

@@ -105,6 +105,16 @@ def saveWordOneProgress(request):
     return JsonResponse({"Score": new_score, "Level": level})
 
 
+# ADMIN -----------------------------------------------------------------------
+@login_required()
+@group_required('ADMIN', 'ENSEIGNANT')
+def exportWord(request):
+    words = WordOne.objects.filter(level=3)
+    for word in words:
+        print(word.name)
+    return redirect('index')
+
+
 @login_required()
 @group_required('ADMIN', 'ENSEIGNANT')
 def createWordOneList(request):

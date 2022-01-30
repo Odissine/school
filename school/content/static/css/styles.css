@@ -446,3 +446,9 @@ a {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color:#FFF !important;
 }
+.bg-error {
+    background-color:#dc3545 !important;
+}
+.toast-body {
+    color:#333 !important;
+}

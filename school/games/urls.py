@@ -8,6 +8,7 @@ urlpatterns = [
     # ADMIN
     path('create_word_list/', views.createWordOneList, name='create_word_list'),
     path('create_halo/', views.createHalo, name='create_halo'),
+    path('export_words/', views.exportWord, name='export-words'),
 
     # WORD
     path('word_one/', views.wordOne, name='word_one'),

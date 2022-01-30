@@ -382,3 +382,6 @@ a {
         border-radius: 20px;
     }
 }
+.bg-error {
+    background-color:#dc3545 !important;
+}

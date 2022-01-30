@@ -82,6 +82,7 @@
                             <li><a class="dropdown-item" href="{% url 'games:create_word_list' %}">Ajouter des mots</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:create_halo' %}">Créer un halo</a></li>
                             <li><a class="dropdown-item" href="{% url 'account:user_list' %}">Liste des utilisateurs</a></li>
+                            <li><a class="dropdown-item" href="{% url 'games:export-words' %}">Export des mots (console)</a>
                             <!--
                             <li><a class="dropdown-item" href="#">Another action</a></li>
                             <li><hr class="dropdown-divider"></li>
@@ -107,8 +108,14 @@
         <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
             <div class="toast fade hide bg-light" id="error_message">
                 <div class="toast-header {% if message.tags %} bg-{{ message.tags }} text-light {% endif %}">
-                    <strong class="me-auto">Information</strong>
-                    <i class="bi-info-circle"></i>
+                    <strong class="me-auto">
+                        {% if message.tags == 'error' %} Erreur {% else %} Information {% endif %}
+                    </strong>
+                        {% if message.tags == 'error' %}
+                        <i class="bi-exclamation-octagon"></i>
+                        {% else %}
+                        <i class="bi-info-circle"></i>
+                        {% endif %}
                 </div>
                 <div class="toast-body">{{ message }}</div>
             </div>

@@ -66,7 +66,7 @@ def login_view(request):
             return redirect('index')
             # return render(request, './account/success.html')
         else:
-            messages.warning(request, "Erreur d'authentification ! Merci de réessayer.")
+            messages.error(request, "Erreur d'authentification ! Merci de réessayer.")
             return redirect('account:login')
 
     return render(request, './account/login.html', {'form': form})
@@ -118,7 +118,24 @@ def user_list(request):
 
     context = {'list': list, 'group_name': group_name}
     return render(request, './account/list.html', context)
-    
+
+
+@login_required
+@group_required('ADMIN')
+def change_password(request):
+    if request.method == "POST":
+        id_user = request.POST['idUser']
+        user = User.objects.filter(pk=id_user).first()
+        user.set_password(request.POST['password'])
+        if user.save():
+            print("ok")
+            message = "Mot de passe modifié avec succès pour ", user.first_name
+            messages.success(request, message)
+        else:
+            message = "Quelquechose c'est mal passé ... Veuillez réessayer avec un autre mot de passe !"
+            messages.error(request, message)
+
+    return redirect('account:user_list')
 
 # def password_reset(self, request):
 #     instance_user = get_object_or_404(User, id=int(user_id))
