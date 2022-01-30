@@ -18,7 +18,6 @@
     <title>{% block title %}SCHOOL @ {% endblock %}</title>
 </head>
 <body class="dark">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 	<script src="{% static 'js/popper.min.js' %}"></script>
@@ -41,14 +40,9 @@
             </div>
             <div class="collapse navbar-collapse" id="navbarScroll">
                 <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 400px;">
-                    <!--
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Accueil</a>
+                        <a class="nav-link active h5" aria-current="page" href="{% url 'index' %}">Accueil</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Jeux</a>
-                    </li>
-                    -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle h5" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Jeux</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
@@ -59,36 +53,20 @@
                             <li><a class="dropdown-item" href="{% url 'games:soustraction' %}">Soustraction</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:multiplication' %}">Multiplication</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:halo' %}">Halo</a></li>
-                            <!--
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            -->
                         </ul>
                     </li>
-                    <!--
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Link</a>
-                    </li>
-                    -->
                 </ul>
                 {% if user.is_authenticated %}
                 <div class="nav-text h4">{{ request.user.first_name }} {{ request.user.last_name }}</div>
                 <ul class="nav navbar-nav d-flex">
                     {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
+                        <a class="nav-link dropdown-toggle h5" href="#" id="navbarScrollingDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                             <li><a class="dropdown-item" href="{% url 'games:create_word_list' %}">Ajouter des mots</a></li>
                             <li><a class="dropdown-item" href="{% url 'games:create_halo' %}">Créer un halo</a></li>
                             <li><a class="dropdown-item" href="{% url 'account:user_list' %}">Liste des utilisateurs</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:export-words' %}">Export des mots (console)</a>
-                            <!--
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            -->
+                            <li><a class="dropdown-item" href="{% url 'games:export-words' %}">Export des mots (console)</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -130,7 +108,6 @@
             //$('#error_message').removeClass('show');
         }
         setTimeout(hideMsg,3000);
-
     </script>
     {% endfor %}
     {% endif %}

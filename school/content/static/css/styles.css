@@ -369,9 +369,9 @@ a {
 
     .addition-border {
         background-color:#DDDDDD !important;
-        border-radius:50px;
+        border-radius:5px;
         margin-bottom:20px;
-        color:black;
+        color:black !important;
         font-size:8em !important;
     }
 }
@@ -458,4 +458,9 @@ a {
 .tooltip-inner {
     padding-left:10px;
     padding-right:10px;
+}
+.dropdown-menu[data-bs-popper] {
+    top: 60%;
+    left: -100px;
+    margin-top: .125rem;
 }
