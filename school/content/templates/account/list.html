@@ -61,13 +61,13 @@
     <tbody>
     {% for user in list %}
     <tr>
-        <td>{{ user.prenom }}</td>
-        <td>{{ user.nom }}</td>
-        <td>{{ user.classe }}</td>
-        <td>{{ user.max_lettre }} ({{ user.moyenne_lettre }})</td>
-        <td>{{ user.max_mot }} ({{ user.moyenne_mot }})</td>
-        <td><label class="btn btn-default">
-            <button class="btn btn-primary" name="userPwd" vId="{{ user.id }}" type="radio" vNom="{{ user.nom }}" vPrenom="{{ user.prenom }}"><i class="bi bi-check"></i></button>
+        <td class="align-middle"><a class="link-light" href="#" id="usernameToolTip" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ user.username }}">{{ user.prenom }}</a></td>
+        <td class="align-middle">{{ user.nom }}</td>
+        <td class="align-middle">{{ user.classe }}</td>
+        <td class="align-middle">{{ user.max_lettre }} ({{ user.moyenne_lettre }})</td>
+        <td class="align-middle">{{ user.max_mot }} ({{ user.moyenne_mot }})</td>
+        <td class="align-middle"><label class="btn btn-default">
+            <button class="btn btn-warning" name="userPwd" vId="{{ user.id }}" type="radio" vNom="{{ user.nom }}" vPrenom="{{ user.prenom }}"><i class="bi bi-pencil"></i></button>
             </label>
         </td>
     <tr>
@@ -91,5 +91,14 @@
             $("#idUser").val(id);
         });
     });
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip()
+    })
 </script>
 {% endblock %}

@@ -452,3 +452,10 @@ a {
 .toast-body {
     color:#333 !important;
 }
+.tooltip {
+    font-size:1.2em;
+}
+.tooltip-inner {
+    padding-left:10px;
+    padding-right:10px;
+}
