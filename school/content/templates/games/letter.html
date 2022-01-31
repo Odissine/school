@@ -67,8 +67,8 @@ $(document).ready(function(){
     var alphabet = "abcdefghijklmnopqrstuvwxyz";
     var alphabet2 = "ABCDEFGHIJKLMNOPQRTSUVWXYZ";
     var alphabet3 = "1234567890";
-    var alphabet4 = ",;.?:()\'!";
-    var alphabet5 = "èéùûàç";
+    var alphabet4 = ",;.?:()\!";
+    var alphabet5 = "èéùàç";
     var level = document.querySelector('#inputLevel').value;
     if (level == '2') {
         alphabet = alphabet + alphabet2;
@@ -140,6 +140,9 @@ $(document).ready(function(){
             if ($('#inputBestScore').val() < count) {
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
+            } else {
+                $('h5.modal-title').html("DOMMAGE ! Tu n'a pas battu ton score !");
+                $('div.modal-header').attr("class", "modal-header bg-warning");
             }
 
         } else {

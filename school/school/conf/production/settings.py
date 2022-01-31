@@ -11,7 +11,7 @@ CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 SECRET_KEY = 'django-insecure-omf4=vg)fg2r*e(gk5-ydqn(=5r+7*sj!pj!@j(380j1pg#-a('
 
 DEBUG = False
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118']
 
 SITE_ID = 1
 
@@ -22,10 +22,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django_select2',
+    'bootstrap5',
+    'crispy_forms',
+    'crispy_bootstrap5',
     # Application Apps
     'account',
     'main',
+    'games',
 ]
 
 MIDDLEWARE = [
@@ -62,9 +66,9 @@ WSGI_APPLICATION = 'school.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'cyril.henry@gmail.com'
-DEFAULT_FROM_EMAIL = 'cyril.henry@gmail.com'
-EMAIL_HOST_PASSWORD = 'Alix_311212'
+EMAIL_HOST_USER = 'support@endtg.com'
+DEFAULT_FROM_EMAIL = 'support@endtg.com'
+EMAIL_HOST_PASSWORD = 'Azerty2+'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
@@ -74,8 +78,12 @@ EMAIL_USE_SSL = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'ENDTG',
+        'USER': 'root',
+        'PASSWORD': 'admin',
+        'HOST': '192.168.1.228',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
     }
 }
 
@@ -84,18 +92,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 
@@ -110,11 +118,15 @@ USE_REMEMBER_ME = False
 RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = True
 ENABLE_ACTIVATION_AFTER_EMAIL_CHANGE = True
 
+SIGN_UP_FIELDS = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+if DISABLE_USERNAME:
+    SIGN_UP_FIELDS = ['first_name', 'last_name', 'email', 'password1', 'password2']
+
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 USE_I18N = True
 USE_L10N = True
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'fr'
 LANGUAGES = [
     ('en', _('English')),
     ('ru', _('Russian')),
@@ -125,19 +137,18 @@ LANGUAGES = [
 TIME_ZONE = 'UTC'
 USE_TZ = True
 
-STATIC_ROOT = os.path.join(CONTENT_DIR, 'static')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(CONTENT_DIR, 'static'),
+]
+STATIC_ROOT = os.path.join(CONTENT_DIR, 'assets')
 
 MEDIA_ROOT = os.path.join(CONTENT_DIR, 'media')
 MEDIA_URL = '/media/'
 
-STATICFILES_DIRS = [
-    os.path.join(CONTENT_DIR, 'assets'),
-]
+# LOCALE_PATHS = [
+#     os.path.join(CONTENT_DIR, 'locale')
+# ]
 
-LOCALE_PATHS = [
-    os.path.join(CONTENT_DIR, 'locale')
-]
-SIGN_UP_FIELDS = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
-if DISABLE_USERNAME:
-    SIGN_UP_FIELDS = ['first_name', 'last_name', 'email', 'password1', 'password2']
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

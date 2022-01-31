@@ -76,6 +76,7 @@ $(document).ready(function(){
         resetAddition();
         Start();
         count = 0;
+        countError = 1;
 
         $('#sol' + bt2).val(additionBidon1);
         $('#sol' + bt3).val(additionBidon2);
@@ -85,12 +86,14 @@ $(document).ready(function(){
     });
 
     $('input[name="sol"]').click(function() {
+        // COMPTAGE DES POINTS
+        // A CHAQUE ERREUR ON RETIRE 2 POINTS ... 4 pour 2 erreurs consécutives, 6 pour 3 erreurs consécutives, ...
         countSecondes = countSecondes - secondes;
         if (countSecondes <= 2) {
-            points = 5;
+            points = 3;
         }
         if (countSecondes > 2 && countSecondes <=5) {
-            points = 3;
+            points = 2;
         }
         if (countSecondes > 5 && countSecondes <=8) {
             points = 1;
@@ -106,29 +109,18 @@ $(document).ready(function(){
             resetAddition();
             countSecondes = secondes;
             count = count + points;
-            countError = 0;
+            countError = 1;
         } else {
             $('#box').removeClass("success-border");
             $('#box').addClass("error-border");
-            if (countError == 1) {
-                if (count > 1) {
-                    count = count - 2;
-                    countError = 2;
-                }
-            } else if (countError ==2) {
-                if (count > 4) {
-                    count = count - 5;
-                } else if (count > 1) {
-                    count = count - 2;
-                } else if (count > 0) {
-                    count--;
-                }
+            // COMPTAGE DES POINTS
+            // A CHAQUE ERREUR ON RETIRE 2 POINTS ... 4 pour 2 erreurs consécutives, 6 pour 3 erreurs consécutives, ...
+            if (count - countError * 2 >= 0) {
+                count = count - countError * 2;
             } else {
-                if (count > 0) {
-                    count--;
-                    countError = 1;
-                }
+                count = 0;
             }
+            countError++;
         }
         $("#count").html(count);
         $("#score").html(count);
@@ -197,6 +189,9 @@ $(document).ready(function(){
             if ($('#inputBestScore').val() < count) {
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
+            } else {
+                $('h5.modal-title').html("DOMMAGE ! Tu n'a pas battu ton score !");
+                $('div.modal-header').attr("class", "modal-header bg-warning");
             }
         } else {
             if (secondes <= 0) {

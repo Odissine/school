@@ -95,6 +95,7 @@ $(document).ready(function(){
         randomWord = mots[Math.floor(Math.random() * mots.length)]
         $("#word").val(randomWord);
         $("#wordFind").val("");
+        $("#wordFind").focus();
         $("#count").html(count);
         $("#score").html(count);
     });
@@ -156,6 +157,9 @@ $(document).ready(function(){
             if ($('#inputBestScore').val() < count) {
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
+            } else {
+                $('h5.modal-title').html("DOMMAGE ! Tu n'a pas battu ton score !");
+                $('div.modal-header').attr("class", "modal-header bg-warning");
             }
 
         } else {
