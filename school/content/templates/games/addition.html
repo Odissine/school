@@ -86,18 +86,8 @@ $(document).ready(function(){
 
     $('input[name="sol"]').click(function() {
         countSecondes = countSecondes - secondes;
-        if (countSecondes <= 2) {
-            points = 5;
-        }
-        if (countSecondes > 2 && countSecondes <=5) {
-            points = 3;
-        }
-        if (countSecondes > 5 && countSecondes <=8) {
-            points = 1;
-        }
-        if (countSecondes > 8) {
-            points = 0;
-        }
+        points = calculPoints(countSecondes, secondes);
+
         var sol = $(this).val();
 
         if (sol == addition) {
@@ -115,13 +105,11 @@ $(document).ready(function(){
                     count = count - 2;
                     countError = 2;
                 }
-            } else if (countError ==2 ) {
+            } else if (countError ==2) {
                 if (count > 4) {
                     count = count - 5;
-                } else if (count > 2) {
-                    count = count - 3;
                 } else if (count > 1) {
-                    count-2;
+                    count = count - 2;
                 } else if (count > 0) {
                     count--;
                 }
@@ -197,9 +185,6 @@ $(document).ready(function(){
             if ($('#inputBestScore').val() < count) {
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
-            } else {
-                $('h5.modal-title').html("DOMMAGE ! Tu n'a pas battu ton score !");
-                $('div.modal-header').attr("class", "modal-header bg-warning");
             }
         } else {
             if (secondes <= 0) {

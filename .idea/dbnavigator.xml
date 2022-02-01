@@ -29,6 +29,7 @@
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="9827fadb-0f59-4255-b81d-2a5f88f8c48c">
       <console name="Connection" type="STANDARD" schema="" session="Main" />
+      <console name="Sqlite" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
