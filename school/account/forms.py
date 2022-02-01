@@ -13,8 +13,8 @@ class UsernameChoiceField(forms.ModelChoiceField):
 
 
 class RegisterForm(UserCreationForm):
-    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Prénom'}))
-    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Nom'}))
+    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Prénom', 'autocomplete': 'off'}))
+    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Nom', 'autocomplete': 'off'}))
     group = forms.ModelChoiceField(queryset=Group.objects.all(), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe')
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'}), label='')

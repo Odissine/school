@@ -24,7 +24,10 @@
         <a role="button" class="btn col-3 text-center fs-5 p-2 btn-secondary m-2 rounded text-white fs-4" href="{% url 'account:user_list' %}">Liste des utilisateurs</a>
         <a role="button" class="btn col-3 text-center fs-5 p-2 btn-secondary m-2 rounded text-white fs-4" href="{% url 'games:export-words' %}">Export des mots (console)</a>
     </div>
+
     {% endif %}
+{% else %}
+<div class="mt-10 h1">Bienvenue !</div>
 {% endif %}
 <!--
 {% if request.user|has_group:"CP" %}
