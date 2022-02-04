@@ -79,9 +79,12 @@ def wordOne(request):
     else:
         wordScore = wordScore.score
 
+    context_header = {'title': 'Mots'}
+
     context = {'level': level,
                'wordOneScore': wordScore,
                'word_list': wordListFormatted,
+               'context_header': context_header,
                }
     return render(request, './games/word_one.html', context)
 
@@ -169,9 +172,11 @@ def letter(request):
         letterScore = 0
     else:
         letterScore = letterScore.score
+    context_header = {'title': 'Lettres'}
 
     context = {'level': level,
                'letterScore': letterScore,
+               'context_header': context_header,
                }
     return render(request, './games/letter.html', context)
 
@@ -199,7 +204,11 @@ def saveLetterProgress(request):
 @login_required()
 def halo(request):
     images = Halo.objects.all()
-    context = {'images': images}
+    context_header = {'title': 'Halo'}
+
+    context = {'images': images,
+               'context_header':context_header
+               }
 
     if request.GET.get('p', ''):
         p = request.GET.get('p', '')
@@ -218,8 +227,8 @@ def addition(request):
         additionScore = 0
     else:
         additionScore = additionScore.score
-
-    context = {'additionScore': additionScore}
+    context_header = {'title': 'Additions'}
+    context = {'additionScore': additionScore, 'context_header': context_header}
     return render(request, './games/addition.html', context)
 
 
@@ -231,8 +240,8 @@ def addition_posee(request):
         additionPoseeScore = 0
     else:
         additionPoseeScore = additionPoseeScore.score
-
-    context = {'additionPoseeScore': additionPoseeScore}
+    context_header = {'title': 'Additions Posées'}
+    context = {'additionPoseeScore': additionPoseeScore, 'context_header': context_header}
     return render(request, './games/addition_posee.html', context)
 
 
@@ -281,8 +290,8 @@ def multiplication(request):
         multiplicationScore = 0
     else:
         multiplicationScore = multiplicationScore.score
-
-    context = {'multiplicationScore': multiplicationScore}
+    context_header = {'title': 'Multiplications'}
+    context = {'multiplicationScore': multiplicationScore, 'context_header':context_header}
     return render(request, './games/multiplication.html', context)
 
 
@@ -313,8 +322,8 @@ def soustraction(request):
         soustractionScore = 0
     else:
         soustractionScore = soustractionScore.score
-
-    context = {'soustractionScore': soustractionScore}
+    context_header = {'title': 'Soustractions'}
+    context = {'soustractionScore': soustractionScore, 'context_header': context_header}
     return render(request, './games/soustraction.html', context)
 
 

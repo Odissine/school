@@ -37,7 +37,7 @@ class UserLoginForm(forms.ModelForm):
     # username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur", 'autofocus': 'None'}), label="", required=True)
     # username = forms.ModelChoiceField(widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'form-control'}), queryset=User.objects.all(), label="Nom d'utilisateur", required=True, help_text="Merci d'indiquer votre nom d'utilisateur")
     username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'autocomplete': 'off'}), label='Mot de passe')
     # username.widget.attrs.update({"autofocus": False})
 
     def clean(self):

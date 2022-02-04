@@ -14,17 +14,31 @@
 }
 
 /** NAVBAR BOOSTRAP **/
-.nav {
-    /*
-    background-color: #ccc !important;
-    box-shadow: 0px 3px 3px 0px rgba(0, 0, 0, .4);
-    */
+.navbar {
+    /* background-color: rgba(255, 255, 255, .8) !important; */
+    background-color: #ACC09F !important;
+    /* box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, .4); */
+    font-size:1.5em !important;
+}
+.nav-link {
+    padding: .5rem;
+    color:#333;
+}
+.nav-link:hover {
+    color:#666;
+}
+.nav-link:focus {
+    color:#666;
 }
 .affix {
     background-color: #ffc107 !important;
     box-shadow: 0px 4px 5px 1px rgba(0, 0, 0, .4);
 }
-
+.bg-school {
+    background-color: #ACC09F !important;
+}
+.collapse {
+}
 /** INDEX **/
 .bg-index {
     background-image: url("../img/bg_school.png");
@@ -85,4 +99,14 @@
      background: -webkit-linear-gradient(top, #e13232 0%, #EA6F6F 80%, #E75B5B 100%);
      color:#FFF !important;
      text-shadow: 0 0.5px 1px #FFF, 0 4px 2px #333;
+}
+
+/** SIDEBAR **/
+.sidebar{
+	margin: 0;
+	padding: 0;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	width:300px;
+	margin-top:70px;
 }

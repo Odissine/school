@@ -1,5 +1,7 @@
-from django.views.generic import TemplateView
+from django.shortcuts import render, redirect
 
 
-class IndexPageView(TemplateView):
-    template_name = 'main/index.html'
+def index_view(request):
+    context_header = {'title': ''}
+    context = {'context_header': context_header}
+    return render(request, 'main/index.html')
