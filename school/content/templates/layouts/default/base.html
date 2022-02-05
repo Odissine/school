@@ -387,7 +387,7 @@
             </a>
           </li>
           <li>
-            <a href="{% url 'account:user_list' %}">
+            <a href="{% url 'account:user-list' 'la' 'wa' %}">
               <i class="bi bi-circle"></i><span>Liste des utilisateurs</span>
             </a>
           </li>
@@ -405,7 +405,7 @@
   {% if messages %}
   {% for message in messages %}
   <div aria-live="polite" aria-atomic="true" class="bg-dark bd-example-toasts">
-    <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
+    <div class="toast-container position-absolute p-3 top-1 end-0" id="toastPlacement">
       {% if message.tags == 'error' %}
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <i class="bi bi-exclamation-octagon me-1"></i>

@@ -115,7 +115,7 @@ def exportWord(request):
     words = WordOne.objects.filter(level=3)
     for word in words:
         print(word.name)
-    return redirect('index')
+    return redirect('index-view')
 
 
 @login_required()

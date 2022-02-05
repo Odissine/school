@@ -16,7 +16,7 @@
                     {% csrf_token %}
                     <input type="hidden" value="" id="idUser" name="idUser">
                     <div class="text-dark m-3">
-                    <input class="form-control px-3" type="text" name="password">
+                    <input class="form-control px-3" type="password" name="password">
                     </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" type="submit">Enregistrer</button>
@@ -31,43 +31,53 @@
     <h5>{{ group_name }}</h5>
 <form method="POST" action="">
     {% csrf_token %}
-    <select name="group" id="group" class="form-select">
-        <option value="">TOUS</option>
-        <option value="CP">CP</option>
-        <option value="CE1">CE1</option>
-        <option value="CE2">CE2</option>
-        <option value="CM1">CM1</option>
-        <option value="CM2">CM2</option>
-        <option value="ADMIN">ADMIN</option>
-        <option value="ENSEIGNANTS">ENSEIGNANTS</option>
-        <option value="ELEVE">ELEVE</option>
-    </select>
-    <div class="d-grid gap-2">
+    <div class="mb-3">
+        <select name="group" id="group" class="js-example-basic-single form-control select">
+            <option value="">TOUS</option>
+            <option value="CP">CP</option>
+            <option value="CE1">CE1</option>
+            <option value="CE2">CE2</option>
+            <option value="CM1">CM1</option>
+            <option value="CM2">CM2</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="ENSEIGNANTS">ENSEIGNANTS</option>
+            <option value="ELEVE">ELEVE</option>
+        </select>
+    </div>
+    <div class="d-grid gap-2 mb-3">
         <button type="submit" class="btn btn-success">Filtrer</button>
     </div>
 </form>
     {% if list|length > 0 %}
-    <table class="table table-striped table-dark">
+    <table class="table table-hover">
     <thead>
     <tr>
         <th scope="col">PRENOM</th>
         <th scope="col">NOM</th>
         <th scope="col">CLASSE</th>
-        <th scope="col">LETTRE MAX (MOY)</th>
-        <th scope="col">MOTS MAX (MOY)</th>
+        <th scope="col">
+            LETTRES
+            <a href="{% url 'account:user-list' orderl='ld' orderw=orderw %}" class="link-dark"><i class="bi bi-caret-down-fill"></i></a>
+            <a href="{% url 'account:user-list' orderl='la' orderw=orderw %}" class="link-dark"><i class="bi bi-caret-up-fill"></i></a>
+        </th>
+        <th scope="col">
+            MOTS
+            <a href="{% url 'account:user-list' orderl=orderl orderw='wd' %}" class="link-dark"><i class="bi bi-caret-down-fill"></i></a>
+            <a href="{% url 'account:user-list' orderl=orderl orderw='wa' %}" class="link-dark"><i class="bi bi-caret-up-fill"></i></a>
+        </th>
         <th></th>
     <tr>
     </thead>
     <tbody>
     {% for user in list %}
     <tr>
-        <td class="align-middle"><a class="link-light" href="#" id="usernameToolTip" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ user.username }}">{{ user.prenom }}</a></td>
+        <td class="align-middle">{{ user.prenom }}</td>
         <td class="align-middle">{{ user.nom }}</td>
         <td class="align-middle">{{ user.classe }}</td>
         <td class="align-middle">{{ user.max_lettre }} ({{ user.moyenne_lettre }})</td>
         <td class="align-middle">{{ user.max_mot }} ({{ user.moyenne_mot }})</td>
-        <td class="align-middle"><label class="btn btn-default">
-            <button class="btn btn-warning" name="userPwd" vId="{{ user.id }}" type="radio" vNom="{{ user.nom }}" vPrenom="{{ user.prenom }}"><i class="bi bi-pencil"></i></button>
+        <td class="align-middle"><label class="btn btn-default label-list">
+            <button class="btn btn-warning btn-list" name="userPwd" vId="{{ user.id }}" type="radio" vNom="{{ user.nom }}" vPrenom="{{ user.prenom }}"><i class="bi bi-pencil"></i></button>
             </label>
         </td>
     <tr>
@@ -79,26 +89,30 @@
     {% endif %}
 </div>
 <script>
-    $(document).ready(function(){
-        $('[name="userPwd"]').click(function () {
-            $('#modalChangePwd').modal('show');
-            var valueis = $(this).val();
-            var prenom = $(this).attr("vPrenom");
-            var nom = $(this).attr("vNom");
-            var id = $(this).attr("vId");
-            console.log(valueis);
-            $("#labelTitle").html("Modification du mot de passe de " + prenom + " " + nom);
-            $("#idUser").val(id);
-        });
+$(document).ready(function(){
+    $('[name="userPwd"]').click(function () {
+        $('#modalChangePwd').modal('show');
+        var valueis = $(this).val();
+        var prenom = $(this).attr("vPrenom");
+        var nom = $(this).attr("vNom");
+        var id = $(this).attr("vId");
+        console.log(valueis);
+        $("#labelTitle").html("Modification du mot de passe de " + prenom + " " + nom);
+        $("#idUser").val(id);
     });
+});
 
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 
-    $(function () {
-        $('[data-bs-toggle="tooltip"]').tooltip()
-    })
+$(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+})
+
+$(document).on('select2:open', () => {
+    document.querySelector('.select2-search__field').focus();
+});
 </script>
 {% endblock %}

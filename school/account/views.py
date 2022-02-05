@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegisterForm, UserLoginForm
 from django.contrib.auth.models import Group, User
+from django.db.models import Max
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from .core import get_moyenne_score, get_max_score
 
 
@@ -49,7 +51,7 @@ def register_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect('main:index-view')
 
     form = UserLoginForm(request.POST or None)
     if request.method == "POST":
@@ -63,7 +65,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('index')
+            return redirect('main:index-view')
             # return render(request, './account/success.html')
         else:
             messages.error(request, "Erreur d'authentification ! Merci de réessayer.")
@@ -85,17 +87,33 @@ def login_success(request):
 
 @login_required
 @group_required('ADMIN')
-def user_list(request):
+def user_list(request, orderl, orderw):
+    order_letter = "letterscore__score"
+    order_word = "wordscore__score"
+    if orderl == "ld":
+        order_letter = "-letterscore__score"
+    if orderw == "md":
+        order_word = "-wordscore__score"
+
     if request.method == "POST":
         group = request.POST['group']
     else:
         group = None
     if group:
         group_name = group
-        users = User.objects.filter(groups__name=group)
+        users = User.objects.filter(groups__name=group).order_by(order_letter).distinct()
     else:
         group_name = "TOUS LES GROUPES"
         users = User.objects.all()
+
+    usernames = set()
+    users_temp = []
+    for item in users:
+        if item.username not in usernames:
+            users_temp.append(users)
+            usernames.add(item.username)
+    # users = users_temp
+
     list = []
     for user in users:
         classe = user.groups.first()
@@ -116,7 +134,11 @@ def user_list(request):
             'max_lettre': max_lettre,
         })
 
-    context = {'list': list, 'group_name': group_name}
+    context = {'list': list,
+               'group_name': group_name,
+               'orderl': orderl,
+               'orderw': orderw,
+               }
     return render(request, './account/list.html', context)
 
 
@@ -126,20 +148,9 @@ def change_password(request):
     if request.method == "POST":
         id_user = request.POST['idUser']
         user = User.objects.filter(pk=id_user).first()
-        user.set_password(request.POST['password'])
-        if user.save():
-            print("ok")
-            message = "Mot de passe modifié avec succès pour ", user.first_name
-            messages.success(request, message)
-        else:
-            message = "Quelquechose c'est mal passé ... Veuillez réessayer avec un autre mot de passe !"
-            messages.error(request, message)
+        # user.set_password(request.POST['password'])
+        # user.save()
+        message = "Mot de passe modifié avec succès pour ", user.first_name
+        messages.success(request, message)
 
-    return redirect('account:user_list')
-
-# def password_reset(self, request):
-#     instance_user = get_object_or_404(User, id=int(user_id))
-#     form_edit_password = MyChangeFormPassword(instance_user)
-#     context={'form_edit_password': form_edit_password}
-# 
-#    return render(request, './account/password.html', context)
+    return redirect('account:user-list' 'la' 'wa')

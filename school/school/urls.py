@@ -24,7 +24,7 @@ urlpatterns = [
     path("select2/", include("django_select2.urls")),
 
     # Index du site
-    path('', include(('main.urls', 'main'), namespace='index')),
+    path('', include(('main.urls', 'main'), namespace='main')),
     # path('', include("django.contrib.auth.urls")),
 
     path('i18n/', include('django.conf.urls.i18n')),

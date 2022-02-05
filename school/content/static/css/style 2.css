@@ -1088,14 +1088,3 @@ h1, h2, h3, h4, h5, h6 {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 38px !important;
 }
-
-/*-----------------------------------------------------------
-# DIVERS
------------------------------------------------------------*/
-
-.btn-list {
-    padding:.1rem .3rem !important;
-}
-.label-list {
-    padding:0;
-}
