@@ -79,7 +79,7 @@ def wordOne(request):
     else:
         wordScore = wordScore.score
 
-    context_header = {'title': 'Mots'}
+    context_header = {'title': 'Jeux de Mots'}
 
     context = {'level': level,
                'wordOneScore': wordScore,
@@ -172,7 +172,7 @@ def letter(request):
         letterScore = 0
     else:
         letterScore = letterScore.score
-    context_header = {'title': 'Lettres'}
+    context_header = {'title': 'Jeux de Lettres'}
 
     context = {'level': level,
                'letterScore': letterScore,

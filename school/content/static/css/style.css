@@ -339,7 +339,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 .logo img {
-  max-height: 26px;
+  max-height: 36px;
   margin-right: 6px;
 }
 .logo span {
@@ -1098,4 +1098,87 @@ h1, h2, h3, h4, h5, h6 {
 }
 .label-list {
     padding:0;
+}
+
+/*-----------------------------------------------------------
+# JEUX
+-----------------------------------------------------------*/
+
+.score-live {
+    font-size:6em;
+}
+
+.level-select {
+    width:200px !important;
+}
+#play {
+    width:200px;
+}
+
+.count-red {
+    color:#e13232 !important;
+}
+
+/*-----------------------------------------------------------
+# JEUX LETTRES
+-----------------------------------------------------------*/
+
+#letter {
+    font-family: 'PT Mono', monospace;
+}
+.key_up {
+    box-sizing: border-box;
+    line-height: 290px;
+    font-size: 150px;
+    text-align: center;
+    width: 300px;
+    color: #333 !important;
+    cursor: pointer;
+    margin: 0 8px;
+    height: 300px;
+    border-color: #f2f2f2;
+    border-style: solid;
+    text-shadow: 0 0.5px 1px #FFF, 0 4px 2px #FFF;
+    border-width: 1px;
+    border-radius: 20px;
+    background: -webkit-linear-gradient(top, #f9f9f9 0%, #D2D2D2 80%, #c0c0c0 100%);
+    font-family: sans-serif;
+    display: inline-block;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 0 1px #FFF,
+                0 1px 0 #fff,
+                0 40px 0 #C0C0C0,
+                0 8px 17px rgba(68, 68, 68, 0.4),
+                2px 1px 4px rgba(68, 68, 68, 0.25),
+                -2px 1px 4px rgba(68, 68, 68, 0.25),
+                0 9px 16px rgba(68, 68, 68, 0.1);
+}
+.key_press {
+    box-shadow: 0 0 20px #FFF,
+              0 0 20px #fff,
+              0 4px 0 #C0C0C0,
+              0 2px 35px rgba(68, 68, 68, 0.3),
+              2px 2px 4px rgba(68, 68, 68, 0.25),
+              -2px 2px 4px rgba(68, 68, 68, 0.25),
+              0 7px 4px rgba(68, 68, 68, 0.1);
+    transform: translateY(36px);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.key_ok {
+     background: -webkit-linear-gradient(top, #2A8B3F 0%, #34AF4F 80%, #8CAB93 100%);
+     color:#FFF !important;
+     text-shadow: 0 0.5px 1px #FFF, 0 4px 2px #333;
+}
+.key_ko {
+     background: -webkit-linear-gradient(top, #e13232 0%, #EA6F6F 80%, #E75B5B 100%);
+     color:#FFF !important;
+     text-shadow: 0 0.5px 1px #FFF, 0 4px 2px #333;
+}
+
+/*-----------------------------------------------------------
+# JEUX MOTS
+-----------------------------------------------------------*/
+
+#word, #wordFind {
+    font-size:3rem;
 }

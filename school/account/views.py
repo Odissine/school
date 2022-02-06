@@ -101,18 +101,16 @@ def user_list(request, orderl, orderw):
         group = None
     if group:
         group_name = group
-        users = User.objects.filter(groups__name=group).order_by(order_letter).distinct()
+        users = User.objects.filter(groups__name=group).order_by(order_letter, order_word, 'first_name').distinct()
     else:
         group_name = "TOUS LES GROUPES"
-        users = User.objects.all()
+        users = User.objects.all().order_by(order_letter, order_word, 'first_name').distinct()
 
-    usernames = set()
     users_temp = []
-    for item in users:
-        if item.username not in usernames:
-            users_temp.append(users)
-            usernames.add(item.username)
-    # users = users_temp
+    for user in users:
+        if user not in users_temp:
+            users_temp.append(user)
+    users = users_temp
 
     list = []
     for user in users:

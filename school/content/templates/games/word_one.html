@@ -29,47 +29,39 @@
         {% csrf_token %}
     </form>
 
-    <div class="mot-box">
+    <div class="">
         <div class="row mb-2">
-            <div class="col-4 h1 px-5">Jeux de mots</div>
-            <div class="col-8 offset text-end h2" id="scoreActuel">Ton meilleur score est de {{ wordOneScore }} mots à la minute</div>
+            <div class="col-12 offset text-start h2" id="scoreActuel">Ton meilleur score est de {{ wordOneScore }} mots à la minute</div>
         </div>
         <div class="row mb-3">
-            <div class="col-7 px-5">
+            <div class="col-7">
                 <div class="row mb-2">
                     <input disabled style="background-color:#EEE !important;" type="text" class="form-control-lg form-control word-input" id="word" value="" />
                 </div>
                 <div class="row mb-2">
                     <input type="text" id="wordFind" class="form-control-lg form-control mot-input" />
                 </div>
-                <div class="row mb-2">
-                    <button type="button" class="text-center btn btn-success btn-labeled my-2 py-3 fs-1" style="width:100%" id="nextWord">SUIVANT</button>
-                </div>
             </div>
-            <div class="col-5 px-5">
-                <div class="row" style="font-size:3.8rem"><div class="text-center" id="timer">01 : 00</div></div>
-                <div class="row">
-                    <div class="text-center">
-                        <select class="custom-select h1 text-center" style="width:200px !important;" onchange="window.location.href=?l=" id="dynamic-select">
-                            <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
-                            <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
-                            <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
-                            <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
-                            <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
-                            <option {% if level == '6' %} selected {% endif %} value="6">Niveau 6</option>
-                            <!--
-                            <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
-                            <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
-                            -->
-                        </select>
-                    </div>
+            <div class="col-5">
+                <div class="text-end h1" id="timer">01 : 00</div>
+                <div class="fs-5 py-2 text-end">
+                    <select class="basic-single text-start level-select py-2" style="width:200px !important;" onchange="window.location.href=?l=" id="dynamic-select">
+                        <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
+                        <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
+                        <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
+                        <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
+                        <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
+                        <option {% if level == '6' %} selected {% endif %} value="6">Niveau 6</option>
+                        <!--
+                        <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
+                        <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
+                        -->
+                    </select>
                 </div>
-                <div class="row" id="play">
-                    <button type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span>Démarrer</button>
+                <div class="text-end my-2">
+                    <button type="button" id="play" class="text-center btn btn-success btn-labeled py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span> Démarrer</button>
                 </div>
-                <div class="row" style="font-size:5rem">
-                    <div id="count" class="text-center">0</div>
-                </div>
+                <div id="count" class="text-end score-live">0</div>
             </div>
         </div>
     </div>
@@ -95,6 +87,7 @@ $(document).ready(function(){
         randomWord = mots[Math.floor(Math.random() * mots.length)]
         $("#word").val(randomWord);
         $("#wordFind").val("");
+        $("#wordFind").focus();
         $("#count").html(count);
         $("#score").html(count);
     });
