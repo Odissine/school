@@ -1,5 +1,6 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
+{% load mathfilters %}
 {% load auth_extras %}
 {% block title %}School @ ENDTG - Accueil{% endblock %}
 {% block content %}
@@ -16,8 +17,8 @@
                     <div class="card-body">
                         <h5 class="card-title">Jeux de Lettres</h5>
                         <p class="card-text">Pour mieux connaître son clavier... <br/>Plusieurs niveaux disponibles. A vous de jouer, vous avez 1 minute pour saisir un maximum de lettres.</p>
-                        <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-warning" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress mt-3" data-bs-original-title="{{ score_letter }} / {{ max_score_letter}}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <div class="progress-bar-striped {% if score_letter < max_score_letter|mul:20|div:100 %}bg-danger{% elif score_letter > max_score_letter|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_letter }}%" aria-valuenow="{{ score_letter}}" aria-valuemin="0" aria-valuemax="{{ max_score_letter }}"></div>
                         </div>
                     </div>
                 </div>
@@ -34,8 +35,8 @@
                     <div class="card-body">
                         <h5 class="card-title">Jeux de Mots</h5>
                         <p class="card-text">Pour encore mieux connaître son clavier...<br/>Plusieurs niveaux disponibles. A vous de jouer, vous avez 1 minute pour saisir un maximum de mots</p>
-                        <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress mt-3" data-bs-original-title="{{ score_word }} / {{ max_score_word }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <div class="progress-bar-striped {% if score_word < max_score_word|mul:20|div:100 %}bg-danger{% elif score_word > max_score_word|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_word }}%" aria-valuenow="{{ score_word }}" aria-valuemin="0" aria-valuemax="{{ max_score_word }}"></div>
                         </div>
                     </div>
                 </div>
@@ -55,7 +56,7 @@
                         <h5 class="card-title">Additions</h5>
                         <p class="card-text">Entraînes-toi au calcul mental en réalisant un maximum d'additions simple en moins d'une minute !</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_addition }}%" aria-valuenow="{{ score_addition }}" aria-valuemin="0" aria-valuemax="{{ max_score_addition }}"></div>
                         </div>
                     </div>
                 </div>
@@ -73,7 +74,7 @@
                         <h5 class="card-title">Soustractions</h5>
                         <p class="card-text">Entraînes-toi au calcul mental en réalisant cette fois-ci un maximum de soustractions, sans pièges, en moins d'une minute !</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_soustraction }}%" aria-valuenow="{{ score_soustraction }}" aria-valuemin="0" aria-valuemax="{{ max_score_soustraction }}"></div>
                         </div>
                     </div>
                 </div>
@@ -93,7 +94,7 @@
                         <h5 class="card-title">Multiplications</h5>
                         <p class="card-text">Entraînes-toi au calcul mental sur les tables de multiplications, toujours en moins d'une minute !</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_multiplication }}%" aria-valuenow="{{ score_multiplication }}" aria-valuemin="0" aria-valuemax="{{ max_score_multiplication }}"></div>
                         </div>
                     </div>
                 </div>
@@ -111,7 +112,7 @@
                         <h5 class="card-title">Additions posées</h5>
                         <p class="card-text">Entraînes-toi au calcul mental avec des additions posées sur des nombres compris entre 10 et 99.</p>
                         <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_additionposee }}%" aria-valuenow="{{ score_additionposee }}" aria-valuemin="0" aria-valuemax="{{ max_score_additionposee }}"></div>
                         </div>
                     </div>
                 </div>
@@ -120,14 +121,14 @@
     </div>
 </div>
 <div class="d-flex flex-wrap justify-content-md-center">
-    <a role="button" href="{% url 'games:letter' %}" class="btn col-3 text-center h3 p-4 btn-danger m-2 rounded text-white fs-2">Lettres</a>
-    <a role="button" href="{% url 'games:word_one' %}" class="btn col-3 text-center h3 p-4 btn-warning m-2 rounded text-dark fs-2">Mots</a>
-    <a role="button" href="{% url 'games:addition' %}" class="btn col-3 text-center h3 p-4 btn-success m-2 rounded text-white fs-2">Additions</a>
+    <a role="button" href="{% url 'games:letter' %}" class="btn col-3 text-center h3 p-4 btn-danger m-2 rounded text-white fs-3">Lettres</a>
+    <a role="button" href="{% url 'games:word_one' %}" class="btn col-3 text-center h3 p-4 btn-warning m-2 rounded text-dark fs-3">Mots</a>
+    <a role="button" href="{% url 'games:addition' %}" class="btn col-3 text-center h3 p-4 btn-success m-2 rounded text-white fs-3">Additions</a>
 </div>
 <div class="d-flex flex-wrap justify-content-md-center">
-    <a role="button" href="{% url 'games:addition_posee' %}" class="btn col-3 text-center h3 p-4 btn-primary m-2 rounded text-white fs-2">Additions posées</a>
-    <a role="button" href="{% url 'games:soustraction' %}" class="btn col-3 text-center h3 p-4 btn-info m-2 rounded text-dark fs-2">Soustractions</a>
-    <a role="button" href="{% url 'games:multiplication' %}" class="btn col-3 text-center h3 p-4 btn-light m-2 rounded text-dark fs-2">Multiplications</a>
+    <a role="button" href="{% url 'games:addition_posee' %}" class="btn col-3 text-center h3 p-4 btn-primary m-2 rounded text-white fs-3">Additions posées</a>
+    <a role="button" href="{% url 'games:soustraction' %}" class="btn col-3 text-center h3 p-4 btn-info m-2 rounded text-dark fs-3">Soustractions</a>
+    <a role="button" href="{% url 'games:multiplication' %}" class="btn col-3 text-center h3 p-4 btn-light m-2 rounded text-dark fs-3">Multiplications</a>
 </div>
     {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
     <div class="d-flex flex-wrap justify-content-md-center">
@@ -141,7 +142,8 @@
 
     {% endif %}
 {% else %}
-<div class="mt-10 h1">Bienvenue !</div>
+<div class="my-2 h1">Bienvenue !</div>
+<div class="text-center h4 mt-4">Afin de pouvoir profiter de l'ensemble des fonctionnalités du site, <a href="{% url 'account:login' %}">identifiez-vous</a> ou <a href="{% url 'account:register' %}">créez un compte</a> !</div>
 {% endif %}
 <!--
 {% if request.user|has_group:"CP" %}
