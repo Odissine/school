@@ -36,7 +36,7 @@
         <div class="row mb-3">
             <div class="col-8 px-5 text-center">
                 <div class="row text-center addition">
-                    <div class="col-12 py-5 addition-border border border-primary" style="font-size:5rem;" id="addition">&nbsp;</div>
+                    <div name="box" class="col-12 py-5 addition-border border border-primary" style="font-size:5rem;" id="addition">&nbsp;</div>
                 </div>
                 <div class="row text-center">
                     <div class="col-4 d-grid gap-2"><input id="sol1" type="button" class="btn btn-primary btn-lg" name="sol" text="" value="" style="font-size:5rem;" /></div>
@@ -122,33 +122,18 @@ $(document).ready(function(){
 
 
         if (sol == addition) {
-            $('#box').removeClass("error-border");
-            $('#box').addClass("success-border");
+            $("#addition").removeClass("error-border");
+            $("#addition").addClass("success-border");
             resetAddition();
             countSecondes = secondes;
             count = count + points;
-            countError = 0;
+            countError = 1;
         } else {
-            $('#box').removeClass("success-border");
-            $('#box').addClass("error-border");
-            if (countError == 1) {
-                if (count > 1) {
-                    count = count - 2;
-                    countError = 2;
-                }
-            } else if (countError ==2) {
-                if (count > 4) {
-                    count = count - 5;
-                } else if (count > 1) {
-                    count = count - 2;
-                } else if (count > 0) {
-                    count--;
-                }
-            } else {
-                if (count > 0) {
-                    count--;
-                    countError = 1;
-                }
+            $("#addition").removeClass("success-border");
+            $("#addition").addClass("error-border");
+            count = count - (countError * 3)
+            if (count < 0) {
+                count = 0;
             }
         }
         $("#count").html(count);
@@ -255,6 +240,10 @@ $(document).ready(function(){
             clearTimeout(timerID);
             $("#addition").html("");
             $('#inputScore').val(count);
+            $('#sol1').val("");
+            $('#sol2').val("");
+            $('#sol3').val("");
+            $("#score").html("0");
             Save();
         }
     }
