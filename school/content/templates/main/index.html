@@ -1,6 +1,7 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
 {% load mathfilters %}
+{% load float2integer %}
 {% load auth_extras %}
 {% block title %}School @ ENDTG - Accueil{% endblock %}
 {% block content %}
@@ -18,14 +19,14 @@
                         <h5 class="card-title">Jeux de Lettres</h5>
                         <p class="card-text">Pour mieux connaître son clavier... <br/>Plusieurs niveaux disponibles. A vous de jouer, vous avez 1 minute pour saisir un maximum de lettres.</p>
                         <div class="progress mt-3" data-bs-original-title="{{ score_letter }} / {{ max_score_letter}}" data-bs-toggle="tooltip" data-bs-placement="top">
-                            <div class="progress-bar-striped {% if score_letter < max_score_letter|mul:20|div:100 %}bg-danger{% elif score_letter > max_score_letter|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_letter|mul:100|div:max_score_letter }}%" aria-valuenow="{{ score_letter}}" aria-valuemin="0" aria-valuemax="{{ max_score_letter }}"></div>
+                            <div class="progress-bar-striped {% if score_letter < max_score_letter|mul:20|div:100 %}bg-danger{% elif score_letter > max_score_letter|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_letter_purcent }}%" aria-valuenow="{{ score_letter}}" aria-valuemin="0" aria-valuemax="{{ max_score_letter }}"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:word_one' %}';">
         <div class="card mb-3 border-primary">
             <div class="row g-0">
                 <div class="col-md-3 lh-5 text-center pt-4">
@@ -36,7 +37,7 @@
                         <h5 class="card-title">Jeux de Mots</h5>
                         <p class="card-text">Pour encore mieux connaître son clavier...<br/>Plusieurs niveaux disponibles. A vous de jouer, vous avez 1 minute pour saisir un maximum de mots</p>
                         <div class="progress mt-3" data-bs-original-title="{{ score_word }} / {{ max_score_word }}" data-bs-toggle="tooltip" data-bs-placement="top">
-                            <div class="progress-bar-striped {% if score_word < max_score_word|mul:20|div:100 %}bg-danger{% elif score_word > max_score_word|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_word }}%" aria-valuenow="{{ score_word }}" aria-valuemin="0" aria-valuemax="{{ max_score_word }}"></div>
+                            <div class="progress-bar-striped {% if score_word < max_score_word|mul:20|div:100 %}bg-danger{% elif score_word > max_score_word|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_word_purcent }}%" aria-valuenow="{{ score_word }}" aria-valuemin="0" aria-valuemax="{{ max_score_word }}"></div>
                         </div>
                     </div>
                 </div>
@@ -45,7 +46,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-6">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:addition' %}';">
         <div class="card mb-3 border-primary">
             <div class="row g-0">
                 <div class="col-md-3 lh-5 text-center pt-4">
@@ -55,15 +56,15 @@
                     <div class="card-body">
                         <h5 class="card-title">Additions</h5>
                         <p class="card-text">Entraînes-toi au calcul mental en réalisant un maximum d'additions simple en moins d'une minute !</p>
-                        <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_addition }}%" aria-valuenow="{{ score_addition }}" aria-valuemin="0" aria-valuemax="{{ max_score_addition }}"></div>
+                        <div class="progress mt-3" data-bs-original-title="{{ score_addition }} / {{ max_score_addition}}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <div class="progress-bar-striped {% if score_addition < max_score_addition|mul:20|div:100 %}bg-danger{% elif score_addition > max_score_addition|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_addition_purcent }}%" aria-valuenow="{{ score_addition }}" aria-valuemin="0" aria-valuemax="{{ max_score_addition }}"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:soustraction' %}';">
         <div class="card mb-3 border-primary">
             <div class="row g-0">
                 <div class="col-md-3 lh-5 text-center pt-4">
@@ -73,8 +74,8 @@
                     <div class="card-body">
                         <h5 class="card-title">Soustractions</h5>
                         <p class="card-text">Entraînes-toi au calcul mental en réalisant cette fois-ci un maximum de soustractions, sans pièges, en moins d'une minute !</p>
-                        <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_soustraction }}%" aria-valuenow="{{ score_soustraction }}" aria-valuemin="0" aria-valuemax="{{ max_score_soustraction }}"></div>
+                        <div class="progress mt-3" data-bs-original-title="{{ score_soustraction }} / {{ max_score_soustraction }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <div class="progress-bar-striped {% if score_soustraction < max_score_soustraction|mul:20|div:100 %}bg-danger{% elif score_soustraction > max_score_soustraction|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_soustraction_purcent }}%" aria-valuenow="{{ score_soustraction }}" aria-valuemin="0" aria-valuemax="{{ max_score_soustraction }}"></div>
                         </div>
                     </div>
                 </div>
@@ -83,7 +84,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-6">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:multiplication' %}';">
         <div class="card mb-3 border-primary">
             <div class="row g-0">
                 <div class="col-md-3 lh-5 text-center pt-4">
@@ -93,15 +94,15 @@
                     <div class="card-body">
                         <h5 class="card-title">Multiplications</h5>
                         <p class="card-text">Entraînes-toi au calcul mental sur les tables de multiplications, toujours en moins d'une minute !</p>
-                        <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_multiplication }}%" aria-valuenow="{{ score_multiplication }}" aria-valuemin="0" aria-valuemax="{{ max_score_multiplication }}"></div>
+                        <div class="progress mt-3" data-bs-original-title="{{ score_multiplication }} / {{ max_score_multiplication}}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <div class="progress-bar-striped {% if score_multiplication < max_score_multiplication|mul:20|div:100 %}bg-danger{% elif score_multiplication > max_score_multiplication|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_multiplication_purcent }}%" aria-valuenow="{{ score_multiplication }}" aria-valuemin="0" aria-valuemax="{{ max_score_multiplication }}"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:addition_posee' %}';">
         <div class="card mb-3 border-primary">
             <div class="row g-0">
                 <div class="col-md-3 lh-5 text-center pt-4">
@@ -111,8 +112,8 @@
                     <div class="card-body">
                         <h5 class="card-title">Additions posées</h5>
                         <p class="card-text">Entraînes-toi au calcul mental avec des additions posées sur des nombres compris entre 10 et 99.</p>
-                        <div class="progress mt-3">
-                            <div class="progress-bar-striped bg-info" role="progressbar" style="width: {{ score_additionposee }}%" aria-valuenow="{{ score_additionposee }}" aria-valuemin="0" aria-valuemax="{{ max_score_additionposee }}"></div>
+                        <div class="progress mt-3" data-bs-original-title="{{ score_additionposee }} / {{ max_score_additionposee}}" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <div class="progress-bar-striped {% if score_additionposee < max_score_additionposee|mul:20|div:100 %}bg-danger{% elif score_additionposee > max_score_additionposee|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_additionposee_purcent }}%" aria-valuenow="{{ score_additionposee }}" aria-valuemin="0" aria-valuemax="{{ max_score_additionposee }}"></div>
                         </div>
                     </div>
                 </div>
