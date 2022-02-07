@@ -87,16 +87,16 @@ $(document).ready(function(){
 
     $('input[name="sol"]').click(function() {
         countSecondes = countSecondes - secondes;
-        if (countSecondes <= 5) {
+        if (countSecondes <= 1) {
             points = 5;
         }
-        if (countSecondes > 5 && countSecondes <=10) {
+        if (countSecondes > 1 && countSecondes <=2) {
             points = 3;
         }
-        if (countSecondes > 10 && countSecondes <=20) {
+        if (countSecondes > 2 && countSecondes <=3) {
             points = 1;
         }
-        if (countSecondes > 8) {
+        if (countSecondes > 3) {
             points = 0;
         }
         var sol = $(this).val();
