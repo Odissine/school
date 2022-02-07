@@ -37,10 +37,9 @@
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 
-<body>
+<body class="color-a">
   <!--
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-
   -->
   <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
   <script src="{% static 'js/popper.min.js' %}"></script>
@@ -49,11 +48,39 @@
   <script src="{% static 'js/select2.min.js' %}"></script>
   <script>
       $(document).ready(function() {
-          $('.js-example-basic-single').select2();
+        $('.js-example-basic-single').select2();
+
+        $("#color-a").click(function() {
+          $("body, header, aside").addClass("color-a");
+          $("body, header, aside").removeClass("color-b");
+          $("body, header, aside").removeClass("color-c");
+          $("body, header, aside").removeClass("color-d");
+        });
+
+        $("#color-b").click(function() {
+          $("body, header, aside").addClass("color-b");
+          $("body, header, aside").removeClass("color-a");
+          $("body, header, aside").removeClass("color-c");
+          $("body, header, aside").removeClass("color-d");
+        });
+
+        $("#color-c").click(function() {
+          $("body, header, aside").addClass("color-c");
+          $("body, header, aside").removeClass("color-a");
+          $("body, header, aside").removeClass("color-b");
+          $("body, header, aside").removeClass("color-d");
+        });
+
+        $("#color-d").click(function() {
+          $("body, header, aside").addClass("color-d");
+          $("body, header, aside").removeClass("color-a");
+          $("body, header, aside").removeClass("color-b");
+          $("body, header, aside").removeClass("color-c");
+        });
       });
   </script>
   <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
+  <header id="header" class="header fixed-top d-flex align-items-center color-a">
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{% url 'main:index-view' %}" class="logo d-flex align-items-center">
@@ -321,7 +348,7 @@
   </header><!-- End Header -->
 
   <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar color-a">
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
@@ -397,9 +424,37 @@
             </a>
           </li>
         </ul>
-      </li><!-- End Admin Nav -->
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#color-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+          <i class="bi bi-journal-text"></i><span>Couleurs</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="color-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="#" id="color-a">
+              <i class="bi bi-circle"></i><span>Couleur A</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="color-b">
+              <i class="bi bi-circle"></i><span>Couleur B</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="color-c">
+              <i class="bi bi-circle"></i><span>Couleur C</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="color-d">
+              <i class="bi bi-circle"></i><span>Couleur D</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- End Admin Nav -->
       {% endif %}
-      <li class="nav-heading">A Venir ...</li>
+      <li class="nav-heading" id="change-color"><button>A Venir ...</button></li>
     </ul>
   </aside><!-- End Sidebar-->
   {% if messages %}

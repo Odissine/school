@@ -29,27 +29,27 @@
         {% csrf_token %}
     </form>
 
-    <div class="mot-box" id="box">
-        <div class="row mb-2">
-            <div class="col-6 h1 px-5">Soustractions</div>
-            <div class="col-6 offset text-end h2" id="scoreActuel">Ton meilleur score est de {{ soustractionScore }}</div>
+    <div>
+        <div class="row">
+            <div class="col-12 offset text-start h2" id="scoreActuel">Ton meilleur score est : {{ soustractionScore }}</div>
         </div>
         <div class="row mb-3">
             <div class="col-8 px-5 text-center">
-                <div class="row">
-                    <div class="col py-5 addition-border" style="font-size:5rem;" id="addition"></div>
+                <div class="row text-center addition">
+                    <div class="col py-5 addition-border border border-primary" style="font-size:5rem;" id="addition">&nbsp;</div>
                 </div>
-                <div class="row">
+                <div class="row text-center">
                     <div class="col-4 d-grid gap-2"><input id="sol1" type="button" class="btn btn-primary btn-lg" style="font-size:5rem;" name="sol" text="" value="" /></div>
                     <div class="col-4 d-grid gap-2"><input id="sol2" type="button" class="btn btn-primary btn-lg" style="font-size:5rem;" name="sol" text="" value="" /></div>
                     <div class="col-4 d-grid gap-2"><input id="sol3" type="button" class="btn btn-primary btn-lg" style="font-size:5rem;" name="sol" text="" value="" /></div>
                 </div>
             </div>
             <div class="col-4">
-                <div class="row choicefont" style="font-size:3.5rem"><div class="text-center" id="timer">01 : 00</div></div>
-                <div class="row" id="play">
-                    <button type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span>Démarrer</button></div>
-                <div class="row" style="font-size:5rem"><div id="count" class="text-center">0</div></div>
+                <div class="text-end score-live" id="timer">01:00</div>
+                <div class="text-end my-2">
+                    <button id="play" type="button" class="text-center btn btn-success btn-labeled py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span> Démarrer</button>
+                </div>
+                <div id="count" class="text-end score-live">0</div>
             </div>
         </div>
     </div>
@@ -86,19 +86,40 @@ $(document).ready(function(){
 
     $('input[name="sol"]').click(function() {
         countSecondes = countSecondes - secondes;
-        if (countSecondes <= 2) {
+        var sol = $(this).val();
+        testSoustraction(sol);
+    });
+
+    $(document).keyup(function(event) {
+        countSecondes = countSecondes - secondes;
+        if (event.keyCode === 49) {
+            var sol = $('#sol1').val();
+            testSoustraction(sol)
+        }
+        if (event.keyCode === 50) {
+            var sol = $('#sol2').val();
+            testSoustraction(sol)
+        }
+        if (event.keyCode === 51) {
+            var sol = $('#sol3').val();
+            testSoustraction(sol)
+        }
+    });
+
+    function testSoustraction(sol) {
+        if (countSecondes <= 1) {
             points = 5;
         }
-        if (countSecondes > 2 && countSecondes <=5) {
+        if (countSecondes > 1 && countSecondes <=2) {
             points = 3;
         }
-        if (countSecondes > 5 && countSecondes <=8) {
+        if (countSecondes > 2 && countSecondes <=3) {
             points = 1;
         }
-        if (countSecondes > 8) {
+        if (countSecondes > 3) {
             points = 0;
         }
-        var sol = $(this).val();
+
 
         if (sol == addition) {
             $('#box').removeClass("error-border");
@@ -132,7 +153,7 @@ $(document).ready(function(){
         }
         $("#count").html(count);
         $("#score").html(count);
-    });
+    }
 
     function resetAddition() {
         randomNum1 = num[Math.floor(Math.random() * num.length)];
@@ -197,6 +218,9 @@ $(document).ready(function(){
             if ($('#inputBestScore').val() < count) {
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
+            } else {
+                $('h5.modal-title').html('DOMMAGE ! N\'abandonnes pas !');
+                $('div.modal-header').attr("class", "modal-header bg-warning");
             }
         } else {
             if (secondes <= 0) {
@@ -206,13 +230,13 @@ $(document).ready(function(){
         }
 
         if (minutes < 10 && secondes < 10) {
-            $("#timer").html("0" + minutes+" : 0" + secondes);
+            $("#timer").html("0" + minutes+":0" + secondes);
         } else if(minutes < 10 && secondes >= 10) {
-            $("#timer").html("0" + minutes+" : " + secondes);
+            $("#timer").html("0" + minutes+":" + secondes);
         } else if(minutes >= 10 && secondes < 10) {
-            $("#timer").html( + minutes + " : 0" + secondes);
+            $("#timer").html( + minutes + ":0" + secondes);
         } else if(minutes >= 10 && secondes > 10){
-            $("#timer").html( + minutes + " : " + secondes);
+            $("#timer").html( + minutes + ":" + secondes);
         }
 
         if (minutes <= 0 && secondes < 10) {
