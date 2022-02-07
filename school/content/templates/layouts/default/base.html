@@ -89,13 +89,15 @@
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
-
+    <!--
     <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
+      <form class="search-form d-flex align-items-center" method="POST" action="">
         <input type="text" name="query" placeholder="Recherche" title="Entrer un mot clé">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
-    </div><!-- End Search Bar -->
+    </div>
+    -->
+    <!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -358,7 +360,7 @@
           <span>Accueil</span>
         </a>
       </li><!-- End Dashboard Nav -->
-
+      {% if user.is_authenticated %}
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#jeux-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-menu-button-wide"></i><span>Jeux</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -396,7 +398,7 @@
           </li>
         </ul>
       </li><!-- End Jeux Nav -->
-
+      {% endif %}
       {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
@@ -454,7 +456,7 @@
       </li>
       <!-- End Admin Nav -->
       {% endif %}
-      <li class="nav-heading" id="change-color"><button>A Venir ...</button></li>
+      <li class="nav-heading" id="change-color"></li>
     </ul>
   </aside><!-- End Sidebar-->
   {% if messages %}
