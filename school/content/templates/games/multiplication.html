@@ -111,11 +111,11 @@ $(document).ready(function(){
             $('#box').removeClass("success-border");
             $('#box').addClass("error-border");
             if (countError == 1) {
-                if (count > 1) {
-                    count = count - 2;
+                if (count > 2) {
+                    count = count - 3;
                     countError = 2;
                 }
-            } else if (countError ==2 ) {
+            } else if (countError >= 2 ) {
                 if (count > 4) {
                     count = count - 5;
                 } else if (count > 2) {
@@ -126,8 +126,8 @@ $(document).ready(function(){
                     count--;
                 }
             } else {
-                if (count > 0) {
-                    count--;
+                if (count > 1) {
+                    count = count - 2;
                     countError = 1;
                 }
             }

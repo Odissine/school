@@ -1,6 +1,6 @@
 import os
 import warnings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from os.path import dirname
 
 warnings.simplefilter('error', DeprecationWarning)
@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'ENDTG',
-        'USER': 'root',
+        'USER': 'endtg',
         'PASSWORD': 'admin',
         'HOST': '192.168.1.228',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
