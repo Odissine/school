@@ -126,18 +126,24 @@ $(document).ready(function(){
             $("#addition").addClass("success-border");
             resetAddition();
             countSecondes = secondes;
-            count = count + points;
+            if (countError > 1) {
+                count = count + 1;
+            } else {
+                count = count + points;
+            }
             countError = 1;
         } else {
             $("#addition").removeClass("success-border");
             $("#addition").addClass("error-border");
-            count = count - (countError * 3)
+            count = count - (countError * 4);
             if (count < 0) {
                 count = 0;
             }
         }
-        $("#count").html(count);
-        $("#score").html(count);
+        if (on === true) {
+            $("#count").html(count);
+            $("#score").html(count);
+        }
     };
 
     function resetAddition() {
@@ -243,8 +249,10 @@ $(document).ready(function(){
             $('#sol1').val("");
             $('#sol2').val("");
             $('#sol3').val("");
-            $("#score").html("0");
+            $("#count").html("0");
             Save();
+            count=0;
+            $('#inputScore').val(count);
         }
     }
 

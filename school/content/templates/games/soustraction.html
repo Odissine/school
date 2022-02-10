@@ -122,33 +122,23 @@ $(document).ready(function(){
 
 
         if (sol == addition) {
-            $('#box').removeClass("error-border");
-            $('#box').addClass("success-border");
+            $('#addition').removeClass("error-border");
+            $('#addition').addClass("success-border");
             resetAddition();
             countSecondes = secondes;
-            count = count + points;
-            countError = 0;
-        } else {
-            $('#box').removeClass("success-border");
-            $('#box').addClass("error-border");
-            if (countError == 1) {
-                if (count > 1) {
-                    count = count - 2;
-                    countError = 2;
-                }
-            } else if (countError ==2) {
-                if (count > 4) {
-                    count = count - 5;
-                } else if (count > 1) {
-                    count = count - 2;
-                } else if (count > 0) {
-                    count--;
-                }
+            if (countError > 1) {
+                count++;
             } else {
-                if (count > 0) {
-                    count--;
-                    countError = 1;
-                }
+                count = count + points;
+            }
+            countError = 1;
+        } else {
+            $('#addition').removeClass("success-border");
+            $('#addition').addClass("error-border");
+            count = count - ( countError * 4 );
+            countError++;
+            if (count < 1) {
+                count = 0;
             }
         }
         $("#count").html(count);
@@ -263,7 +253,13 @@ $(document).ready(function(){
             clearTimeout(timerID);
             $("#addition").html("");
             $('#inputScore').val(count);
+            $('#sol1').val("");
+            $('#sol2').val("");
+            $('#sol3').val("");
+            $("#count").html("0");
             Save();
+            count=0;
+            $('#inputScore').val(count);
         }
     }
 

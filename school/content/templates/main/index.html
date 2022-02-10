@@ -121,27 +121,76 @@
         </div>
     </div>
 </div>
-<div class="d-flex flex-wrap justify-content-md-center">
-    <a role="button" href="{% url 'games:letter' %}" class="btn col-3 text-center h3 p-4 btn-danger m-2 rounded text-white fs-3">Lettres</a>
-    <a role="button" href="{% url 'games:word_one' %}" class="btn col-3 text-center h3 p-4 btn-warning m-2 rounded text-dark fs-3">Mots</a>
-    <a role="button" href="{% url 'games:addition' %}" class="btn col-3 text-center h3 p-4 btn-success m-2 rounded text-white fs-3">Additions</a>
-</div>
-<div class="d-flex flex-wrap justify-content-md-center">
-    <a role="button" href="{% url 'games:addition_posee' %}" class="btn col-3 text-center h3 p-4 btn-primary m-2 rounded text-white fs-3">Additions posées</a>
-    <a role="button" href="{% url 'games:soustraction' %}" class="btn col-3 text-center h3 p-4 btn-info m-2 rounded text-dark fs-3">Soustractions</a>
-    <a role="button" href="{% url 'games:multiplication' %}" class="btn col-3 text-center h3 p-4 btn-light m-2 rounded text-dark fs-3">Multiplications</a>
-</div>
-    {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-    <div class="d-flex flex-wrap justify-content-md-center">
-        <a role="button" class="btn col-3 text-center fs-5 p-2 btn-secondary m-2 rounded text-white fs-4" href="{% url 'games:create_word_list' %}">Ajouter des mots</a>
-        <a role="button" class="btn col-3 text-center fs-5 p-2 btn-secondary m-2 rounded text-white fs-4" href="{% url 'games:create_halo' %}">Créer un halo</a>
+{% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+<div class="row">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:create_word_list' %}';">
+        <div class="card mb-3 border-primary admin">
+            <div class="row g-0">
+                <div class="col-md-3 lh-5 text-center pt-4">
+                    <i class="bi bi-body-text" style="font-size:6em;"></i>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title">Ajouter de nouveaux mots</h5>
+                        <p class="card-text">
+                            Mots de niveau 1/4 : {{ nb_mots.level1 }} <br>
+                            Mots de niveau 2/5 : {{ nb_mots.level2 }}<br>
+                            Mots de niveau 3/6 : {{ nb_mots.level3 }}<br>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="d-flex flex-wrap justify-content-md-center">
-        <a role="button" class="btn col-3 text-center fs-5 p-2 btn-secondary m-2 rounded text-white fs-4" href="{% url 'account:user-list' 'la' 'wa' %}">Liste des utilisateurs</a>
-        <a role="button" class="btn col-3 text-center fs-5 p-2 btn-secondary m-2 rounded text-white fs-4" href="{% url 'games:export-words' %}">Export des mots (console)</a>
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'account:user-list' 'la' %}';">
+        <div class="card mb-3 border-primary admin">
+            <div class="row g-0">
+                <div class="col-md-3 lh-5 text-center pt-4">
+                    <i class="bi bi-person-lines-fill" style="font-size:6em;"></i>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title">Liste des utilisateurs</h5>
+                        <p class="card-text">Affiche la liste des utilisateurs ainsi que les scores (lettres / mots) associés et permet de changer le mot de passe.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    {% endif %}
+</div>
+<div class="row">
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'account:export-users' %}';">
+        <div class="card mb-3 border-primary admin">
+            <div class="row g-0">
+                <div class="col-md-3 lh-5 text-center pt-4">
+                    <i class="bi bi-download" style="font-size:6em;"></i>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title">Export des utilisateurs</h5>
+                        <p class="card-text">Génère un fichier Json avec l'ensemble des utilisateurs de l'application.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6" style="cursor:pointer;" onclick="location.href='{% url 'games:export-words' %}';">
+        <div class="card mb-3 border-primary admin">
+            <div class="row g-0">
+                <div class="col-md-3 lh-5 text-center pt-4">
+                    <i class="bi bi-download" style="font-size:6em;"></i>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title">Export des mots</h5>
+                        <p class="card-text">Génère un fichier Json avec l'ensemble des mots et le level associé.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% else %}
 <div class="my-2 h1">Bienvenue !</div>
 <div class="text-center h4 mt-4">Afin de pouvoir profiter de l'ensemble des fonctionnalités du site, <a href="{% url 'account:login' %}">identifiez-vous</a> ou <a href="{% url 'account:register' %}">créez un compte</a> !</div>

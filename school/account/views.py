@@ -8,7 +8,13 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from .core import get_moyenne_score, get_max_score
+from django.core import serializers
+from django.http import HttpResponse
 
+from io import BytesIO
+import xlsxwriter
+
+from games.models import *
 
 class MyChangeFormPassword(PasswordChangeForm):
     pass
@@ -87,13 +93,16 @@ def login_success(request):
 
 @login_required
 @group_required('ADMIN')
-def user_list(request, orderl, orderw):
-    order_letter = "letterscore__score"
-    order_word = "wordscore__score"
-    if orderl == "ld":
-        order_letter = "-letterscore__score"
-    if orderw == "md":
-        order_word = "-wordscore__score"
+def user_list(request, order):
+    order_criteria = "letterscore__score"
+    if order == "ld":
+        order_criteria = "-letterscore__score"
+    if order == "la":
+        order_criteria = "letterscore__score"
+    if order == "wd":
+        order_criteria = "-wordscore__score"
+    if order == "wa":
+        order_criteria = "wordscore__score"
 
     if request.method == "POST":
         group = request.POST['group']
@@ -101,10 +110,10 @@ def user_list(request, orderl, orderw):
         group = None
     if group:
         group_name = group
-        users = User.objects.filter(groups__name=group).order_by(order_letter, order_word, 'first_name').distinct()
+        users = User.objects.filter(groups__name=group).order_by(order_criteria, 'first_name').distinct()
     else:
         group_name = "TOUS LES GROUPES"
-        users = User.objects.all().order_by(order_letter, order_word, 'first_name').distinct()
+        users = User.objects.all().order_by(order_criteria, 'first_name').distinct()
 
     users_temp = []
     for user in users:
@@ -134,10 +143,109 @@ def user_list(request, orderl, orderw):
 
     context = {'list': list,
                'group_name': group_name,
-               'orderl': orderl,
-               'orderw': orderw,
+               'order': order,
                }
     return render(request, './account/list.html', context)
+
+
+@login_required
+@group_required('ADMIN')
+def export_user_excel(request):
+
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+
+    # EN-TETE
+
+    # Create a format to use in the merged range.
+    header_format = workbook.add_format({
+        'bold': 1,
+        'bottom': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': 'silver'
+    })
+
+    merge_format = workbook.add_format({
+        'bold': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': 'silver',
+    })
+
+    cell_header_format = workbook.add_format({'bold': True, 'bg_color': 'green'})
+    worksheet.set_column(3, 13, 10)
+    worksheet.write(1, 0, 'NOM', header_format)
+    worksheet.write(1, 1, 'PRENOM', header_format)
+    worksheet.write(1, 2, 'CLASSE', header_format)
+    worksheet.merge_range('D1:H1', 'LETTRES', merge_format)
+    worksheet.write(1, 3, 'L1', header_format)
+    worksheet.write(1, 4, 'L2', header_format)
+    worksheet.write(1, 5, 'L3', header_format)
+    worksheet.write(1, 6, 'L4', header_format)
+    worksheet.write(1, 7, 'L5', header_format)
+    worksheet.merge_range('I1:N1', 'MOTS', merge_format)
+    worksheet.write(1, 8, 'L1', header_format)
+    worksheet.write(1, 9, 'L2', header_format)
+    worksheet.write(1, 10, 'L3', header_format)
+    worksheet.write(1, 11, 'L4', header_format)
+    worksheet.write(1, 12, 'L5', header_format)
+    worksheet.write(1, 13, 'L6', header_format)
+
+    if request.method == "POST":
+        group = request.POST['group']
+    else:
+        group = None
+    if group:
+        group_name = group
+        users = User.objects.filter(groups__name=group).order_by('last_name', 'first_name').distinct()
+    else:
+        group_name = "TOUS LES GROUPES"
+        users = User.objects.all().order_by('last_name', 'first_name').distinct()
+
+    users_temp = []
+    for user in users:
+        if user not in users_temp:
+            users_temp.append(user)
+    users = users_temp
+
+    line = 2
+    for user in users:
+        classe = user.groups.first()
+        worksheet.write(line, 0, user.first_name)
+        worksheet.write(line, 1, user.last_name)
+        worksheet.write(line, 2, classe.name)
+        for level in range(1, 6):
+            score = LetterScore.objects.filter(user=user, level=level).first()
+            if score is not None:
+                score = score.score
+            else:
+                score = 0
+            worksheet.write(line, level + 2, score)
+
+        for level in range(1,7):
+            score = WordScore.objects.filter(user=user, level=level).first()
+            if score is not None:
+                score = score.score
+            else:
+                score = 0
+            worksheet.write(line, level + 7, score)
+        line += 1
+
+    workbook.close()
+
+    # create a response
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+
+    # tell the browser what the file is named
+    response['Content-Disposition'] = 'attachment;filename="export_eleves.xlsx"'
+
+    # put the spreadsheet data into the response
+    response.write(output.getvalue())
+
+    # return the response
+    return response
 
 
 @login_required
@@ -152,3 +260,15 @@ def change_password(request):
         messages.success(request, message)
 
     return redirect('account:user-list' 'la' 'wa')
+
+@login_required()
+@group_required('ADMIN', 'ENSEIGNANT')
+def export_users(request):
+    try:
+        users = User.objects.all()
+        response = HttpResponse(serializers.serialize('json', users), content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="export_users.json"'
+    except Exception:
+        raise
+
+    return response

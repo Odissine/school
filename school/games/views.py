@@ -15,6 +15,8 @@ from django.http import JsonResponse
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
+from django.core import serializers
+from django.http import HttpResponse
 
 from . import core
 from .models import WordOne, WordScore, LetterScore, Halo, AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
@@ -112,10 +114,15 @@ def saveWordOneProgress(request):
 @login_required()
 @group_required('ADMIN', 'ENSEIGNANT')
 def exportWord(request):
-    words = WordOne.objects.filter(level=3)
-    for word in words:
-        print(word.name)
-    return redirect('index-view')
+    try:
+        words = WordOne.objects.all()
+
+        response = HttpResponse(serializers.serialize('json', words), content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="export_words.json"'
+    except Exception:
+        raise
+
+    return response
 
 
 @login_required()

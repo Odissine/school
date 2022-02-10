@@ -538,7 +538,7 @@ h1, h2, h3, h4, h5, h6 {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #aab7cf transparent;
-  box-shadow: 3px 0px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
 }
 @media (max-width: 1199px) {
@@ -599,30 +599,30 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: #4154f1;
+  color: #333;
   transition: 0.3;
-  background: #f6f9ff;
+  background: #EEE;
   padding: 10px 15px;
   border-radius: 4px;
 }
 .sidebar-nav .nav-link i {
   font-size: 16px;
   margin-right: 10px;
-  color: #4154f1;
+  color: #333;
 }
 .sidebar-nav .nav-link.collapsed {
   color: #012970;
-  background: #fff;
+  background: #EEE;
 }
 .sidebar-nav .nav-link.collapsed i {
   color: #899bbd;
 }
 .sidebar-nav .nav-link:hover {
-  color: #4154f1;
+  color: #000;
   background: #f6f9ff;
 }
 .sidebar-nav .nav-link:hover i {
-  color: #4154f1;
+  color: #000;
 }
 .sidebar-nav .nav-link .bi-chevron-down {
   margin-right: 0;
@@ -653,7 +653,8 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50%;
 }
 .sidebar-nav .nav-content a:hover, .sidebar-nav .nav-content a.active {
-  color: #4154f1;
+  color: #000;
+  background-color: #CCC;
 }
 .sidebar-nav .nav-content a.active i {
   background-color: #4154f1;
@@ -1063,7 +1064,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 20px 0;
   font-size: 14px;
   transition: all 0.3s;
-  border-top: 1px solid #cddfff;
+  border-top: 1px solid #CCC;
 }
 .footer .copyright {
   text-align: center;
@@ -1111,6 +1112,10 @@ h1, h2, h3, h4, h5, h6 {
 .color-d {
     background: #87B391;
 }
+
+.card.admin {
+    background: rgba(1, 140, 210, .2);
+}
 /*-----------------------------------------------------------
 # JEUX
 -----------------------------------------------------------*/
@@ -1127,6 +1132,11 @@ h1, h2, h3, h4, h5, h6 {
 @media screen and (max-width: 831px) {
     .score-live {
         font-size:4em;
+    }
+}
+@media screen and (max-width: 900px) {
+    .btn-addition-posee {
+        font-size:3em !important;
     }
 }
 .level-select {

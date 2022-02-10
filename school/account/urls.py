@@ -10,7 +10,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     # path('password-reset/', views.password_reset, name='password-reset'),
     path('success/', views.login_success, name='success'),
-    path('user_list/<orderl>/<orderw>/', views.user_list, name='user-list'),
-
-    path('change-password/', views.change_password, name='change-password'),
+    path('user_list/<order>/', views.user_list, name='user-list'),
+    path('export_users/', views.export_users, name='export-users'),
+    path('export_user_excel/', views.export_user_excel, name='export-user-excel'),
+    path('change_password/', views.change_password, name='change-password'),
 ]
