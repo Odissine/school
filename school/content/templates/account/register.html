@@ -6,7 +6,7 @@
 {% block content %}
 <div class="testbox">
 <h2>Création du compte</h2>
-<form method="POST">
+<form method="POST" autocomplete="off">
     {% csrf_token %}
     {% if form.errors %}
        {% for field in form %}

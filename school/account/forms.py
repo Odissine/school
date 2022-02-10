@@ -13,9 +13,9 @@ class UsernameChoiceField(forms.ModelChoiceField):
 
 
 class RegisterForm(UserCreationForm):
-    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Prénom'}))
-    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Nom'}))
-    group = forms.ModelChoiceField(queryset=Group.objects.all(), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe')
+    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Prénom', 'autocomplete': 'off'}))
+    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Nom', 'autocomplete': 'off'}))
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe', widget=Select2Widget(attrs={'placeholder': "Classe", 'class': 'js-example-basic-single form-control select'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'}), label='')
 
@@ -37,7 +37,7 @@ class UserLoginForm(forms.ModelForm):
     # username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur", 'autofocus': 'None'}), label="", required=True)
     # username = forms.ModelChoiceField(widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'form-control'}), queryset=User.objects.all(), label="Nom d'utilisateur", required=True, help_text="Merci d'indiquer votre nom d'utilisateur")
     username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'autocomplete': 'off'}), label='Mot de passe')
     # username.widget.attrs.update({"autofocus": False})
 
     def clean(self):

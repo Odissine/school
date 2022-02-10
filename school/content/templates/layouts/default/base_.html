@@ -1,0 +1,81 @@
+{% load static %}
+{% load bootstrap5 %}
+{% load i18n %}
+{% load auth_extras %}
+{% get_current_language as language_code %}
+<! DOCTYPE html>
+<html lang="fr-FR">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles2.css' %}">
+    <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Cookie&family=PT+Mono&display=swap');
+    </style>
+
+    <title>{% block title %}SCHOOL @ {% endblock %}</title>
+</head>
+<body class="bg-index">
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/toastr.min.js' %}"></script>
+<script src="{% static 'js/select-menu.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
+</script>
+<div class="wrapper">
+    <header class="main-header">
+        <a class="" href="{% url 'index' %}"><img class="" src="{% static 'img/logo.png' %}" width="30" /></a>&nbsp;
+        <a class="navbar-brand" href="{% url 'index' %}">ENDTG</a>
+        <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+        {% if user.is_authenticated %}
+        <span class="navbar-text">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        <ul class="nav d-flex">
+            <li class="nav-item"><a class="nav-link" href="{% url 'account:logout' %}"><button class="btn btn-outline-primary"><i class="bi bi-lock-fill"></i> Se déconnecter</button></a></li>
+        </ul>
+        {% else %}
+        <ul class="nav d-flex">
+            <li class="nav-item"><a class="nav-link" href="{% url 'account:register' %}"><button class="btn btn-outline-primary"><i class="bi bi-person-plus-fill"></i> Créer un compte</button></a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'account:login' %}"><button class="btn btn-outline-primary"><i class="bi bi-unlock-fill"></i> Se connecter</button></a></li>
+        </ul>
+        {% endif %}
+        </nav>
+    </header>
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            {% include 'sidebar.html' %}
+        </section>
+    </aside>
+    <div id="main-content-wrapper" class="content-wrapper">
+        <section class="content">
+            {% if messages %}
+            <div class="row">
+                {% for message in messages %}
+                <div class="col-md-12">
+                    <div class="alert alert-dismissible color-palette {% if message.tags %} bg-{{ message.tags }}{% endif %}">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                        <text class="title">
+                            <i class="bi-{% if message.tags == 'error' %}exclamation-octagon{% else %}info-circle{% endif %}"></i>
+                        </text>{{ message|safe }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% block content %}
+        {% endblock %}
+        </section>
+    </div>
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs"><b>Version</b> 2.1</div>
+    </footer>
+    <div class="control-sidebar-bg"></div>
+</div>
+</body>
+</html>

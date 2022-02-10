@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from main.views import IndexPageView
 
 urlpatterns = [
     # Admin DJANGO
@@ -25,8 +24,8 @@ urlpatterns = [
     path("select2/", include("django_select2.urls")),
 
     # Index du site
-    path('', IndexPageView.as_view(), name='index'),
-    path('', include("django.contrib.auth.urls")),
+    path('', include(('main.urls', 'main'), namespace='main')),
+    # path('', include("django.contrib.auth.urls")),
 
     path('i18n/', include('django.conf.urls.i18n')),
     path('account/', include(('account.urls', 'account'), namespace='account')),
