@@ -9,8 +9,6 @@ def index_view(request):
 
     if request.user.is_authenticated:
         max_score_letter = LetterScore.objects.filter(user__groups=request.user.groups.first()).aggregate(Max('score'))
-        print(max_score_letter)
-
         score_letter = LetterScore.objects.filter(user=request.user).aggregate(Max('score'))
         score_letter_purcent = get_purcent(score_letter['score__max'], max_score_letter['score__max'])
 
