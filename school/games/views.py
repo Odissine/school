@@ -15,6 +15,8 @@ from django.http import JsonResponse
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.base import ContentFile
+from django.core import serializers
+from django.http import HttpResponse
 
 from . import core
 from .models import WordOne, WordScore, LetterScore, Halo, AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
@@ -79,9 +81,12 @@ def wordOne(request):
     else:
         wordScore = wordScore.score
 
+    context_header = {'title': 'Jeux de Mots'}
+
     context = {'level': level,
                'wordOneScore': wordScore,
                'word_list': wordListFormatted,
+               'context_header': context_header,
                }
     return render(request, './games/word_one.html', context)
 
@@ -109,10 +114,15 @@ def saveWordOneProgress(request):
 @login_required()
 @group_required('ADMIN', 'ENSEIGNANT')
 def exportWord(request):
-    words = WordOne.objects.filter(level=3)
-    for word in words:
-        print(word.name)
-    return redirect('index')
+    try:
+        words = WordOne.objects.all()
+
+        response = HttpResponse(serializers.serialize('json', words), content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="export_words.json"'
+    except Exception:
+        raise
+
+    return response
 
 
 @login_required()
@@ -169,9 +179,11 @@ def letter(request):
         letterScore = 0
     else:
         letterScore = letterScore.score
+    context_header = {'title': 'Jeux de Lettres'}
 
     context = {'level': level,
                'letterScore': letterScore,
+               'context_header': context_header,
                }
     return render(request, './games/letter.html', context)
 
@@ -181,12 +193,14 @@ def saveLetterProgress(request):
     level = request.POST.get("level")
     count = request.POST.get("score")
     user = request.user
+    group = request.user.groups.first()
     score = LetterScore.objects.filter(level=level, user=user).first()
     if not score:
-        instance = LetterScore.objects.create(level=level, user=user, score=count)
+        instance = LetterScore.objects.create(level=level, user=user, group=group, score=count)
         new_score = instance.score
     elif score.score < int(count):
         score.score = int(count)
+        score.group = request.user.groups.first()
         score.save()
         new_score = count
     else:
@@ -199,7 +213,11 @@ def saveLetterProgress(request):
 @login_required()
 def halo(request):
     images = Halo.objects.all()
-    context = {'images': images}
+    context_header = {'title': 'Halo'}
+
+    context = {'images': images,
+               'context_header':context_header
+               }
 
     if request.GET.get('p', ''):
         p = request.GET.get('p', '')
@@ -218,8 +236,8 @@ def addition(request):
         additionScore = 0
     else:
         additionScore = additionScore.score
-
-    context = {'additionScore': additionScore}
+    context_header = {'title': 'Additions'}
+    context = {'additionScore': additionScore, 'context_header': context_header}
     return render(request, './games/addition.html', context)
 
 
@@ -231,8 +249,8 @@ def addition_posee(request):
         additionPoseeScore = 0
     else:
         additionPoseeScore = additionPoseeScore.score
-
-    context = {'additionPoseeScore': additionPoseeScore}
+    context_header = {'title': 'Additions Posées'}
+    context = {'additionPoseeScore': additionPoseeScore, 'context_header': context_header}
     return render(request, './games/addition_posee.html', context)
 
 
@@ -281,8 +299,8 @@ def multiplication(request):
         multiplicationScore = 0
     else:
         multiplicationScore = multiplicationScore.score
-
-    context = {'multiplicationScore': multiplicationScore}
+    context_header = {'title': 'Multiplications'}
+    context = {'multiplicationScore': multiplicationScore, 'context_header':context_header}
     return render(request, './games/multiplication.html', context)
 
 
@@ -313,8 +331,8 @@ def soustraction(request):
         soustractionScore = 0
     else:
         soustractionScore = soustractionScore.score
-
-    context = {'soustractionScore': soustractionScore}
+    context_header = {'title': 'Soustractions'}
+    context = {'soustractionScore': soustractionScore, 'context_header': context_header}
     return render(request, './games/soustraction.html', context)
 
 

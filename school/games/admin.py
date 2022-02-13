@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LetterScore, WordOne, Halo, AdditionScore, WordScore, MultiplicationScore
+from .models import LetterScore, WordOne, Halo, AdditionScore, WordScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
 
 # LETTER
 @admin.register(LetterScore)
@@ -36,9 +36,19 @@ class AdditionScoreAdmin(admin.ModelAdmin):
     list_display = ['score', 'user']
 
 
+# ADDITION POSEE
+@admin.register(AdditionPoseeScore)
+class AdditionPoseeScoreAdmin(admin.ModelAdmin):
+    list_display = ['score', 'user']
+
+# SOUSTRACTION
+@admin.register(SoustractionScore)
+class SoustractionScoreAdmin(admin.ModelAdmin):
+    list_display = ['score', 'user']
+
 # MULTIPLICATION
 @admin.register(MultiplicationScore)
 class MultiplicationScoreAdmin(admin.ModelAdmin):
     list_display = ['score', 'user']
 
-admin.register(AdditionScore, MultiplicationScore, Halo, LetterScore, WordOne, WordScore)
+admin.register(AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore, LetterScore, WordOne, WordScore)

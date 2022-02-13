@@ -4,118 +4,527 @@
 {% load auth_extras %}
 {% get_current_language as language_code %}
 <!DOCTYPE html>
-<html lang="fr-FR">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
-    <style>
-         @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Cookie&family=PT+Mono&display=swap');
-    </style>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>{% block title %}SCHOOL @ {% endblock %}</title>
+  <title>School @ ENDTG</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'img/favicon.png' %}" rel="icon">
+  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Cookie&family=PT+Mono&display=swap');
+  </style>
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/simple-datatables/style.css' %}" rel="stylesheet">
+  <link href="{% static 'css/select2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/select2-bootstrap-5-theme.min.css' %}" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
-<body class="dark">
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-	<script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/toastr.min.js' %}"></script>
-    <script src="{% static 'js/select-menu.js' %}"></script>
-    <script src="{% static 'js/select2.min.js' %}"></script>
-    <script>
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2();
+
+<body class="color-a">
+  <!--
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  -->
+  <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+  <script src="{% static 'js/popper.min.js' %}"></script>
+  <script src="{% static 'js/toastr.min.js' %}"></script>
+  <script src="{% static 'js/select-menu.js' %}"></script>
+  <script src="{% static 'js/select2.min.js' %}"></script>
+  <script>
+      $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+
+        $("#color-a").click(function() {
+          $("body, header, aside").addClass("color-a");
+          $("body, header, aside").removeClass("color-b");
+          $("body, header, aside").removeClass("color-c");
+          $("body, header, aside").removeClass("color-d");
         });
-    </script>
-    <nav class="navbar navbar-expand-lg navbar-light bg-school sticky-top">
-        <div class="container-fluid">
-            <a href="{% url 'index' %}"><img src="{% static 'img/logo.png' %}" width="30" />&nbsp</a>
-            <a class="navbar-brand" href="{% url 'index' %}">ENDTG</a>
-            <div class="navbar-brand">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-            <div class="collapse navbar-collapse" id="navbarScroll">
-                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 400px;">
-                    <li class="nav-item">
-                        <a class="nav-link active h5" aria-current="page" href="{% url 'index' %}">Accueil</a>
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle h5" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Jeux</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                            <li><a class="dropdown-item" href="{% url 'games:letter' %}">Lettres</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:word_one' %}">Mots</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:addition' %}">Addition</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:addition_posee' %}">Addition Posée</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:soustraction' %}">Soustraction</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:multiplication' %}">Multiplication</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:halo' %}">Halo</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                </ul>
-                {% if user.is_authenticated %}
-                <div class="nav-text h4">{{ request.user.first_name }} {{ request.user.last_name }}</div>
-                <ul class="nav navbar-nav d-flex">
-                    {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle h5" href="#" id="navbarScrollingDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administration</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                            <li><a class="dropdown-item" href="{% url 'games:create_word_list' %}">Ajouter des mots</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:create_halo' %}">Créer un halo</a></li>
-                            <li><a class="dropdown-item" href="{% url 'account:user_list' %}">Liste des utilisateurs</a></li>
-                            <li><a class="dropdown-item" href="{% url 'games:export-words' %}">Export des mots (console)</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account:logout' %}"><i class="bi bi-lock"></i></a></li>
-                </ul>
-                {% else %}
-                <ul class="nav navbar-nav d-flex">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account:register' %}"><i class="bi bi-person"></i></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account:login' %}"><i class="bi bi-unlock"></i></a></li>
-                </ul>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
-    {% if messages %}
-    {% for message in messages %}
-    <div aria-live="polite" aria-atomic="true" class="bg-dark bd-example-toasts">
-        <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
-            <div class="toast fade hide bg-light" id="error_message">
-                <div class="toast-header {% if message.tags %} bg-{{ message.tags }} text-light {% endif %}">
-                    <strong class="me-auto">
-                        {% if message.tags == 'error' %} Erreur {% else %} Information {% endif %}
-                    </strong>
-                        {% if message.tags == 'error' %}
-                        <i class="bi-exclamation-octagon"></i>
-                        {% else %}
-                        <i class="bi-info-circle"></i>
-                        {% endif %}
-                </div>
-                <div class="toast-body">{{ message }}</div>
-            </div>
-        </div>
+
+        $("#color-b").click(function() {
+          $("body, header, aside").addClass("color-b");
+          $("body, header, aside").removeClass("color-a");
+          $("body, header, aside").removeClass("color-c");
+          $("body, header, aside").removeClass("color-d");
+        });
+
+        $("#color-c").click(function() {
+          $("body, header, aside").addClass("color-c");
+          $("body, header, aside").removeClass("color-a");
+          $("body, header, aside").removeClass("color-b");
+          $("body, header, aside").removeClass("color-d");
+        });
+
+        $("#color-d").click(function() {
+          $("body, header, aside").addClass("color-d");
+          $("body, header, aside").removeClass("color-a");
+          $("body, header, aside").removeClass("color-b");
+          $("body, header, aside").removeClass("color-c");
+        });
+      });
+  </script>
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center color-a">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{% url 'main:index-view' %}" class="logo d-flex align-items-center">
+        <img src="{% static 'img/logo.png' %}" alt="">
+        <span class="d-none d-lg-block">ENDTG</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+    <!--
+    <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="">
+        <input type="text" name="query" placeholder="Recherche" title="Entrer un mot clé">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
     </div>
-    <script>
-        $('#error_message').addClass('show');
-        $('#error_message').removeClass('hide');
-        function hideMsg () {
-            $('#error_message').fadeOut();
-            //$('#error_message').removeClass('show');
-        }
-        setTimeout(hideMsg,3000);
-    </script>
-    {% endfor %}
-    {% endif %}
-<div id="content" class="container-fluid">
-    {% block content %}
-    {% endblock %}
-</div>
+    -->
+    <!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li>
+        <!-- End Search Icon-->
+<!--
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-primary badge-number">4</span>
+          </a>
+-->
+          <!-- End Notification Icon -->
+<!--
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have 4 new notifications
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-exclamation-circle text-warning"></i>
+              <div>
+                <h4>Lorem Ipsum</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>30 min. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-x-circle text-danger"></i>
+              <div>
+                <h4>Atque rerum nesciunt</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>1 hr. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-check-circle text-success"></i>
+              <div>
+                <h4>Sit rerum fuga</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>2 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-info-circle text-primary"></i>
+              <div>
+                <h4>Dicta reprehenderit</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>4 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li class="dropdown-footer">
+              <a href="#">Show all notifications</a>
+            </li>
+
+          </ul>
+-->
+          <!-- End Notification Dropdown Items -->
+<!--
+        </li>
+-->
+        <!-- End Notification Nav -->
+<!--
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-chat-left-text"></i>
+            <span class="badge bg-success badge-number">3</span>
+          </a>
+-->
+          <!-- End Messages Icon -->
+<!--
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+            <li class="dropdown-header">
+              You have 3 new messages
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Maria Hudson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>4 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Anna Nelson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>6 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>David Muldon</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>8 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="dropdown-footer">
+              <a href="#">Show all messages</a>
+            </li>
+
+          </ul>
+-->
+          <!-- End Messages Dropdown Items -->
+<!--
+        </li>
+-->
+        <!-- End Messages Nav -->
+        {% if user.is_authenticated %}
+        <li class="nav-item pe-3">
+            <span class="d-none d-md-block ps-2">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        </li>
+        {% endif %}
+<!--
+        <li class="nav-item dropdown pe-3">
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+          </a>
+-->
+          <!-- End Profile Iamge Icon -->
+<!--
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>Kevin Anderson</h6>
+              <span>Web Designer</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul>
+-->
+        <!-- End Profile Dropdown Items -->
+<!--
+        </li>
+-->
+        <!-- End Profile Nav -->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link nav-icon" href="{% url 'account:logout' %}">
+            <i class="bi bi-lock-fill"></i>
+          </a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link nav-icon" href="{% url 'account:register' %}">
+            <i class="bi bi-person-plus-fill"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-icon" href="{% url 'account:login' %}">
+            <i class="bi bi-unlock-fill"></i>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav><!-- End Icons Navigation -->
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar color-a">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'main:index-view' %}">
+          <i class="bi bi-home"></i>
+          <span>Accueil</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#jeux-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+          <i class="bi bi-menu-button-wide"></i><span>Jeux</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="jeux-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav" style="">
+          <li>
+            <a href="{% url 'games:letter' %}">
+              <i class="bi bi-circle"></i><span>Lettres</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:word_one' %}">
+              <i class="bi bi-circle"></i><span>Mots</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:addition' %}">
+              <i class="bi bi-circle"></i><span>Additions</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:addition_posee' %}">
+              <i class="bi bi-circle"></i><span>Additions posées</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:soustraction' %}">
+              <i class="bi bi-circle"></i><span>Soustractions</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:multiplication' %}">
+              <i class="bi bi-circle"></i><span>Multiplication</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Jeux Nav -->
+      {% endif %}
+      {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+          <i class="bi bi-journal-text"></i><span>Administration</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="admin-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'games:create_word_list' %}">
+              <i class="bi bi-circle"></i><span>Ajouter des mots</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:create_halo' %}">
+              <i class="bi bi-circle"></i><span>Créer un halo</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'account:user-list' 'la' %}">
+              <i class="bi bi-circle"></i><span>Liste des utilisateurs</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:export-words' %}">
+              <i class="bi bi-circle"></i><span>Export des mots</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#color-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+          <i class="bi bi-journal-text"></i><span>Couleurs</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="color-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="#" id="color-a">
+              <i class="bi bi-circle"></i><span>Couleur A</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="color-b">
+              <i class="bi bi-circle"></i><span>Couleur B</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="color-c">
+              <i class="bi bi-circle"></i><span>Couleur C</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="color-d">
+              <i class="bi bi-circle"></i><span>Couleur D</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- End Admin Nav -->
+      {% endif %}
+      <li class="nav-heading" id="change-color"></li>
+    </ul>
+  </aside><!-- End Sidebar-->
+  {% if messages %}
+  {% for message in messages %}
+  <div aria-live="polite" aria-atomic="true" class="bg-dark bd-example-toasts">
+    <div class="toast-container position-absolute p-3 top-1 end-0" id="toastPlacement">
+      {% if message.tags == 'error' %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-octagon me-1"></i>
+        {% else %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i>
+        {% endif %}
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  <script>
+      $('#error_message').addClass('show');
+      $('#error_message').removeClass('hide');
+      function hideMsg () {
+          $('#error_message').fadeOut();
+          //$('#error_message').removeClass('show');
+      }
+      setTimeout(hideMsg,3000);
+  </script>
+  {% endfor %}
+  {% endif %}
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <div class="h1">{{ context_header.title }}</div>
+    </div><!-- End Page Title -->
+    <section class="section dashboard">
+      {% block content %}
+      {% endblock %}
+    </section>
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>School@ENDTG</span></strong>. Tous droits réservés
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Créé par <a href="mailto:cyril.henry@gmail.com">Cyril HENRY</a>
+    </div>
+  </footer><!-- End Footer -->
+  <!--
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  -->
+  <!-- Vendor JS Files -->
+  <script src="{% static 'vendor/apexcharts/apexcharts.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/chart.js/chart.min.js' %}"></script>
+  <script src="{% static 'vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+  <script src="{% static 'vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'js/main.js' %}"></script>
+
 </body>
+
 </html>

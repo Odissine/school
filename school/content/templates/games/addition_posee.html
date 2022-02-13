@@ -4,7 +4,6 @@
 {% block title %}School @ ENDTG - ADDITION{% endblock %}
 {% block content %}
 {% if user.is_authenticated %}
-
     <div class="modal fade" tabindex="-1" id="myModal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -29,30 +28,30 @@
         {% csrf_token %}
     </form>
 
-    <div class="mot-box" id="box">
-        <div class="row mb-2">
-            <div class="col-6 h1 px-5">Additions Posées</div>
-            <div class="col-6 offset text-end h2" id="scoreActuel">Ton meilleur score est de {{ additionPoseeScore }}</div>
+    <div>
+        <div class="row">
+            <div class="col-12 offset text-start h2" id="scoreActuel">Ton meilleur score est : {{ additionPoseeScore }}</div>
         </div>
         <div class="row mb-3">
-            <div class="col-9 px-5 text-center">
-                <div class="row">
-                    <div class="col py-5 addition-border" style="font-size:5rem; padding-top:70px !important; padding-bottom:150px !important;" id="addition">
-                        <span id="spanRandomNum1" style="text-align:right; width:300px; display:block; padding:0; margin:0 auto; height:20px; line-height:0px;"></span>
-                        <span id="spanRandomNum2" style="text-align:right; width:300px; display:block; padding:0; margin:0 auto; height:20px; line-height:170px;"></span>
+            <div class="col-8 px-5 text-center">
+                <div class="row text-center addition">
+                    <div class="col-12 py-5 addition-border border border-primary" style="height:300px; padding-top:90px !important;" id="addition">
+                        <span id="spanRandomNum1" style="text-align:right; width:300px; display:block; padding:0; margin:0 auto; height:20px; line-height:0px;">&nbsp;</span>
+                        <span id="spanRandomNum2" style="text-align:right; width:300px; display:block; padding:0; margin:0 auto; height:20px; line-height:170px;">&nbsp;</span>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-4 d-grid gap-2"><input id="sol1" type="button" class="btn btn-primary btn-lg" style="font-size:5rem;" name="sol" text="" value="" /></div>
-                    <div class="col-4 d-grid gap-2"><input id="sol2" type="button" class="btn btn-primary btn-lg" style="font-size:5rem;" name="sol" text="" value="" /></div>
-                    <div class="col-4 d-grid gap-2"><input id="sol3" type="button" class="btn btn-primary btn-lg" style="font-size:5rem;" name="sol" text="" value="" /></div>
+                <div class="row text-center">
+                    <div class="col-4 d-grid gap-2"><input id="sol1" type="button" class="btn btn-primary btn-lg btn-addition-posee" style="font-size:5rem;" name="sol" text="" value="" /></div>
+                    <div class="col-4 d-grid gap-2"><input id="sol2" type="button" class="btn btn-primary btn-lg btn-addition-posee" style="font-size:5rem;" name="sol" text="" value="" /></div>
+                    <div class="col-4 d-grid gap-2"><input id="sol3" type="button" class="btn btn-primary btn-lg btn-addition-posee" style="font-size:5rem;" name="sol" text="" value="" /></div>
                 </div>
             </div>
-            <div class="col-3">
-                <div class="row" style="font-size:3.5rem"><div class="text-center" id="timer">01 : 00</div></div>
-                <div class="row" id="play">
-                    <button type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span>Démarrer</button></div>
-                <div class="row" style="font-size:5rem"><div id="count" class="text-center">0</div></div>
+            <div class="col-4">
+                <div class="text-end score-live" id="timer">01:00</div>
+                <div class="text-end my-2">
+                    <button id="play" type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span> Démarrer</button>
+                </div>
+                <div id="count" class="text-end score-live">0</div>
             </div>
         </div>
     </div>
@@ -87,53 +86,64 @@ $(document).ready(function(){
 
     $('input[name="sol"]').click(function() {
         countSecondes = countSecondes - secondes;
-        if (countSecondes <= 1) {
+        var sol = $(this).val();
+        testAddition(sol);
+    });
+
+    $(document).keyup(function(event) {
+        countSecondes = countSecondes - secondes;
+        if (event.keyCode === 49) {
+            var sol = $('#sol1').val();
+            testAddition(sol)
+        }
+        if (event.keyCode === 50) {
+            var sol = $('#sol2').val();
+            testAddition(sol)
+        }
+        if (event.keyCode === 51) {
+            var sol = $('#sol3').val();
+            testAddition(sol)
+        }
+    });
+
+    function testAddition(sol) {
+        if (countSecondes <= 2) {
             points = 5;
         }
-        if (countSecondes > 1 && countSecondes <=2) {
+        if (countSecondes > 2 && countSecondes <=3) {
             points = 3;
         }
-        if (countSecondes > 2 && countSecondes <=3) {
+        if (countSecondes > 3 && countSecondes <=4) {
             points = 1;
         }
-        if (countSecondes > 3) {
+        if (countSecondes > 4) {
             points = 0;
         }
-        var sol = $(this).val();
 
         if (sol == addition) {
-            $('#box').removeClass("error-border");
-            $('#box').addClass("success-border");
+            $('#addition').removeClass("error-border");
+            $('#addition').addClass("success-border");
             resetAddition();
             countSecondes = secondes;
-            count = count + points;
-            countError = 0;
-        } else {
-            $('#box').removeClass("success-border");
-            $('#box').addClass("error-border");
-            if (countError == 1) {
-                if (count > 1) {
-                    count = count - 2;
-                    countError = 2;
-                }
-            } else if (countError ==2) {
-                if (count > 4) {
-                    count = count - 5;
-                } else if (count > 1) {
-                    count = count - 2;
-                } else if (count > 0) {
-                    count--;
-                }
+            if (countError > 1) {
+                count = count + 1;
             } else {
-                if (count > 0) {
-                    count--;
-                    countError = 1;
-                }
+                count = count + points;
+            }
+            countError = 1;
+        } else {
+            $('#addition').removeClass("success-border");
+            $('#addition').addClass("error-border");
+            count = count - (countError * 4);
+            countSecondes = secondes;
+            countError ++;
+            if (count < 0) {
+                count = 0;
             }
         }
         $("#count").html(count);
         $("#score").html(count);
-    });
+    };
 
     function resetAddition() {
         randomNum1 = randomIntFromInterval(10,99);
@@ -162,14 +172,14 @@ $(document).ready(function(){
         if (addition < 11) {
             additionBidon1 = addition + 5;
         } else {
-            additionBidon1 = addition - 10 ;
+            additionBidon1 = addition - 10;
         }
 
 
         if (addition > 195 ) {
-            additionBidon2 = addition - 5 ;
+            additionBidon2 = addition - 5;
         } else {
-            additionBidon2 = addition + 10 ;
+            additionBidon2 = addition + 10;
         }
         $('#sol' + bt1).val(addition);
         $('#sol' + bt2).val(additionBidon1);
@@ -188,7 +198,7 @@ $(document).ready(function(){
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
             } else {
-                $('h5.modal-title').html("DOMMAGE ! Tu n'a pas battu ton score !");
+                $('h5.modal-title').html('DOMMAGE ! N\'abandonnes pas !');
                 $('div.modal-header').attr("class", "modal-header bg-warning");
             }
         } else {
@@ -199,13 +209,13 @@ $(document).ready(function(){
         }
 
         if (minutes < 10 && secondes < 10) {
-            $("#timer").html("0" + minutes+" : 0" + secondes);
+            $("#timer").html("0" + minutes+":0" + secondes);
         } else if(minutes < 10 && secondes >= 10) {
-            $("#timer").html("0" + minutes+" : " + secondes);
+            $("#timer").html("0" + minutes+":" + secondes);
         } else if(minutes >= 10 && secondes < 10) {
-            $("#timer").html( + minutes + " : 0" + secondes);
+            $("#timer").html( + minutes + ":0" + secondes);
         } else if(minutes >= 10 && secondes > 10){
-            $("#timer").html( + minutes + " : " + secondes);
+            $("#timer").html( + minutes + ":" + secondes);
         }
 
         if (minutes <= 0 && secondes < 10) {
@@ -229,9 +239,14 @@ $(document).ready(function(){
         if (on===true) {
             on = false;
             clearTimeout(timerID);
-            $("#addition").html("");
             $('#inputScore').val(count);
+            $('#sol1').val("");
+            $('#sol2').val("");
+            $('#sol3').val("");
+            $("#count").html("0");
             Save();
+            count=0;
+            $('#inputScore').val(count);
         }
     }
 

@@ -28,32 +28,30 @@
         <input type="hidden" value="{{ level }}" id="inputLevel">
         {% csrf_token %}
     </form>
-
-    <div class="mot-box">
+    <div class="clearfix mb-4">
         <div class="row mb-2">
-            <div class="col-6 h1 px-5">Jeux de lettres</div>
-            <div class="col-6 offset text-end h2" id="scoreActuel">Ton meilleur score est : {{ letterScore }}</div>
+            <div class="text-start h2" id="scoreActuel">Ton meilleur score est : {{ letterScore }}</div>
         </div>
-        <div class="row mb-3">
-            <div class="col-9 px-5 text-center">
-                <div class="key_up" id="letter"></div>
+        <div class="col-5 float-md-end">
+
+            <div class="text-end h1" id="timer">01 : 00</div>
+            <div class="fs-5 py-2 text-end">
+                <select class="basic-single text-start level-select py-2" onchange="window.location.href=?l=" id="dynamic-select">
+                    <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
+                    <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
+                    <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
+                    <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
+                    <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
+                    <option {% if level == '6' %} selected {% endif %} value="6">Niveau 6</option>
+                </select>
             </div>
-            <div class="col-3 px-5">
-                <div class="row" style="font-size:3.8rem"><div class="text-center" id="timer">01 : 00</div></div>
-                <div class="row">
-                    <div>
-                        <select class="custom-select h1 text-center" style="width:200px !important;" onchange="window.location.href=?l=" id="dynamic-select">
-                            <option {% if level == '1' %} selected {% endif %} value="1">Niveau 1</option>
-                            <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
-                            <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
-                            <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
-                            <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row" id="play"><button type="button" class="text-center btn btn-success btn-labeled my-2 py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span>Démarrer</button></div>
-                <div class="row" style="font-size:5rem"><div id="count" class="text-center">0</div></div>
+            <div class="text-end  my-2">
+                <button id="play" type="button" class="text-center btn btn-success btn-labeled py-2 fs-5"><span class="btn-label"><i class="bi bi-play-circle pr-2"></i></span> Démarrer</button>
             </div>
+            <div id="count" class="text-end score-live">0</div>
+        </div>
+        <div class="col-md-7 text-center float-md-start mb-3">
+            <div class="key_up" id="letter"></div>
         </div>
     </div>
 {% endif %}
@@ -69,6 +67,7 @@ $(document).ready(function(){
     var alphabet3 = "1234567890";
     var alphabet4 = ",;.?:()\!";
     var alphabet5 = "èéùàç";
+    var alphabet6 = "{}@#&%$€*+=-";
     var level = document.querySelector('#inputLevel').value;
     if (level == '2') {
         alphabet = alphabet + alphabet2;
@@ -81,6 +80,9 @@ $(document).ready(function(){
     }
     if (level == '5') {
         alphabet = alphabet + alphabet2 + alphabet3 + alphabet4 + alphabet5;
+    }
+    if (level == '6') {
+        alphabet = alphabet + alphabet2 + alphabet3 + alphabet4 + alphabet5 + alphabet6;
     }
     var randomCharacter = "";
 
@@ -141,7 +143,7 @@ $(document).ready(function(){
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
             } else {
-                $('h5.modal-title').html("DOMMAGE ! Tu n'a pas battu ton score !");
+                $('h5.modal-title').html('DOMMAGE ! N\'abandonnes pas !');
                 $('div.modal-header').attr("class", "modal-header bg-warning");
             }
 
@@ -222,5 +224,9 @@ $('#dynamic-select').bind('change', function () { // bind change event to select
         }
         return false;
     });
+$(document).ready(function() {
+    $('.basic-single').select2();
+});
 </script>
+
 {% endblock %}
