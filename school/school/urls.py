@@ -30,6 +30,7 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('account/', include(('account.urls', 'account'), namespace='account')),
     path('games/', include(('games.urls', 'games'), namespace='games')),
+    path('quiz/', include(('poll.urls', 'quiz'), namespace='quiz')),
 ]
 
 if settings.DEBUG:

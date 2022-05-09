@@ -1,0 +1,48 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+{% if quiz is not None %}
+<form action="{% url 'poll:question-create' quiz_id=quiz.id %}" method="POST" class="col-8" enctype='multipart/form-data'>
+{% else %}
+<form action="{% url 'poll:question-create' quiz_id=None %}" method="POST" class="col-8" enctype='multipart/form-data'>
+{% endif %}
+    {% csrf_token %}
+    <div class="input-group mb-2">
+        <div class="input-group-text" style="width:120px;">{{ form.question.label }}</div>
+        {{ form.question }}
+        <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="{{ form.question.help_text }}"><i class="bi bi-info-circle"></i></div>
+    </div>
+    <div class="input-group mb-2">
+        <div class="input-group-text" style="width:120px;">{{ form.description.label }}</div>
+        {{ form.description }}
+        <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="{{ form.description.help_text }}"><i class="bi bi-info-circle"></i></div>
+    </div>
+    <div class="input-group mb-2">
+        <div class="input-group-text" style="width:120px;">{{ form.question_pic.label }}</div>
+        {{ form.question_pic }}
+        <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="{{ form.question_pic.help_text }}"><i class="bi bi-info-circle"></i></div>
+    </div>
+    <img id="question_pic_preview" width="150" style="border-radius:10px; margin:5px;" />
+    <div class="mb-2">
+        <label class="container">{{ form.mandatory.label }}
+            {{ form.mandatory }}
+            <span class="checkmark"></span>
+        </label>
+    </div>
+    <div class="mb-2">
+        <label class="container">{{ form.multiple.label }}
+            {{ form.multiple }}
+            <span class="checkmark"></span>
+        </label>
+    </div>
+    <div class="mb-2">
+        <label class="container">{{ form.randomize.label }}
+            {{ form.randomize }}
+            <span class="checkmark"></span>
+        </label>
+    </div>
+    <input type="submit" value="Ajouter" class="btn btn-success">
+</form>
+{% endblock %}

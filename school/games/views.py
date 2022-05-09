@@ -412,13 +412,6 @@ def createHalo(request):
                 response = requests.get(img_url)
                 if response.status_code == 200:
                     photo = Halo()  # set any other fields, but don't commit to DB (ie. don't save())
-                    filename = urlparse(img_url).path.split('/')[-1]
-                    extension = filename.split(".")[-1].lower()
-                    name = "halo/" + slugify(request.POST['name']) + "." + extension
-                    photo.image.save(name, ContentFile(response.content), save=False)
-                    photo.image.name = name
-                    photo.name = request.POST['name']
-                    photo.save()
             else:
                 document = form.save(commit=False)
                 document.name = request.POST['name']

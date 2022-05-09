@@ -1,0 +1,527 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% load is_answer_pic %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="toast-container position-absolute p-3 start-0 fade hide" id="toastPlacement" style="top:50px; width:100%; z-index:999;">
+  <div class="alert alert-success alert-dismissible" role="alert">
+    <i class="bi bi-check-circle me-1"></i>
+      <span id="toastBody"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="hideMsg();"></button>
+  </div>
+</div>
+{% if quiz is not None %}
+<div class="row">
+    <div class="col-12">
+        <div class="h1">{{ quiz }}</div>
+    </div>
+</div>
+{% endif %}
+<div class="row clear">
+    <div class="col-3 border-end border-primary" id="questions">
+        <div class="row mb-2">
+            <h4 class="col-10">Liste des questions</h4>
+            {% if quiz is not None %}
+            <div class="col-2"><a href="{% url 'poll:question-create' quiz_id=quiz.id %}" class="btn btn-secondary float-end btn-sm" data-bs-toggle="tooltip" data-bs-original-title="Ajouter une question" data-bs-placement="left"><i class="bi bi-plus"> </i></a></div>
+            {% else %}
+            <div class="col-2"><a href="{% url 'poll:question-create' quiz_id=None %}" class="btn btn-secondary float-end btn-sm" data-bs-toggle="tooltip" data-bs-original-title="Ajouter une question" data-bs-placement="left"><i class="bi bi-plus"> </i></a></div>
+            {% endif %}
+        </div>
+        <div class="list-group list-group-numbered" type="A">
+        {% for question in questions %}
+        {% if quiz is not None %}
+        <a class="list-group-item list-group-item-action py-2" href="{% url 'poll:question-list' quiz_id=quiz.id question_id=question.id %}">
+            {{ forloop.counter }} - <span id="question_menu_{{ question.id }}">{{ question.question }}</span>
+        </a>
+        {% else %}
+        <a class="list-group-item list-group-item-action py-2" href="{% url 'poll:question-list' question_id=question.id %}">
+            {{ forloop.counter }} - <span id="question_menu_{{ question.id }}">{{ question.question }}</span>
+        </a>
+        {% endif %}
+        {% endfor %}
+        {% if quiz is not None %}
+        <a href="#" class="list-group-item list-group-item-action bg-secondary text-light" data-bs-toggle="modal" data-bs-target="#addQuestion" >Ajouter / Retirer des questions</a>
+        {% endif %}
+        </div>
+
+    </div>
+    <div class="col-9" id="answers">
+        {% if question %}
+        <div class="row">
+        <div class="col-8 border-end border-primary">
+            <div class="h5 oswald">
+                <i class="bi bi-arrow-right-short"></i>
+                <input id="question_input" name="question_input" class="border-0 bg-transparent question" type="text" value="{{ question.question }}" />
+                <a data-bs-toggle="modal" data-bs-target="#deleteQuestion" class="btn btn-sm btn-danger float-end"><i class="bi bi-trash"></i></a>
+            </div>
+            {% if question.question_pic != "" and question %}
+            <div class="text-center col-12 my-3 rounded-3" id="picQuestionDiv">
+                <img class="img-thumbnail rounded-3 p-2" src="/media/{{ question.question_pic }}" width="200" />
+                <a href="#" class="btn btn-sm btn-outline-warning edit_pic" data-bs-toggle="modal" data-bs-target="#questionPicModalAdd"><i class="bi bi-pencil"></i></a>
+                <a href="#" id="deletePicQuestion" class="btn btn-sm btn-outline-danger delete_pic"><i class="bi bi-x"></i></a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#questionPicModal" class="btn btn-sm btn-outline-secondary zoom_pic"><i class="bi bi-zoom-in"></i></a>
+
+            </div>
+            <div class="my-2 d-none" id="addBtnQuestionPic">
+                <a class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#questionPicModalAdd">Ajouter une image</a>
+            </div>
+            {% else %}
+            <div class="my-2">
+                <a class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#questionPicModalAdd">Ajouter une image</a>
+            </div>
+            {% endif %}
+            {% if question|is_answer_pic %}
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for choice in question.choices.all %}
+                <div class="col">
+                    <div class="card info-card sales-card btn {% if choice.correct %}border border-success border-5 {% else %}border border-light{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center bg-light rounded-3" style="height:25rem;">
+                                {% if choice.answer_pic %}
+                                <img class="card-img-top rounded-3 mt-2 img-fluid mh-100 cover" src="/media/{{ choice.answer_pic }}">
+                                {% else %}
+                                <i class="card-img-top rounded-3 mt-2 img-fluid mh-100 cover bi bi-eye-slash fs-1"></i>
+                                {% endif %}
+                            </div>
+                            <div class="card-title p-0 text-start">{{ choice.answer }}</div>
+                            <p class="card-text">
+                            {% if choice.answer_pic %}
+                            <button type="button" id="answerPicAdd_{{ choice.id }}" class="btn btn-sm btn-outline-warning answerPicAdd" data-id="{{ choice.id }}" data-choice="{{ choice }}"><i class="bi bi-pencil"></i></button>
+                            <a href="#" id="deletePicAnswer" data-answer="{{ choice.id }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            <a href="#" data-bs-toggle="modal" data-answer="{{ choice.id }}" data-bs-target="#answerPicModal_{{ choice.id }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-zoom-in"></i></a>
+                            {% else %}
+                            <button type="button" id="answerPicAdd_{{ choice.id }}" class="btn btn-sm btn-outline-success answerPicAdd" data-id="{{ choice.id }}" data-choice="{{ choice }}"><i class="bi bi-image"></i></button>
+                            {% endif %}
+
+                            {% if choice.correct == False %}
+                            <a href="#" id="correct_{{ choice.id }}" data-action="add" data-id="{{ choice.id }}" class="btn btn-outline-success btn-sm correct ms-3" data-bs-toggle="tooltip" data-bs-original-title="Bonne réponse" data-bs-placement="top"><i id="symbol_{{ choice.id }}" class="bi bi-check"> </i></a>
+                            {% else %}
+                            <a href="#" id="correct_{{ choice.id }}" data-action="remove" data-id="{{ choice.id }}" class="btn btn-outline-danger btn-sm correct ms-3" data-bs-toggle="tooltip" data-bs-original-title="Retirer la bonne réponse" data-bs-placement="top"><i id="symbol_{{ choice.id }}" class="bi bi-x"> </i></a>
+                            {% endif %}
+                            <a href="#" data-id="{{ choice.id }}" id="delete_{{ choice.id }}" class="btn btn-outline-danger btn-sm delete_answer" data-bs-toggle="tooltip" data-bs-original-title="Supprimer la réponse" data-bs-placement="top"><i class="bi bi-trash"> </i> </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <ol class="list-group" type="A">
+            {% for choice in question.choices.all %}
+                <li id="list_choice_{{ choice.id }}" class="list-group-item list-group-item-action oswald {% if choice.correct %}list-group-item-success{% else %}list-group-item-light{% endif %}">
+                    <input class="border-0 bg-transparent answer" data-id="{{ choice.id }}" style="width:75%" type="text" value="{{ choice.answer }}" />&nbsp;
+                    {% if choice.correct == False %}
+                        <a href="#" id="correct_{{ choice.id }}" data-action="add" data-id="{{ choice.id }}" class="float-end btn btn-outline-success btn-sm mx-1 correct" data-bs-toggle="tooltip" data-bs-original-title="Bonne réponse" data-bs-placement="left"><i id="symbol_{{ choice.id }}" class="bi bi-check"> </i></a>
+                    {% else %}
+                        <a href="#" id="correct_{{ choice.id }}" data-action="remove" data-id="{{ choice.id }}" class="float-end btn btn-outline-danger btn-sm mx-1 correct" data-bs-toggle="tooltip" data-bs-original-title="Retirer la bonne réponse" data-bs-placement="left"><i id="symbol_{{ choice.id }}" class="bi bi-x"> </i></a>
+                    {% endif %}
+                    <a href="#" data-id="{{ choice.id }}" id="delete_{{ choice.id }}" class="float-end btn btn-outline-danger btn-sm mx-1 delete_answer" data-bs-toggle="tooltip" data-bs-original-title="Supprimer la réponse" data-bs-placement="left"><i class="bi bi-trash"> </i> </a>
+                </li>
+            {% endfor %}
+            </ol>
+            {% endif %}
+            <a href="{% url 'poll:answer-create' question_id=question.id %}" class="btn btn-secondary float-start mt-2" data-bs-toggle="tooltip" data-bs-original-title="Ajouter une réponse" data-bs-placement="right"><i class="bi bi-plus"> </i></a>
+        </div>
+        <div class="col-4">
+            <h4 class="">Options</h4>
+            <div class="mb-2">
+                <label class="container">{{ formQuestion.multiple.label }}
+                    {{ formQuestion.multiple }}
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div class="mb-2">
+                <label class="container">{{ formQuestion.mandatory.label }}
+                    {{ formQuestion.mandatory }}
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div class="mb-2">
+                <label class="container">{{ formQuestion.randomize.label }}
+                    {{ formQuestion.randomize }}
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- MODAL POUR AJOUTER DE NOUVELLES QUESTIONS AU QUIZ -->
+<div class="modal fade" id="addQuestion" aria-hidden="true" style="z-index:1051;">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <form action="{% url 'poll:question-add' quiz_id=quiz.id %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-header bg-secondary text-light">
+                <h5 class="modal-title" id="addQuestionTitle">Associer / dissocier de nouvelles questions !</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ formQuiz.questions }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-success">Valider</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POUR CONFIRMER LA SUPPRESSION D'UNE QUESTION -->
+<div class="modal fade" id="deleteQuestion" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-light">
+        <h5 class="modal-title" id="deleteQuestionTitle">Confirmation de suppression !</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">Tu es sur de vouloir supprimer cette question ?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          {% if quiz is not None %}
+          {% if question is not None %}
+            <a href="{% url 'poll:question-delete' quiz_id=quiz.id question_id=question.id %}" class="btn btn-danger">Supprimer</a>
+          {% else %}
+            <a href="{% url 'poll:question-delete' quiz_id=quiz.id question_id=None %}" class="btn btn-danger">Supprimer</a>
+          {% endif %}
+          {% else %}
+          {% if question is not None %}
+            <a href="{% url 'poll:question-delete' quiz_id=None question_id=question.id %}" class="btn btn-danger">Supprimer</a>
+          {% else %}
+            <a href="{% url 'poll:question-delete' quiz_id=None question_id=None %}" class="btn btn-danger">Supprimer</a>
+          {% endif %}
+          {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POUR ZOOMER SUR L'ILLUSTRATION DE LA QUESTION -->
+<div class="modal fade" id="questionPicModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Illustration</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          {% if question.question_pic != "" and question %}
+            <img class="img-thumbnail rounded-3 p-2" src="/media/{{ question.question_pic }}" width="auto" />
+          {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POUR ZOOMER SUR LES ILLLUSTRATIONS DES REPONSES -->
+{% for choice in question.choices.all %}
+{% if choice.answer_pic and choice.answer_pic != "" %}
+<div class="modal fade" id="answerPicModal_{{ choice.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelAnswer_{{ choice.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabelAnswer_{{ choice.id }}">{{ choice.answer }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body align-center text-center">
+          <img class="img-thumbnail rounded-3 p-2 align-center text-center" src="/media/{{ choice.answer_pic }}" width="auto" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<!-- MODAL POUR AJOUTER UNE IMAGE SUR LA QUESTION -->
+<div class="modal fade" id="questionPicModalAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            {% if question %}
+            <form action="{% url 'poll:question-add-pic' question_id=question.id %}" method="POST" enctype="multipart/form-data">
+            {% else %}
+            <form action="{% url 'poll:question-add-pic' question_id=None %}" method="POST" enctype="multipart/form-data">
+            {% endif %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabelAdd">{% if question.question_pic %}Modifier l'illustration{% else %}Ajouter une illustration{% endif %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-text">Illustration</div>
+                        <!-- <input type="file" name="question_pic" class="form-control" oninput="question_pic_preview.src = window.URL.createObjectURL(this.files[0])" accept="image/*" id="id_question_pic"> -->
+                        {{ formQuestionPic.question_pic }}
+                        {% csrf_token %}
+                    <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Ajouter une illustration"><i class="bi bi-info-circle"></i></div>
+                </div>
+                <img id="question_pic_preview" width="100%; max-width:250px; max-height:300px;" style="border-radius:10px; margin:5px;" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                {% if question.question_pic %}
+                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="add_pic_button_modal">Editer</button>
+                {% else %}
+                    <button type="submit" class="btn btn-warning" data-bs-dismiss="modal" id="edit_pic_button_modal">Ajouter</button>
+                {% endif %}
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL POUR AJOUTER UNE IMAGE SUR LA REPONSE -->
+<div class="modal fade" id="answerPicModalAdd" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            {% if question %}
+            <form id="answerPicModalForm" action="{% url 'poll:answer-edit-pic' question_id=question.id answer_id=question.id %}" method="POST" enctype="multipart/form-data">
+            {% else %}
+            <form id="answerPicModalForm" action="{% url 'poll:answer-edit-pic' question_id=None answer_id=None %}" method="POST" enctype="multipart/form-data">
+            {% endif %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabelAddAnswer"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-2">
+                    <div class="input-group-text">Illustration</div>
+                        {{ formAnswerPic.answer_pic }}
+                        {% csrf_token %}
+                    <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Ajouter une illustration"><i class="bi bi-info-circle"></i></div>
+                </div>
+                <img id="answer_pic_preview" width="100%; max-width:250px; max-height:300px;" style="border-radius:10px; margin:5px;" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                {% if question.question_pic %}
+                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal" id="add_pic_button_modal">Editer</button>
+                {% else %}
+                    <button type="submit" class="btn btn-warning" data-bs-dismiss="modal" id="edit_pic_button_modal">Ajouter</button>
+                {% endif %}
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    $(document).ready(function(){
+
+        // MODIFICATION DU TITRE DE LA QUESTION
+        $('#question_input').change(function() {
+            console.log($(this).val());
+            $.ajax({
+                type: 'POST',
+                url:'/quiz/question/edit/{{ question.id }}',
+                data:{
+                    question_input:$(this).val(),
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                    },
+                    success: function (data){
+                        $('#question_input').val(data);
+                        $('#question_menu_{{ question.id }}').html(data);
+                        toast_ajax('Titre de la question modifié.');
+                    }
+            })
+        })
+
+        // MODIFICATION DE L'ILLUSTRATION DE LA QUESTION
+        /*
+        $('#add_pic_button_modal').click(function() {
+            $.ajax({
+                type: 'POST',
+                contentType:'multipart/form-data',
+                url:'/quiz/question_pic/edit',
+                data:{
+                    question_input:{{ question.id }},
+                    question_pic:$('#id_question_pic').files[0],
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                    },
+                    success: function (data){
+                        // $('#question_input').val(data);
+                        // $('#question_menu_{{ question.id }}').html(data);
+                        // $('#img_thumbnail').attr('src','/media/' + window.URL.createObjectURL($('#id_question_pic').files[0]));
+                        // $('#img_thumbnail').removeClass('hide');
+                        // $('#img_thumbnail').addClass('show');
+                        toast_ajax('Illustration de la question modifiée.');
+                    }
+            })
+        })
+        */
+
+        // SUPPRESSION DE L'ILLUSTRATION DE LA QUESTION
+        $('#deletePicQuestion').click(function() {
+            $.ajax({
+                type: 'POST',
+                url:'/quiz/question/delete/pic',
+                data:{
+                    question_input:{{ question.id }},
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                    },
+                    success: function (data){
+                        $('#picQuestionDiv').addClass('d-none');
+                        $('#addBtnQuestionPic').removeClass('d-none');
+                        toast_ajax('Illustration supprimée.');
+                    }
+            })
+        })
+
+        // ACTIVE/DESACTIVE OPTION MULTIPLE QUESTION
+        $('#id_multiple').change(function() {
+            checked = $(this).prop("checked");
+            $.ajax({
+                type: 'GET',
+                url:'/quiz/question/edit/{{ question.id }}/' + checked + '/multiple',
+                data:{
+                    },
+                    success: function (data){
+                        console.log(data);
+                        if (data == "True") {
+                            toast_ajax('Plusieurs réponses possibles.');
+                        } else {
+                            toast_ajax('Une seule réponse possible.');
+                        }
+                    }
+            })
+        })
+
+        // ACTIVE/DESACTIVE OPTION OBLIGATOIRE QUESTION
+        $('#id_mandatory').change(function() {
+            checked = $(this).prop("checked");
+            $.ajax({
+                type: 'GET',
+                url:'/quiz/question/edit/{{ question.id }}/' + checked + '/mandatory',
+                data:{
+                    },
+                    success: function (data){
+                        console.log(data);
+                        if (data == "True") {
+                            toast_ajax('Question obligatoire.');
+                        } else {
+                            toast_ajax('Question optionnelle.');
+                        }
+                    }
+            })
+        })
+
+        // ACTIVE/DESACTIVE OPTION ALEATOIRE QUESTION
+        $('#id_randomize').change(function() {
+            checked = $(this).prop("checked");
+            $.ajax({
+                type: 'GET',
+                url:'/quiz/question/edit/{{ question.id }}/' + checked + '/randomize',
+                data:{
+                    },
+                    success: function (data){
+                        console.log(data);
+                        if (data == "True") {
+                            toast_ajax('Réponses aléatoires.');
+                        } else {
+                            toast_ajax('Réponses affichées dans l\'ordre.');
+                        }
+                    }
+            })
+        })
+
+        // MODIFICATION DE LA REPONSE CORRECTE (UNE OU PLUSIEURS SELON LES PARAMETRES DE LA QUESTION
+        $('.correct').click(function() {
+            choice_id = $(this).attr('data-id');
+            choice_action = $(this).attr('data-action');
+            console.log(choice_id);
+            $.ajax({
+                type: 'GET',
+                url:'/quiz/answer/edit/correct/{{ question.id }}/' + choice_id,
+                data:{
+                    },
+                    success: function (data){
+                        if (choice_action == 'add') {
+                            $('#correct_' + choice_id).addClass('btn-outline-danger');
+                            $('#correct_' + choice_id).removeClass('btn-outline-success');
+                            $('#list_choice_' + choice_id).addClass('list-group-item-success');
+                            $('#list_choice_' + choice_id).removeClass('list-group-item-light');
+                            $('#correct_' + choice_id).attr('data-action', 'remove');
+                            $('#symbol_' + choice_id).addClass('bi-x');
+                            $('#symbol_' + choice_id).removeClass('bi-check');
+                            toast_ajax('Réponse correcte activée.');
+                        } else {
+                            $('#correct_' + choice_id).addClass('btn-outline-success');
+                            $('#correct_' + choice_id).removeClass('btn-outline-danger');
+                            $('#list_choice_' + choice_id).addClass('list-group-item-light');
+                            $('#list_choice_' + choice_id).removeClass('list-group-item-success');
+                            $('#correct_' + choice_id).attr('data-action', 'add');
+                            $('#symbol_' + choice_id).addClass('bi-check');
+                            $('#symbol_' + choice_id).removeClass('bi-x');
+                            toast_ajax('Réponse correcte retirée.');
+                        }
+                    }
+            })
+        })
+
+        // SUPPRESSION DE LA RESPONSE DE LA REPONSE CORRECTE (UNE OU PLUSIEURS SELON LES PARAMETRES DE LA QUESTION
+        $('.delete_answer').click(function() {
+            choice_id = $(this).attr('data-id');
+            $.ajax({
+                type: 'POST',
+                url:'/quiz/answer/delete',
+                data:{
+                    choice_input:$(this).attr('data-id'),
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                    },
+                    success: function (data){
+                        $('#list_choice_' + choice_id).addClass('d-none');
+                        toast_ajax('Réponse supprimée.');
+                    }
+            })
+        })
+
+        // AFFICHAGE MODAL PERSONNALISE AVEC ID REPONSE POUR AJOUT IMAGE
+        $('.answerPicAdd').click(function() {
+            choice_id = $(this).attr('data-id');
+            choice = $(this).attr('data-choice');
+            url = '/quiz/answer/edit/pic/{{ question.id }}/' + choice_id;
+            $('#answerPicModalAdd').modal('toggle');
+            $('#answerPicModalForm').attr('action',url);
+            $('#staticBackdropLabelAddAnswer').html('Illlustration pour la réponse : ' + choice);
+        })
+
+
+        // MODIFICATION DE L'INTITULE DE LA REPONSE
+        $('.answer').change(function() {
+            answer_text = $(this).val();
+            answer_id = $(this).attr('data-id');
+            $.ajax({
+                type: 'POST',
+                url:'/quiz/answer/edit/text/' + answer_id,
+                data:{
+                    answer_input:answer_text,
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                    },
+                    success: function (data){
+                        $(this).val(data);
+                        toast_ajax('Intitulé de la réponse modifiée avec succès');
+                    }
+            })
+        })
+    })
+    function toast_ajax(text) {
+        $('#toastPlacement').addClass('show');
+        $('#toastPlacement').removeClass('hide');
+        $('#toastBody').html(text);
+        function hideMsg () {
+          $('#toastPlacement').fadeOut();
+          $('#toastPlacement').removeClass('show');
+        }
+        setTimeout(hideMsg,3000);
+    }
+</script>
+{% endblock %}

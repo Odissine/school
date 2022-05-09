@@ -1,0 +1,134 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% load is_answer_pic %}
+{% load show_letter %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="row clear">
+    <div class="col-12" id="quizs">
+        <div class="row mb-2">
+            <h4 class="col-12">{{ quiz.nom }}</h4>
+        </div>
+        <div class="card">
+            <div class="card-body p-0">
+                {% for question in quiz.questions.all %}
+                <fieldset class="p-4" style="max-width:720px; margin:0 auto;">
+                    <question>
+                        {{ forloop.counter }} - {{ question.question }}
+                        {% if question.question_pic != "" and question %}
+                        <div class="col-12 my-3 rounded-3" id="picQuestionDiv">
+                            <img class="img-thumbnail rounded-3 p-2" src="/media/{{ question.question_pic }}" width="200" />
+                        </div>
+                        {% endif %}
+                    </question>
+                    <reponses class="d-grid gap-4" style="display:block !important; ">
+                        {% if question|is_answer_pic %}
+                            {% for reponse in question.choices.all %}
+                            <input type="checkbox" hidden value="{{ reponse.id }}" name="reponse" id="reponse_{{ reponse.id }}" />
+                            <reponse style="width:calc(50% - 8px + 4px); text-align:left !important;" class="col-6 mb-2 btn btn-reponse reponse" data-id="reponse_{{ reponse.id }}">
+                                <div class="d-flex align-items-center rounded-3">
+                                {% if reponse.answer_pic %}
+                                    <img class="card-img-top rounded-3 img-fluid mh-100 cover text-center" style="" src="/media/{{ reponse.answer_pic }}">
+                                {% else %}
+                                    <i class="card-img-top rounded-3 mt-2 img-fluid mh-100 cover bi bi-eye-slash fs-1 text-center"></i>
+                                {% endif %}
+                                </div>
+                                <div style="display:inline-block">
+                                    <span class="border border-secondary p-0 px-2 rounded-3 letter-reponse-pic bg-light text-secondary" style="">{{ forloop.counter0|show_letter }}</span>
+                                    <span class="">{{ reponse.answer }}</span>
+                                </div>
+                            </reponse>
+                            {% endfor %}
+                        {% else %}
+                            {% for reponse in question.choices.all %}
+                            <reponse style="width:calc(50% - 8px + 4px);" class="col-6 mb-2">
+                                <div class="d-flex align-items-center rounded-3 border btn btn-outline-reponse p-2 reponse mb-2">
+                                    <span class="border border-secondary p-0 px-2 rounded-3 letter-reponse bg-light text-secondary">{{ forloop.counter0|show_letter }}</span>{{ reponse.answer }}
+                                </div>
+                            </reponse>
+                            {% endfor %}
+                        {% endif %}
+                    </reponses>
+                    <link class="" style="display: block;">
+
+                    {% if not forloop.first %}
+                    <a class="btn btn-secondary prev">Précédente</a>
+                    {% endif %}
+
+                    {% if not forloop.last %}
+                    <a class="btn btn-secondary next">Suivante</a>
+                    {% endif %}
+
+                    {% if forloop.last %}
+                    <a class="btn btn-success next">Terminé !</a>
+                    {% endif %}
+                    </link>
+                </fieldset>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        const boxes = document.querySelectorAll('reponse');
+        boxes.forEach(function(userItem) {
+            // userItem.style.height = userItem.clientWidth+"px";
+            // console.log(userItem.clientWidth);
+        });
+    });
+    $(".reponse").click(function() {
+        var $this = $(this);
+        childrenPic = $this.find("span.letter-reponse-pic");
+        children = $this.find("span.letter-reponse");
+        console.log(children);
+        if ($this.hasClass("check-reponse")) {
+            $this.removeClass("check-reponse");
+            children.removeClass("bg-secondary text-light");
+            children.addClass("bg-light text-secondary");
+            childrenPic.removeClass("bg-secondary text-light");
+            childrenPic.addClass("bg-light text-secondary");
+        } else {
+            reponse_id = $this.data("id");
+            
+            $this.addClass("check-reponse-blink");
+            setTimeout(function() {
+                $this.removeClass("check-reponse-blink");
+            }, 100);
+            setTimeout(function() {
+                $this.addClass("check-reponse-blink");
+            }, 200);
+            setTimeout(function() {
+                $this.removeClass("check-reponse-blink");
+            }, 300);
+            setTimeout(function() {
+                $this.addClass("check-reponse");
+                children.removeClass("bg-light text-secondary");
+                children.addClass("bg-secondary text-light");
+                childrenPic.removeClass("bg-light text-secondary");
+                childrenPic.addClass("bg-secondary text-light");
+            }, 400);
+        }
+    });
+
+    $(".next").click(function() {
+        current_fs = $(this).parent();
+        console.log(current_fs);
+        next_fs = $(this).parent().next();
+        next_fs.hide();
+        current_fs.hide("slide", { direction: "up" }, function() {
+            next_fs.show("slide", { direction: "down" });
+        });
+    });
+
+    $(".prev").click(function(){
+        current_fs = $(this).parent();
+        previous_fs = $(this).parent().prev();
+        current_fs.hide("slide", { direction: "down" }, function() {
+            previous_fs.show("slide", { direction: "up" });
+        });
+    });
+
+</script>
+{% endblock %}

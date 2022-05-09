@@ -1,5 +1,6 @@
 import os
 import warnings
+from django.utils.translation import ugettext_lazy as _
 from os.path import dirname
 
 warnings.simplefilter('error', DeprecationWarning)
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     'account',
     'main',
     'games',
+    'poll',
 ]
 
 MIDDLEWARE = [
@@ -66,9 +68,9 @@ WSGI_APPLICATION = 'school.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'cyril.henry@gmail.com'
-DEFAULT_FROM_EMAIL = 'cyril.henry@gmail.com'
-EMAIL_HOST_PASSWORD = 'Alix_311212'
+EMAIL_HOST_USER = 'support@endtg.com'
+DEFAULT_FROM_EMAIL = 'support@endtg.com'
+EMAIL_HOST_PASSWORD = 'Azerty2+'
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True

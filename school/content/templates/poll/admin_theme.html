@@ -1,0 +1,23 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="row clear">
+    <div class="col-8 border-end border-primary" id="quizs">
+        <div class="row mb-2">
+            <h4 class="col-10">Liste des thèmes</h4>
+            <div class="col-2"><a href="{% url 'poll:theme-create' %}" class="btn btn-secondary float-end btn-sm" data-bs-toggle="tooltip" data-bs-original-title="Ajouter un thème" data-bs-placement="left"><i class="bi bi-plus"> </i></a></div>
+        </div>
+        <div class="list-group list-group-numbered" type="1">
+        {% for theme in themes %}
+            <div class="list-group-item">
+                {{ forloop.counter }} - <span id="theme_menu_{{ theme.id }}">{{ theme.nom }}</span>
+                <a href="{% url 'poll:theme-delete' theme_id=theme.id %}" class="btn btn-sm btn-danger float-end"><i class="bi bi-trash"></i></a>
+                <a href="{% url 'poll:theme-edit' theme_id=theme.id %}" class="btn btn-sm btn-warning float-end mx-1"><i class="bi bi-pencil"></i></a>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
