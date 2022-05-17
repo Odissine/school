@@ -1,0 +1,20 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="row clear">
+    <div class="col-12" id="quizs">
+        {% if error %}
+        <div class="row mb-2">
+            <h4 class="col-12">Tu as déjà répondu  :)</h4>
+        </div>
+        {% else %}
+        <div class="row mb-2">
+            <h4 class="col-12">Merci d'avoir répondu au quiz !</h4>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

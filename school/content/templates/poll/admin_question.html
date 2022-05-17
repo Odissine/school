@@ -4,7 +4,8 @@
 {% load is_answer_pic %}
 {% block title %}School @ ENDTG - {{ title }}{% endblock %}
 {% block content %}
-<div class="toast-container position-absolute p-3 start-0 fade hide" id="toastPlacement" style="top:50px; width:100%; z-index:999;">
+<div class="toast-container position-absolute p-3 start-0 fade hide" id="toastPlacement" style="top:50px; width:100%; z-index:999;"
+     xmlns="http://www.w3.org/1999/html">
   <div class="alert alert-success alert-dismissible" role="alert">
     <i class="bi bi-check-circle me-1"></i>
       <span id="toastBody"></span>
@@ -54,6 +55,9 @@
                 <i class="bi bi-arrow-right-short"></i>
                 <input id="question_input" name="question_input" class="border-0 bg-transparent question" type="text" value="{{ question.question }}" />
                 <a data-bs-toggle="modal" data-bs-target="#deleteQuestion" class="btn btn-sm btn-danger float-end"><i class="bi bi-trash"></i></a>
+            </div>
+            <div class="h5 oswald">
+                <textarea cols="100%" id="description_input" name="description_input" class="border-0 bg-transparent question">{{ question.description }}</textarea>
             </div>
             {% if question.question_pic != "" and question %}
             <div class="text-center col-12 my-3 rounded-3" id="picQuestionDiv">
@@ -153,7 +157,11 @@
 <div class="modal fade" id="addQuestion" aria-hidden="true" style="z-index:1051;">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
+        {% if quiz %}
         <form action="{% url 'poll:question-add' quiz_id=quiz.id %}" method="POST">
+        {% else %}
+        <form action="{% url 'poll:question-add' quiz_id=None %}" method="POST">
+        {% endif %}
             {% csrf_token %}
             <div class="modal-header bg-secondary text-light">
                 <h5 class="modal-title" id="addQuestionTitle">Associer / dissocier de nouvelles questions !</h5>
@@ -331,6 +339,23 @@
                         $('#question_input').val(data);
                         $('#question_menu_{{ question.id }}').html(data);
                         toast_ajax('Titre de la question modifié.');
+                    }
+            })
+        })
+
+
+        $('#description_input').change(function() {
+            console.log($(this).val());
+            $.ajax({
+                type: 'POST',
+                url:'/quiz/question/edit/{{ question.id }}',
+                data:{
+                    description_input:$(this).val(),
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                    },
+                    success: function (data){
+                        $('#description_input').val(data);
+                        toast_ajax('Description de la question modifiée.');
                     }
             })
         })

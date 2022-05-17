@@ -1384,7 +1384,8 @@ fieldset:not(:first-of-type) {
     border-color: #CCC;
 }
 .btn-reponse:hover {
-    background-color: #E5E8E8;
+    /* background-color: #E5E8E8; */
+    background-color: #94C493;
 }
 
 .btn-outline-reponse {
@@ -1399,7 +1400,8 @@ fieldset:not(:first-of-type) {
 .check-reponse {
     border-color:black !important;
     border-size:3px;
-    background-color: #E5E8E8;
+    /* background-color: #E5E8E8; */
+    background-color: #94C493;
 }
 .check-reponse-letter {
     border-color:black !important;
@@ -1439,4 +1441,8 @@ fieldset:not(:first-of-type) {
     flex-direction: column;
     text-align: center;
     margin-right:10px;
+}
+
+.card-no-bg {
+    background:none !important;
 }

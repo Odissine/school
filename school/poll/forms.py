@@ -1,5 +1,6 @@
 from .models import *
 from django import forms
+from django.forms import modelform_factory
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 from django.forms.formsets import BaseFormSet
 from django.core.exceptions import ValidationError

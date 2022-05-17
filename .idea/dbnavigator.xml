@@ -27,16 +27,15 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="9827fadb-0f59-4255-b81d-2a5f88f8c48c">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
-      <console name="Sqlite" type="STANDARD" schema="" session="Main" />
+    <connection id="351684e7-5165-439d-afd6-6ad8e0232519">
+      <console name="Sql_School" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="9827fadb-0f59-4255-b81d-2a5f88f8c48c" />
+    <connection id="351684e7-5165-439d-afd6-6ad8e0232519" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -64,9 +63,9 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="9827fadb-0f59-4255-b81d-2a5f88f8c48c" active="true">
+      <connection id="351684e7-5165-439d-afd6-6ad8e0232519" active="true">
         <database>
-          <name value="Sqlite" />
+          <name value="Sql_School" />
           <description value="" />
           <database-type value="SQLITE" />
           <config-type value="BASIC" />

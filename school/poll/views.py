@@ -10,6 +10,7 @@ from django.urls.base import reverse
 from django.contrib import messages
 from django.forms.formsets import formset_factory
 from django.db import IntegrityError, transaction
+from django.contrib.auth.decorators import user_passes_test, login_required
 
 
 # ##########################################################################################
@@ -35,6 +36,60 @@ def show_quiz(request, quiz_id):
         'quiz': quiz,
     }
     return render(request, "poll/show_quiz.html", context)
+
+
+@login_required()
+def answer_quiz(request):
+    context = {}
+
+    if request.method == 'POST':
+        # QuestionFormSet = modelform_factory(Question)
+        # quiz_id = request.POST.get('id_quiz')
+        # form = QuestionFormSet(request.POST)
+        # instances = form.save(commit=False)
+        # for instance in instances:
+        #     instance.save()
+        quiz = Quiz.objects.get(pk=request.POST.get('id_quiz'))
+        player = request.user
+        quiz_player = QuizInstance.objects.filter(player=player, quiz=quiz)
+        # for rep in request.POST.getlist("reponse"):
+        #     question = Question.objects.get(choices=rep)
+        # for question in quiz.questions.all():
+            # print("Q", question.id)
+            # pass
+            # for reponse in question.choices.all():
+                # print("R", reponse.id)
+                # pass
+
+        if len(quiz_player) == 0:
+            # Creation de l'instance
+            quiz_instance = QuizInstance.objects.create(player=player, quiz=quiz)
+
+            # Question ajouté a l'instance pour l'utilisateur
+            for question in quiz.questions.all():
+                print(question)
+                user_reponse = UserResponse.objects.create(quiz_instance=quiz_instance, question=question)
+
+                for rep in request.POST.getlist("reponse"):
+                    answer = Answer.objects.get(pk=rep)
+                    if answer in question.choices.all():
+                        print(answer)
+                        user_reponse.response.add(answer)
+
+                        if answer.correct is True:
+                            quiz_instance.score += 1
+                        else:
+                            quiz_instance.score -= 1
+                        print(quiz_instance.score)
+                        quiz_instance.save()
+
+            print("FINAL", quiz_instance.score)
+
+        else:
+            context = {
+                'error': True,
+            }
+    return render(request, "poll/answer_quiz.html", context)
 
 
 # ADMIN LISTING ##################################################################################
@@ -129,12 +184,10 @@ def question_create(request, quiz_id=None):
         form = QuestionForm()
         previous_page = reverse('poll:quiz-list')
         formAction = 'poll:question-create'
-        print(quiz_id)
-        if quiz_id is not None:
+        try:
             quiz = Quiz.objects.get(pk=quiz_id)
-        else:
+        except:
             quiz = None
-        print(quiz)
         if request.method == 'POST':
             form = QuestionForm(request.POST, request.FILES)
             form_answer = AnswerForm(request.POST, request.FILES)
@@ -175,9 +228,14 @@ def question_create(request, quiz_id=None):
 def question_edit(request, question_id):
     if request.method == 'POST':
         question_input = request.POST.get('question_input')
+        description_input = request.POST.get('description_input')
         question = Question.objects.get(pk=question_id)
         if question_input is not None:
             question.question = question_input
+            question.save()
+
+        if description_input is not None:
+            question.description = description_input
             question.save()
 
         return HttpResponse(question)

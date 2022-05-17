@@ -13,6 +13,7 @@ urlpatterns = [
     # SHOW
     path('show/list', show_list, name='show-list'),
     path('show/quiz/<quiz_id>', show_quiz, name='show-quiz'),
+    path('answer/quiz', answer_quiz, name='answer-quiz'),
 
     # QUIZ
     path('quiz/create', quiz_create, name='quiz-create'),

@@ -93,5 +93,5 @@ class UserResponse(models.Model):
     quiz_instance = models.ForeignKey(QuizInstance, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     response = models.ManyToManyField(Answer, related_name="UserResponses")
-    time_taken = models.DateTimeField(auto_now_add=True)
-    time_taken_delta = models.DateTimeField(blank=True)
+    # time_taken = models.DateTimeField(auto_now_add=True)
+    # time_taken_delta = models.DateTimeField(blank=True)
