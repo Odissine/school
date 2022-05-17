@@ -66,6 +66,9 @@ class Quiz(models.Model):
     def get_question(self, id):
         return self.questions.all()[id]
 
+    def get_questions(self):
+        return "\n".join([question.question for question in self.questions.all()])
+
 
 class QuestionOrder(models.Model):
     order = models.IntegerField()
