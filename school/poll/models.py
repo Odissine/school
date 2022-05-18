@@ -54,7 +54,7 @@ class Quiz(models.Model):
         (3, 'Close'),
     )
     nom = models.CharField(max_length=200, null=False)
-    theme = models.ForeignKey(Theme, null=False, on_delete=models.CASCADE)
+    theme = models.ForeignKey(Theme, null=True, on_delete=models.CASCADE)
     questions = models.ManyToManyField(Question, related_name='Quizs')
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     published = models.DateTimeField(null=True)
