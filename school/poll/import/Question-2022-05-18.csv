@@ -1,0 +1,21 @@
+choices,id,question,description,question_pic,mandatory,multiple,randomize
+"Reponse A,Reponse B,Reponse C,Reponse D,Reponse E,Reponse F",11,Test,Toto,poll/Delorean24x30.jpeg,1,0,1
+"Pas grand choses,Plein de chose,Rien du tout,Encore et encore ;)",12,Quoi Quoi ?,Aidez vous du script joint.,poll/Capture_decran_2022-04-07_a_14.32.50_1zvO9T1.png,1,1,1
+"Oui,Non",13,T'as aimé ?,C'est important,,1,0,1
+,14,Question précise !,Question en lien avec le Quiz,poll/197_parquet_medium_color_texture-seamless.jpg,1,0,0
+,16,Autre question précise ;),azezaeaz,poll/viceVersa.jpg,1,0,0
+",,,",17,Quel groupe de blocs permet de centrer le sprite ?,"Au lancement du programme, quel bloc de mouvement permet de centrer le sprite sur la zone d'affichage de Scratch ?",poll/Capture_decran_2022-05-17_a_09.19.03.png,1,0,1
+",,,,",18,Quel bloc permet de réaliser l'animation ci-contre ?,Attention on souhaite animer le sprite en le déplaçant de gauche à droite !,poll/AnimationScratch.gif,1,1,1
+",,,",19,Quel groupe de bloc permet de déplacer le sprite vers la droite ?,"Pour information, le sprite est déjà orienté vers la droite ...",,1,1,1
+"0,1,10,5,11,Bonjour,Il ne va rien dire ...",20,Que va-t-on faire dire au sprite avec le bloc de code ci-contre ?,En cliquant sur la barre d'espace que va dire l'ordinateur ?,poll/Capture_decran_2022-05-17_a_14.29.20.png,1,1,1
+",,,",21,Quel bloc permet de positionner le rond comme sur l'illustration ?,Le rond est positionné en haut à droite de l'écran ... quel bloc permet de réaliser cette action ?,poll/Capture_decran_2022-05-17_a_14.48.19.png,1,0,1
+"X,Y,Z,A",22,Quel axe permet de déplacer un sprite de la gauche vers la droite ?,,,1,0,1
+",,,,,",23,Quel blocs permets de faire descendre le sprite ?,"Parmis les réponses ci-dessous, une seule permet de le faire le sprite !",,1,1,1
+",,,,,,",24,Quel groupe de bloc permet de réaliser l'animation ci-contre ?,Attention ... je parle bien d'une ANIMATION ... !,poll/AnimRondDroite.gif,1,1,1
+",,,,",25,Quel bout de code permet de faire sauter le sprite ci-contre ?,Je parle ici aussi d'une anomation ... fluide !,poll/SautSprite.gif,1,1,1
+"Mon score sera de 10,Mon score restera à 0,Mon score sera de 1,L'étoile sera supprimé après avoir touché le sprite orange (Gobo),Le sprite orange (Gobo) sera supprimé après avoir touché l'étoile,L'étoile tombe sans rien faire d'autre",26,Que va-t-il se passer si je clique sur le drapeau ?,Analyser bien les deux évènements ...,poll/Capture_decran_2022-05-17_a_16.11.05.png,1,0,1
+",,,,",27,Quel bloc permet en appuyant sur la barre d'espace du clavier de faire avancer le joueur ?,"Attention, regardez bien les évènements ...",poll/Capture_decran_2022-05-17_a_16.18.05.png,1,1,1
+"Oui,Non",28,"Si j'appuie sur la barre d'espace ... le personnage va-t-il dire ""Bonjour !"" ?",,poll/Capture_decran_2022-05-17_a_16.22.24.png,1,0,0
+",,",29,Si je souhaite faire avancer mon personnage de 10 pas ... quel bloc vais-je utiliser ?,,,1,1,1
+"OUI,NON",30,Le groupe de bloc ci-contre permet-il de faire avancer mon personnage de la gauche vers la droite,,poll/Capture_decran_2022-05-17_a_16.27.31.png,1,0,0
+"Variable,Nombre,réponse",31,Comment s'appelle ici ma variable ?,Regardez bien l'enchainement des blocs ...,poll/Capture_decran_2022-05-17_a_16.32.44.png,1,0,1
