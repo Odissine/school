@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import *
 from import_export import resources
 from import_export.admin import ImportMixin, ImportExportModelAdmin
+from import_export.widgets import ManyToManyWidget
 
 
 class AnswerResource(resources.ModelResource):
@@ -12,6 +13,7 @@ class AnswerResource(resources.ModelResource):
 class QuestionResource(resources.ModelResource):
     class Meta:
         model = Question
+        widget = ManyToManyWidget(Answer, field='answer')
 
 
 class QuizResource(resources.ModelResource):
