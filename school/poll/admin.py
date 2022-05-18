@@ -1,24 +1,30 @@
 from django.contrib import admin
 from .models import *
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ImportMixin, ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget
 
 
+# RESOURCES
 class AnswerResource(resources.ModelResource):
     class Meta:
         model = Answer
 
 
 class QuestionResource(resources.ModelResource):
+    choices = fields.Field(column_name='choices', attribute='choices', widget=ManyToManyWidget(Answer, field='answer'))
+
     class Meta:
         model = Question
-        widget = ManyToManyWidget(Answer, field='answer')
+        fields = ('id', 'question', 'description', 'question_pic', 'mandatory', 'multiple', 'randomize', 'choices')
 
 
 class QuizResource(resources.ModelResource):
+    questions = fields.Field(column_name='questions', attribute='questions', widget=ManyToManyWidget(Question, field='question'))
+
     class Meta:
         model = Quiz
+        fields = ["id", "nom", "questions", "status", "published", "date_added", "date_modified"]
 
 
 class QuestionOrderResource(resources.ModelResource):
@@ -26,33 +32,35 @@ class QuestionOrderResource(resources.ModelResource):
         model = QuestionOrder
 
 
-@admin.register(Answer)
+# ADMIN
 class AnswerAdmin(ImportExportModelAdmin):
     ordering = ['id']
     list_display = ('id', 'answer', 'answer_pic', 'correct')
     resource_class = AnswerResource
 
 
-@admin.register(Question)
 class QuestionAdmin(ImportExportModelAdmin):
     ordering = ['id']
     list_display = ('id', 'question', 'description', 'question_pic', 'mandatory', 'multiple', 'randomize', 'get_choices')
     resource_class = QuestionResource
 
 
-@admin.register(Quiz)
 class QuizAdmin(ImportExportModelAdmin):
     ordering = ['id']
     list_display = ("id", "nom", "get_questions", "status", "published", "date_added", "date_modified")
     resource_class = QuizResource
 
 
-@admin.register(QuestionOrder)
 class QuestionOrderAdmin(ImportExportModelAdmin):
     ordering = ['id']
     list_display = ("id", "order", "question", "quiz")
     resource_class = QuestionOrderResource
 
+
+admin.site.register(Answer, AnswerAdmin)
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Quiz, QuizAdmin)
+admin.site.register(QuestionOrder, QuestionOrderAdmin)
 
 '''
 class AnswerAdmin(ImportMixin, admin.ModelAdmin):
