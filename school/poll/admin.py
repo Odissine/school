@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ImportMixin, ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget
 
@@ -11,14 +11,19 @@ class AnswerResource(resources.ModelResource):
 
 
 class QuestionResource(resources.ModelResource):
+    choices = fields.Field(widget=ManyToManyWidget(Answer))
+
     class Meta:
         model = Question
-        widget = ManyToManyWidget(Answer, field='answer')
+        fields = ['id', 'question', 'description', 'question_pic', 'mandatory', 'multiple', 'randomize', 'choices']
 
 
 class QuizResource(resources.ModelResource):
+    questions = fields.Field(widget=ManyToManyWidget(Question))
+
     class Meta:
         model = Quiz
+        fields = ["id", "nom", "questions", "status", "published", "date_added", "date_modified"]
 
 
 class QuestionOrderResource(resources.ModelResource):
