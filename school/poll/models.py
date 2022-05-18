@@ -14,9 +14,9 @@ class Answer(models.Model):
 
     def __str__(self):
         if self.answer is not None:
-            return self.answer
+            return str(self.answer)
         else:
-            return self.pk
+            return str(self.answer_pic)
 
 
 class Question(models.Model):
@@ -31,9 +31,9 @@ class Question(models.Model):
 
     def __str__(self):
         if self.question is not None:
-            return self.question
+            return str(self.question)
         else:
-            return self.question_pic
+            return str(self.question_pic)
 
     def get_choices(self):
         return "\n".join([choice.answer for choice in self.choices.all()])
