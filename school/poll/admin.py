@@ -12,7 +12,7 @@ class AnswerResource(resources.ModelResource):
 
 
 class QuestionResource(resources.ModelResource):
-    choices = fields.Field(column_name='choices', attribute='choices', widget=ManyToManyWidget(Answer, field='answer'))
+    choices = fields.Field(column_name='choices', attribute='choices', widget=ManyToManyWidget(Answer, field='id'))
 
     class Meta:
         model = Question
@@ -24,7 +24,7 @@ class QuizResource(resources.ModelResource):
 
     class Meta:
         model = Quiz
-        fields = ["id", "nom", "questions", "status", "published", "date_added", "date_modified"]
+        fields = ("id", "nom", "questions", "status", "published", "date_added", "date_modified")
 
 
 class QuestionOrderResource(resources.ModelResource):
