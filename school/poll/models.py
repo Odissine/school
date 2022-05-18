@@ -8,12 +8,15 @@ fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 
 class Answer(models.Model):
     objects = None
-    answer = models.CharField(max_length=200, null=False)
+    answer = models.CharField(max_length=200, null=True)
     answer_pic = models.ImageField(upload_to='poll', storage=fs)
     correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.answer
+        if self.answer is not None:
+            return self.answer
+        else:
+            return self.answer_pic
 
 
 class Question(models.Model):
@@ -27,7 +30,10 @@ class Question(models.Model):
     randomize = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.question
+        if self.question is not None:
+            return self.question
+        else:
+            return self.question_pic
 
     def get_choices(self):
         return "\n".join([choice.answer for choice in self.choices.all()])
