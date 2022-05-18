@@ -1,0 +1,59 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div  class="mb-2 h5">{% if question %}Ajouter les réponses ci-dessous pour la question : {{ question }}{% endif %}</div>
+<form action="{% url formAction question_id=None %}" method="post" enctype='multipart/form-data'>
+    {% csrf_token %}
+    <input type="hidden" name="question" value="{{ question.id }}" id="question" />
+    {{ answer_formset.management_form }}
+    {% for answer_form in answer_formset %}
+        <div class="answer-formset ">
+            <div class="input-group mb-2">
+                <div class="input-group-text" style="width:120px;">{{ answer_form.answer.label }}</div>
+                {{ answer_form.answer }}
+                <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="{{ answer_form.answer.help_text }}"><i class="bi bi-info-circle"></i></div>
+            </div>
+            <div class="input-group mb-2">
+                <div class="input-group-text" style="width:120px;">{{ answer_form.answer_pic.label }}</div>
+                {{ answer_form.answer_pic }}
+                <div class="input-group-text" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="{{ answer_form.answer_pic.help_text }}"><i class="bi bi-info-circle"></i></div>
+            </div>
+            <img id="answer_pic_preview" width="150" style="border-radius:10px; margin:5px;" />
+            <div class="mb-2">
+                <label class="container">{{ answer_form.correct.label }}
+                    {{ answer_form.correct }}
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+    {% endfor %}
+    <div class=" d-grid gap-2 d-md-block float-end">
+        <a href="{{ previous_page }}" class="btn btn-secondary">Retour</a>
+        <input type="submit" value="Ajouter la ou les réponses" class="btn btn-success" />
+    </div>
+</form>
+<script>
+    $('.answer-formset').formset({
+        addText: 'Ajouter une réponse',
+        deleteText: 'Supprimer la réponse'
+    });
+    /*
+    function show_pic() {
+        console.log(this.name)
+    }
+
+    document.addEventListener('input', function(e) {
+        var text = e.target.getAttribute('data');
+        pic.src = window.URL.createObjectURL(e.target.files[0])
+        // alert(text);
+    });
+
+    $('.preview-image').bind('input', "input", function() {
+        var text = $(this).attr('data');
+        alert(text);
+    });
+    */
+</script>
+{% endblock %}

@@ -16,6 +16,7 @@ import xlsxwriter
 
 from games.models import *
 
+
 class MyChangeFormPassword(PasswordChangeForm):
     pass
 
@@ -254,12 +255,13 @@ def change_password(request):
     if request.method == "POST":
         id_user = request.POST['idUser']
         user = User.objects.filter(pk=id_user).first()
-        # user.set_password(request.POST['password'])
-        # user.save()
+        user.set_password(request.POST['new_password'])
+        user.save()
         message = "Mot de passe modifié avec succès pour ", user.first_name
         messages.success(request, message)
 
-    return redirect('account:user-list' 'la' 'wa')
+    return redirect('account:user-list', order='la')
+
 
 @login_required()
 @group_required('ADMIN', 'ENSEIGNANT')

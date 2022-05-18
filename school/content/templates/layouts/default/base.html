@@ -1,40 +1,40 @@
+<!DOCTYPE html>
 {% load static %}
 {% load bootstrap5 %}
 {% load i18n %}
 {% load auth_extras %}
 {% get_current_language as language_code %}
-<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
   <title>School @ ENDTG</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <meta content="" name="description" />
+  <meta content="" name="keywords" />
 
   <!-- Favicons -->
-  <link href="{% static 'img/favicon.png' %}" rel="icon">
-  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+  <link href="{% static 'img/favicon.png' %}" rel="icon" />
+  <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon" />
 
   <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@600&family=Cookie&family=PT+Mono&display=swap');
   </style>
   <!-- Vendor CSS Files -->
-  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet">
-  <link href="{% static 'vendor/simple-datatables/style.css' %}" rel="stylesheet">
-  <link href="{% static 'css/select2.min.css' %}" rel="stylesheet">
-  <link href="{% static 'css/select2-bootstrap-5-theme.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" />
+  <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet" />
+  <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet" />
+  <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet" />
+  <link href="{% static 'vendor/simple-datatables/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/select2-bootstrap-5-theme.min.css' %}" rel="stylesheet" />
   <!-- Template Main CSS File -->
-  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
 </head>
 
 <body class="color-a">
@@ -46,6 +46,9 @@
   <script src="{% static 'js/toastr.min.js' %}"></script>
   <script src="{% static 'js/select-menu.js' %}"></script>
   <script src="{% static 'js/select2.min.js' %}"></script>
+  <script src="{% static 'js/jquery.formset.js' %}"></script>
+  <script src="{% static 'js/jquery.easing.min.js' %}"></script>
+  <script src="{% static 'js/jquery-ui.min.js' %}"></script>
   <script>
       $(document).ready(function() {
         $('.js-example-basic-single').select2();
@@ -79,12 +82,12 @@
         });
       });
   </script>
+
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center color-a">
-
     <div class="d-flex align-items-center justify-content-between">
       <a href="{% url 'main:index-view' %}" class="logo d-flex align-items-center">
-        <img src="{% static 'img/logo.png' %}" alt="">
+        <img src="{% static 'img/logo.png' %}" alt="" />
         <span class="d-none d-lg-block">ENDTG</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -428,6 +431,36 @@
         </ul>
       </li>
       <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#quiz-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+          <i class="bi bi-question-circle"></i><span>Quiz</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="quiz-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'poll:show-list' %}">
+              <i class="bi bi-circle"></i><span>Liste des quizs</span>
+            </a>
+          </li>
+          {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+          <li class="nav-heading">Administration</li>
+          <li>
+            <a href="{% url 'poll:quiz-list' %}">
+              <i class="bi bi-circle"></i><span>Admin des quizs</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'poll:question-list' question_id=None %}">
+              <i class="bi bi-circle"></i><span>Admin des questions</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'poll:theme-list' %}">
+              <i class="bi bi-circle"></i><span>Admin des thèmes</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </li>
+      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#color-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-journal-text"></i><span>Couleurs</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -459,33 +492,6 @@
       <li class="nav-heading" id="change-color"></li>
     </ul>
   </aside><!-- End Sidebar-->
-  {% if messages %}
-  {% for message in messages %}
-  <div aria-live="polite" aria-atomic="true" class="bg-dark bd-example-toasts">
-    <div class="toast-container position-absolute p-3 top-1 end-0" id="toastPlacement">
-      {% if message.tags == 'error' %}
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-octagon me-1"></i>
-        {% else %}
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle me-1"></i>
-        {% endif %}
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    </div>
-  </div>
-  <script>
-      $('#error_message').addClass('show');
-      $('#error_message').removeClass('hide');
-      function hideMsg () {
-          $('#error_message').fadeOut();
-          //$('#error_message').removeClass('show');
-      }
-      setTimeout(hideMsg,3000);
-  </script>
-  {% endfor %}
-  {% endif %}
   <main id="main" class="main">
     <div class="pagetitle">
       <div class="h1">{{ context_header.title }}</div>
@@ -524,7 +530,34 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
-
+{% if messages %}
+  {% for message in messages %}
+    <div class="" id="toastPlacement" style="position:absolute; top:65px; width:100%;">
+      {% if message.tags == 'error' %}
+      <div class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-octagon me-1"></i>
+      {% else %}
+      <div class="alert alert-success bg-success text-light border-0 alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-1"></i>
+      {% endif %}
+      {{ message }}
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  <script>
+  $( document ).ready(function() {
+      $('.alert').addClass('show');
+      $('.alert').show();
+      $('.alert').removeClass('hide');
+      function hideMsg () {
+          $('.alert').fadeOut();
+          $('.alert').hide();
+          $('.alert').removeClass('show');
+      };
+      setTimeout(hideMsg,3000);
+  )};
+  </script>
+  {% endfor %}
+  {% endif %}
 </body>
-
 </html>

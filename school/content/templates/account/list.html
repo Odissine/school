@@ -16,7 +16,7 @@
                     {% csrf_token %}
                     <input type="hidden" value="" id="idUser" name="idUser">
                     <div class="text-dark m-3">
-                    <input class="form-control px-3" type="password" name="password">
+                    <input class="form-control px-3" type="new_password" name="new_password" id="new_password" placeholder="Mot de passe">
                     </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" type="submit">Enregistrer</button>
@@ -101,6 +101,7 @@ $(document).ready(function(){
         var prenom = $(this).attr("vPrenom");
         var nom = $(this).attr("vNom");
         var id = $(this).attr("vId");
+        $("#new_password").val("");
         console.log(valueis);
         $("#labelTitle").html("Modification du mot de passe de " + prenom + " " + nom);
         $("#idUser").val(id);
