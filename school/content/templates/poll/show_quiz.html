@@ -3,8 +3,10 @@
 {% load auth_extras %}
 {% load is_answer_pic %}
 {% load is_multiple %}
+{% load get_width_progress %}
 {% load create_list %}
 {% load random_choices %}
+{% load random_questions %}
 {% load show_letter %}
 {% block title %}School @ ENDTG - {{ title }}{% endblock %}
 {% block content %}
@@ -31,11 +33,16 @@
     <div class="col-12" id="quizs">
         <div class="row mb-2">
             <h4 class="col-8">{{ quiz.nom }}</h4>
-            <h4 class="col-4 text-end" id="questionProgress" data-id="{{ quiz.questions.all|length }}">{{ quiz.questions.all|length }}</h4>
+            <div class="col-4">
+                <div class="progress" style="height: 20px;">
+                    <div id="questionProgress" class="progress-bar bg-success" role="progressbar" style="width:{{ quiz.questions.all|length|get_width_progress:1 }}%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="{{ quiz.questions.all|length }}" data-id="1" data-all="{{ quiz.questions.all|length }}" >1 / {{ quiz.questions.all|length }}</div>
+                </div>
+            </div>
+            <!-- <h4 class="col-4 text-end" id="questionProgress" data-id="1" data-all="{{ quiz.questions.all|length }}">1 / {{ quiz.questions.all|length }}</h4> -->
         </div>
         <div class="card card-no-bg">
             <div class="card-body p-0">
-                {% for question in quiz.questions.all %}
+                {% for question in quiz|random_questions %}
                 <fieldset class="p-4" style="max-width:720px; margin:0 auto;" data-id="field_{{ question.id }}">
                     <question>
                         <span class="h5">{{ forloop.counter }} - {{ question.question }}</span>
@@ -75,10 +82,10 @@
                             {% endfor %}
                         {% else %}
                             {% for reponse in question|random_choices %}
-                            <reponse style="width:calc(50% - 8px + 4px);" class="col-6 mb-2">
-                                <input type="checkbox" hidden value="{{ reponse.id }}" name="reponse" id="reponse_{{ reponse.id }}" />
-                                <div class="d-flex align-items-center rounded-3 border btn btn-outline-reponse p-2 reponse mb-2" data-multiple="{{ question.multiple }}" data-id="{{ reponse.id }}">
-                                    <span class="border border-secondary p-0 px-2 rounded-3 letter-reponse bg-light text-secondary">{{ forloop.counter0|show_letter }}</span>{{ reponse.answer }}
+                            <reponse style="width:calc(50% - 8px + 4px);" class="col-6 mb-2" data-id="reponse_{{ reponse.id }}">
+                                <input type="checkbox" hidden data-id="{{ reponse.id }}" value="{{ reponse.id }}" name="reponse" id="reponse_{{ reponse.id }}" />
+                                <div class="d-flex align-items-center rounded-3 border btn btn-outline-reponse p-2 reponse mb-2" data-multiple="{{ question.multiple }}" data-rep-array="{{ question.choices.all|create_list }}" id="reponse_reponse_{{ reponse.id }}" data-id="{{ reponse.id }}">
+                                    <span id="span_text_{{ reponse.id }}" class="border border-secondary p-0 px-2 rounded-3 letter-reponse bg-light text-secondary">{{ forloop.counter0|show_letter }}</span>{{ reponse.answer }}
                                 </div>
                             </reponse>
                             {% endfor %}
@@ -150,23 +157,15 @@
         var $this = $(this);
         if ($this.data("multiple") == "False") {
             rep_test = $this.data("rep-array");
+            console.log(rep_test);
             $.each(rep_test, function( index, value ) {
                 $("#reponse_"+value).prop('checked', false);
                 $("#reponse_reponse_"+value).removeClass("check-reponse");
                 $("#span_pic_"+value).removeClass("bg-secondary text-light");
-                // $("#span_pic_"+value).addClass("bg-secondary text-light");
                 $("#span_pic_"+value).removeClass("bg-light text-secondary");
-                // reponse_id = "reponse_" + value;
-                // childrenPic = $(".reponse[data-id=' + reponse_id + ']").find("span.letter-reponse-pic");
-                // console.log(childrenPic.data("test"));
-                // children = $(".reponse[data-id=' + reponse_id + ']").find("span.letter-reponse");
-                // console.log(children);
-                // console.log(childrenPic.html());
-                // children.removeClass("bg-secondary text-light");
-                // children.addClass("bg-light text-secondary");
-                // childrenPic.removeClass("bg-secondary text-light");
-                // childrenPic.addClass("bg-primary");
-                // childrenPic.html("Coucou");
+
+                $("#span_text_"+value).removeClass("bg-secondary text-light");
+                $("#span_text_"+value).removeClass("bg-light text-secondary");
             });
         }
         childrenPic = $this.find("span.letter-reponse-pic");
@@ -223,8 +222,13 @@
             current_fs.hide("slide", { direction: "up" }, function() {
                 next_fs.show("slide", { direction: "down" });
             });
-            questionProgress = $("#questionProgress).data("id") + 1;
-            $("#questionProgress").html(questionProgress+1);
+            questionAll = $("#questionProgress").data("all");
+            questionProgress = $("#questionProgress").data("id") + 1;
+            $("#questionProgress").html(questionProgress + " / " + questionAll);
+            $("#questionProgress").data("id", questionProgress);
+            progressBar = questionProgress * 100 / questionAll;
+            $("#questionProgress").attr("aria-valuenow", progressBar);
+            $("#questionProgress").css("width", progressBar + "%");
         } else {
             // alert("Une réponse est obligatoire pour cette question ...");
             $('#myModal').modal('show');

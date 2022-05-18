@@ -1,0 +1,43 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% load create_list %}
+{% load score_max %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="row clear">
+    <div class="col-12" id="quizs">
+        <div class="row mb-2">
+            <h4 class="col-8">{{ player.first_name }} {{ player.last_name }}</h4>
+            <div class="col-4 text-end"><a class="btn btn-secondary" href="{% url 'poll:show-quiz-user-list' quiz_id=None %}">Retour à la liste</a></div>
+            <h5 class="col-10">{{ quiz.nom }}</h5>
+            <h5 class="col-2 text-end">{{ instance.score }} / {{ quiz|score_max }}</h5>
+        </div>
+        <div class="card card-no-bg">
+            <div class="card-body p-0">
+                {% for question in reponses.all %}
+                    <div>{{ question.question }} <i class="bi bi-info-circle" style="cursor:pointer;" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{% if question.question.question_pic %}<img width='150' src='/media/{{ question.question.question_pic }}' />{% else %}{{ question.question.description }}{% endif %}"></i></div>
+                    <div class="row">
+                        <div class="col-2">
+                        {% for answer in question.response.all %}
+                        {% if answer.answer_pic %}
+                        <span class="badge {% if answer.correct %}bg-success{% else %}bg-danger{% endif %}" style="cursor:pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<img width='150' src='/media/{{ answer.answer_pic }}' />">{{ answer.id }}</span>
+                        {% else %}
+                        <span class="badge {% if answer.correct %}bg-success{% else %}bg-danger{% endif %}" style="cursor:pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ answer.answer }}">{{ answer.id }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+                        <div class="col-10">
+                        {% for good_answer in question.question.choices.all %}
+                        {% if good_answer.correct %}
+                            <span class="badge bg-primary">{{ good_answer.id }}</span>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

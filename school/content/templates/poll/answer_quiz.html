@@ -6,8 +6,9 @@
 <div class="row clear">
     <div class="col-12" id="quizs">
         {% if error %}
-        <div class="row mb-2">
+        <div class="row mb-2 text-center">
             <h4 class="col-12">Tu as déjà répondu  :)</h4>
+            <p><a class="btn btn-lg btn-secondary" href="{% url 'poll:show-list' %}">Retourner à la liste des quizs</a></p>
         </div>
         {% else %}
         <div class="row mb-2">

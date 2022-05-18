@@ -41,50 +41,42 @@ def show_quiz(request, quiz_id):
 @login_required()
 def answer_quiz(request):
     context = {}
-
+    score = 0
     if request.method == 'POST':
-        # QuestionFormSet = modelform_factory(Question)
-        # quiz_id = request.POST.get('id_quiz')
-        # form = QuestionFormSet(request.POST)
-        # instances = form.save(commit=False)
-        # for instance in instances:
-        #     instance.save()
         quiz = Quiz.objects.get(pk=request.POST.get('id_quiz'))
         player = request.user
         quiz_player = QuizInstance.objects.filter(player=player, quiz=quiz)
-        # for rep in request.POST.getlist("reponse"):
-        #     question = Question.objects.get(choices=rep)
-        # for question in quiz.questions.all():
-            # print("Q", question.id)
-            # pass
-            # for reponse in question.choices.all():
-                # print("R", reponse.id)
-                # pass
 
         if len(quiz_player) == 0:
+            dic_answer = sort_answer(request.POST.getlist("reponse"), quiz)
             # Creation de l'instance
             quiz_instance = QuizInstance.objects.create(player=player, quiz=quiz)
 
             # Question ajouté a l'instance pour l'utilisateur
             for question in quiz.questions.all():
-                print(question)
                 user_reponse = UserResponse.objects.create(quiz_instance=quiz_instance, question=question)
+                for r in dic_answer[question.id]:
+                    answer = Answer.objects.get(pk=r)
+                    user_reponse.response.add(answer)
+                nb_correct_answer = len(question.choices.filter(correct=True))
+                lt = sorted(list(question.choices.filter(correct=True).values_list('pk')))
+                out = [item for t in lt for item in t]
+                if len(dic_answer[question.id]) < nb_correct_answer:
+                    if sorted(dic_answer[question.id]) == out:
+                        print(sorted(dic_answer[question.id]), out)
+                        score += 2
+                    if any(x in dic_answer[question.id] for x in out):
+                        print(sorted(dic_answer[question.id]), out)
+                        score += 1
 
-                for rep in request.POST.getlist("reponse"):
-                    answer = Answer.objects.get(pk=rep)
-                    if answer in question.choices.all():
-                        print(answer)
-                        user_reponse.response.add(answer)
+                if len(dic_answer[question.id]) == nb_correct_answer:
+                    if sorted(dic_answer[question.id]) == out:
+                        print(sorted(dic_answer[question.id]), out)
+                        score += 2
 
-                        if answer.correct is True:
-                            quiz_instance.score += 1
-                        else:
-                            quiz_instance.score -= 1
-                        print(quiz_instance.score)
-                        quiz_instance.save()
-
-            print("FINAL", quiz_instance.score)
-
+            print(score)
+            quiz_instance.score = score
+            quiz_instance.save()
         else:
             context = {
                 'error': True,
@@ -178,7 +170,6 @@ def question_list(request, quiz_id=None, question_id=None):
 
 # CREATION #################################################################################
 def question_create(request, quiz_id=None):
-
     if request.user.is_staff:
         title = "Créer une question"
         form = QuestionForm()
@@ -342,7 +333,7 @@ def question_delete_pic(request):
 def question_add(request, quiz_id):
     if request.POST:
         quiz = Quiz.objects.get(pk=quiz_id)
-        form = QuizQuestionForm(request.POST,instance=quiz)
+        form = QuizQuestionForm(request.POST, instance=quiz)
         if form.is_valid():
             form.save()
             messages.success(request, "Questions mises à jour !")
@@ -351,13 +342,13 @@ def question_add(request, quiz_id):
     messages.error(request, "Une erreur s'est produite !")
     return redirect('poll:question-list', quiz_id=quiz_id, question_id=None)
 
+
 # ##########################################################################################
 # REPONSES
 # ##########################################################################################
 
 # CREATIONS ################################################################################
 def answer_create(request, question_id=None):
-
     if request.user.is_staff:
         title = "Ajouter les réponses (choix)"
         form = AnswerForm()
@@ -563,3 +554,40 @@ def theme_edit(request, theme_id):
 # SUPPRESSION ##############################################################################
 def theme_delete(request, theme_id):
     pass
+
+
+# ##########################################################################################
+# USER
+# ##########################################################################################
+
+# AFFICHAGE DES JOUEURS ####################################################################
+def show_quiz_user_list(request, quiz_id=None):
+    title = "Liste des joueurs"
+    try:
+        quiz = Quiz.objects.get(pk=quiz_id)
+        instances = QuizInstance.objects.filter(quiz=quiz)
+    except:
+        instances = QuizInstance.objects.all()
+    instances = list(set(instances))
+    print(len(instances))
+    context = {
+        'instances': instances,
+        'title': title,
+    }
+    return render(request, "poll/show_quiz_user_list.html", context)
+
+
+# AFFICHAGE D'UN JOUEUR ####################################################################
+def show_player(request, player_id, quiz_id):
+    player = User.objects.get(pk=player_id)
+    quiz = Quiz.objects.get(pk=quiz_id)
+    instance = QuizInstance.objects.get(player=player, quiz=quiz)
+    reponses = UserResponse.objects.filter(quiz_instance=instance)
+
+    context = {
+        'player': player,
+        'quiz': quiz,
+        'instance': instance,
+        'reponses': reponses,
+    }
+    return render(request, "poll/show_player.html", context)

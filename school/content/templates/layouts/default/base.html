@@ -443,6 +443,11 @@
           {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
           <li class="nav-heading">Administration</li>
           <li>
+            <a href="{% url 'poll:show-quiz-user-list' quiz_id=None %}">
+              <i class="bi bi-circle"></i><span>Liste des joueurs</span>
+            </a>
+          </li>
+          <li>
             <a href="{% url 'poll:quiz-list' %}">
               <i class="bi bi-circle"></i><span>Admin des quizs</span>
             </a>

@@ -1,0 +1,21 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="row clear">
+    <div class="col-12" id="quizs">
+        <div class="row mb-2">
+            <h4 class="col-8">Liste des quizs</h4>
+            <div class="col-4 text-end"><a class="btn btn-secondary" href="{% url 'poll:show-list' %}">Retour à la liste</a></div>
+        </div>
+        <div class="list-group">
+        {% for instance in instances %}
+        <div class="list-group-item list-group-item-action py-2" onclick="location.href='{% url 'poll:show-player' player_id=instance.player.id quiz_id=instance.quiz.id %}';">
+            <span>{{ instance.player.first_name }} {{ instance.player.last_name }} <label class="badge bg-primary">{{ instance.quiz}}</label></span>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
