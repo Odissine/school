@@ -16,7 +16,7 @@ class Answer(models.Model):
         if self.answer is not None:
             return self.answer
         else:
-            return self.answer_pic
+            return self.pk
 
 
 class Question(models.Model):
