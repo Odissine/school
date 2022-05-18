@@ -1,0 +1,243 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% load is_answer_pic %}
+{% load is_multiple %}
+{% load create_list %}
+{% load random_choices %}
+{% load show_letter %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+{% block content %}
+<div class="modal fade" tabindex="-1" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning" style="color:white !important;">
+                <h5 class="modal-title ">Réponse obligatoire !</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" style="color:#333 !important;">
+                <p>Au minimum une réponse doit être donnée ...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<form action="{% url 'poll:answer-quiz' %}" method="POST">
+    <input type="hidden" name="id_quiz" value="{{ quiz.id }}">
+        {% csrf_token %}
+<div class="row clear">
+    <div class="col-12" id="quizs">
+        <div class="row mb-2">
+            <h4 class="col-8">{{ quiz.nom }}</h4>
+            <h4 class="col-4 text-end" id="questionProgress" data-id="{{ quiz.questions.all|length }}">{{ quiz.questions.all|length }}</h4>
+        </div>
+        <div class="card card-no-bg">
+            <div class="card-body p-0">
+                {% for question in quiz.questions.all %}
+                <fieldset class="p-4" style="max-width:720px; margin:0 auto;" data-id="field_{{ question.id }}">
+                    <question>
+                        <span class="h5">{{ forloop.counter }} - {{ question.question }}</span>
+                        {% if question.description %}
+                            <br><i class="text-secondary fs-9">{{ question.description }} </i>
+                        {% endif %}
+                        {% if question.multiple %}
+                            <br><i>(Plusieurs réponses possibles)</i>
+                        {% else %}
+                            <br><i>(Une seule réponse possible)</i>
+                        {% endif %}
+                        {% if question.question_pic != "" and question %}
+                        <div class="col-12 my-3 rounded-3 text-center" id="picQuestionDiv">
+                            <img class="img-thumbnail rounded-3 p-2" src="/media/{{ question.question_pic }}" width="400" />
+                            <a href="#" data-bs-toggle="modal" data-answer="{{ question.question_pic }}" data-bs-target="#answerPicModal" class="btn btn-sm btn-outline-secondary answerZoom"><i class="bi bi-zoom-in"></i></a>
+                        </div>
+                        {% endif %}
+                    </question>
+                    <reponses class="d-grid gap-4" style="display:block !important; " data-rep-array="{{ question.choices.all|create_list }}">
+                        {% if question|is_answer_pic %}
+                            {% for reponse in question|random_choices %}
+                            <input type="checkbox" hidden data-id="{{ reponse.id }}" value="{{ reponse.id }}" name="reponse" id="reponse_{{ reponse.id }}" />
+                            <reponse style="width:calc(50% - 8px + 4px); text-align:left !important;" class="col-6 mb-2 btn btn-reponse reponse" data-id="reponse_{{ reponse.id }}" data-multiple="{{ question.multiple }}" data-rep-array="{{ question.choices.all|create_list }}" id="reponse_reponse_{{ reponse.id }}">
+                                <div class="d-flex align-items-center rounded-3">
+                                {% if reponse.answer_pic %}
+                                    <img class="card-img-top rounded-3 img-fluid mh-100 cover text-center" style="" src="/media/{{ reponse.answer_pic }}">
+                                {% else %}
+                                    <i class="card-img-top rounded-3 mt-2 img-fluid mh-100 cover bi bi-eye-slash fs-1 text-center"></i>
+                                {% endif %}
+                                </div>
+                                <div style="display:inline-block">
+                                    <span id="span_pic_{{ reponse.id }}" class="border border-secondary p-0 px-2 rounded-3 letter-reponse-pic bg-light text-secondary" style="">{{ forloop.counter0|show_letter }}</span>
+                                    <span class="">{{ reponse.answer }}</span>
+                                    <a href="#" data-bs-toggle="modal" data-answer="{{ reponse.answer_pic }}" data-bs-target="#answerPicModal" class="btn btn-sm btn-outline-secondary answerZoom"><i class="bi bi-zoom-in"></i></a>
+                                </div>
+                            </reponse>
+                            {% endfor %}
+                        {% else %}
+                            {% for reponse in question|random_choices %}
+                            <reponse style="width:calc(50% - 8px + 4px);" class="col-6 mb-2">
+                                <input type="checkbox" hidden value="{{ reponse.id }}" name="reponse" id="reponse_{{ reponse.id }}" />
+                                <div class="d-flex align-items-center rounded-3 border btn btn-outline-reponse p-2 reponse mb-2" data-multiple="{{ question.multiple }}" data-id="{{ reponse.id }}">
+                                    <span class="border border-secondary p-0 px-2 rounded-3 letter-reponse bg-light text-secondary">{{ forloop.counter0|show_letter }}</span>{{ reponse.answer }}
+                                </div>
+                            </reponse>
+                            {% endfor %}
+                        {% endif %}
+                    </reponses>
+                    <link class="" style="display: block;">
+
+                    {% if not forloop.first %}
+                    <a class="btn btn-lg btn-secondary prev">Précédente</a>
+                    {% endif %}
+
+                    {% if not forloop.last %}
+                    <a class="btn btn-lg btn-secondary next">Suivante</a>
+                    {% endif %}
+
+                    {% if forloop.last %}
+                    <button type="submit" class="btn btn-lg btn-success next">Terminé !</button>
+                    {% endif %}
+                    </link>
+                </fieldset>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<!-- MODAL POUR ZOOMER SUR LES ILLLUSTRATIONS DES REPONSES -->
+<div class="modal fade" id="answerPicModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelAnswer_{{ choice.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabelAnswer">Zoom</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body align-center text-center">
+          <img class="img-thumbnail rounded-3 p-2 align-center text-center" src="" width="auto" id="srcAnswerPic" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    var zoom = false;
+
+    $(document).ready(function() {
+        const boxes = document.querySelectorAll('reponse');
+        boxes.forEach(function(userItem) {
+            // userItem.style.height = userItem.clientWidth+"px";
+            // console.log(userItem.clientWidth);
+        });
+    });
+
+    $(".answerZoom").click(function() {
+        console.log(zoom);
+        answerPic = $(this).data("answer");
+        $("#srcAnswerPic").attr("src", "/media/" + answerPic);
+        zoom = true;
+    });
+
+    $(".reponse").click(function() {
+        if (zoom === true) {
+            zoom = false;
+            return false;
+        }
+        var $this = $(this);
+        if ($this.data("multiple") == "False") {
+            rep_test = $this.data("rep-array");
+            $.each(rep_test, function( index, value ) {
+                $("#reponse_"+value).prop('checked', false);
+                $("#reponse_reponse_"+value).removeClass("check-reponse");
+                $("#span_pic_"+value).removeClass("bg-secondary text-light");
+                // $("#span_pic_"+value).addClass("bg-secondary text-light");
+                $("#span_pic_"+value).removeClass("bg-light text-secondary");
+                // reponse_id = "reponse_" + value;
+                // childrenPic = $(".reponse[data-id=' + reponse_id + ']").find("span.letter-reponse-pic");
+                // console.log(childrenPic.data("test"));
+                // children = $(".reponse[data-id=' + reponse_id + ']").find("span.letter-reponse");
+                // console.log(children);
+                // console.log(childrenPic.html());
+                // children.removeClass("bg-secondary text-light");
+                // children.addClass("bg-light text-secondary");
+                // childrenPic.removeClass("bg-secondary text-light");
+                // childrenPic.addClass("bg-primary");
+                // childrenPic.html("Coucou");
+            });
+        }
+        childrenPic = $this.find("span.letter-reponse-pic");
+        children = $this.find("span.letter-reponse");
+
+        if ($this.prev().is(':checked')) {
+            $this.prev().prop('checked', false);
+        } else {
+            $this.prev().prop('checked', true);
+        }
+
+        if ($this.hasClass("check-reponse")) {
+            $this.removeClass("check-reponse");
+            children.removeClass("bg-secondary text-light");
+            children.addClass("bg-light text-secondary");
+            childrenPic.removeClass("bg-secondary text-light");
+            childrenPic.addClass("bg-light text-secondary");
+        } else {
+            reponse_id = $this.data("id");
+            
+            $this.addClass("check-reponse-blink");
+            setTimeout(function() {
+                $this.removeClass("check-reponse-blink");
+            }, 100);
+            setTimeout(function() {
+                $this.addClass("check-reponse-blink");
+            }, 200);
+            setTimeout(function() {
+                $this.removeClass("check-reponse-blink");
+            }, 300);
+            setTimeout(function() {
+                $this.addClass("check-reponse");
+                children.removeClass("bg-light text-secondary");
+                children.addClass("bg-secondary text-light");
+                childrenPic.removeClass("bg-light text-secondary");
+                childrenPic.addClass("bg-secondary text-light");
+            }, 400);
+        }
+    });
+
+    $(".next").click(function() {
+        current_fs = $(this).parent();
+        repsArray = current_fs.find("reponses").data("rep-array");
+        checkOne = false;
+        $.each(repsArray, function( index, value ) {
+            if ($("#reponse_"+value).is(':checked')) {
+                checkOne = true;
+                return false;
+            }
+        });
+        if (checkOne === true) {
+            next_fs = $(this).parent().next();
+            next_fs.hide();
+            current_fs.hide("slide", { direction: "up" }, function() {
+                next_fs.show("slide", { direction: "down" });
+            });
+            questionProgress = $("#questionProgress).data("id") + 1;
+            $("#questionProgress").html(questionProgress+1);
+        } else {
+            // alert("Une réponse est obligatoire pour cette question ...");
+            $('#myModal').modal('show');
+        }
+    });
+
+    $(".prev").click(function(){
+        current_fs = $(this).parent();
+        previous_fs = $(this).parent().prev();
+        current_fs.hide("slide", { direction: "down" }, function() {
+            previous_fs.show("slide", { direction: "up" });
+        });
+    });
+
+</script>
+{% endblock %}
