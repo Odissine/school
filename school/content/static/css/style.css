@@ -1341,7 +1341,7 @@ input[type=file]::file-selector-button {
     font-family:Oswald;
 }
 .list-group-item {
-    display:list-item;
+    /* display:list-item; */
     list-style-position: inside;
     cursor:pointer;
 }

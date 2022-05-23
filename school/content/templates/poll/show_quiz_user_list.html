@@ -1,21 +1,50 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
+{% load color %}
 {% load auth_extras %}
 {% block title %}School @ ENDTG - {{ title }}{% endblock %}
 {% block content %}
 <div class="row clear">
     <div class="col-12" id="quizs">
         <div class="row mb-2">
-            <h4 class="col-8">Liste des quizs</h4>
-            <div class="col-4 text-end"><a class="btn btn-secondary" href="{% url 'poll:show-list' %}">Retour à la liste</a></div>
+            <h4 class="col-4">Liste des "joueurs"</h4>
+            <div class="col-8 text-end">
+                <div class="dropdown btn-group">
+                    <a href="#" class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Tri
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="?tri=quiz">Quiz</a></li>
+                        <li><a class="dropdown-item" href="?tri=pn">Prénom Nom</a></li>
+                        <li><a class="dropdown-item" href="?tri=np">Nom Prénom</a></li>
+                        <li><a class="dropdown-item" href="?tri=classe">Classe</a></li>
+                        <li><a class="dropdown-item" href="?tri=score">Score</a></li>
+                    </ul>
+                </div>
+                {% if quiz %}
+                <a class="btn btn-success" href="{% url 'poll:download-players' quiz_id=quiz.id %}">Télécharger les résultats</a>
+                {% else %}
+                <a class="btn btn-success" href="{% url 'poll:download-players' quiz_id=None %}">Télécharger les résultats</a>
+                {% endif %}
+                <a class="btn btn-secondary" href="{% url 'poll:show-list' %}">Retour à la liste</a>
+            </div>
         </div>
-        <div class="list-group">
+        <ul class="list-group">
         {% for instance in instances %}
-        <div class="list-group-item list-group-item-action py-2" onclick="location.href='{% url 'poll:show-player' player_id=instance.player.id quiz_id=instance.quiz.id %}';">
-            <span>{{ instance.player.first_name }} {{ instance.player.last_name }} <label class="badge bg-primary">{{ instance.quiz}}</label></span>
-        </div>
+        <li class="list-group-item list-group-item-action d-flex py-2 justify-content-between align-items-start" onclick="location.href='{% url 'poll:show-player' player_id=instance.player.id quiz_id=instance.quiz.id %}';">
+            <span class="ms-2 me-auto">
+                <label class="badge bg-primary">{{ instance.quiz}}</label> {{ instance.player.first_name }} {{ instance.player.last_name }}
+            </span>
+            {% for group in instance.player.groups.all %}
+            <span class="ms-2">
+            <label class="badge {{ group.name|color }}">{{ group.name }}</label>
+            {% endfor %}
+            &nbsp;
+            <label class="badge bg-primary rounded-pill">{{ instance.score }}</label>
+            </span>
+        </li>
         {% endfor %}
-        </div>
+        </ul>
     </div>
 </div>
 {% endblock %}

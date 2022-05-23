@@ -19,3 +19,14 @@ def sort_answer(reponses, quiz):
             dic_questions[q.id].append(int(reponse))
 
     return dic_questions
+
+
+# FONCTION POUR OBTENIR LE SCORE POUR UNE QUESTION DONNEE A L'AIDE DES REPONSES DES UTILISATEURS vs REPONSES CORRECTES
+def get_score(user_rep, correct_rep):
+    score = 0
+    if user_rep == correct_rep:
+        score = 2
+    if len(user_rep) < len(correct_rep):
+        if any(x in user_rep for x in correct_rep):
+            score = 1
+    return score

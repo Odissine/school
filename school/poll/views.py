@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from .forms import *
 from .core import *
 from .models import Quiz, Question, Answer
@@ -11,6 +10,8 @@ from django.contrib import messages
 from django.forms.formsets import formset_factory
 from django.db import IntegrityError, transaction
 from django.contrib.auth.decorators import user_passes_test, login_required
+import pandas as pd
+from io import BytesIO
 
 
 # ##########################################################################################
@@ -77,6 +78,10 @@ def answer_quiz(request):
             print(score)
             quiz_instance.score = score
             quiz_instance.save()
+            context = {
+                'quiz_instance': quiz_instance,
+                'quiz': quiz,
+            }
         else:
             context = {
                 'error': True,
@@ -563,18 +568,84 @@ def theme_delete(request, theme_id):
 # AFFICHAGE DES JOUEURS ####################################################################
 def show_quiz_user_list(request, quiz_id=None):
     title = "Liste des joueurs"
+    tri = "id"
+
+    if request.GET.get("tri"):
+        tri = request.GET.get('tri')
+        if tri == "quiz":
+            tri = "quiz"
+        elif tri == "pn":
+            tri = "player__first_name"
+        elif tri == "np":
+            tri = "player__last_name"
+        elif tri == "-score":
+            tri = "score"
+        elif tri == "classe":
+            tri = "player__groups__name"
+        else:
+            tri = "id"
+
     try:
         quiz = Quiz.objects.get(pk=quiz_id)
-        instances = QuizInstance.objects.filter(quiz=quiz)
+        instances = QuizInstance.objects.filter(quiz=quiz).order_by(tri)
     except:
-        instances = QuizInstance.objects.all()
-    instances = list(set(instances))
-    print(len(instances))
+        instances = QuizInstance.objects.order_by(tri).all()
+    print(instances.query)
+    # instances = list(set(instances))
     context = {
         'instances': instances,
         'title': title,
     }
     return render(request, "poll/show_quiz_user_list.html", context)
+
+
+def download_players(request, quiz_id=None):
+    instance_dic = {}
+    try:
+        quiz = Quiz.objects.get(pk=quiz_id)
+        instances = QuizInstance.objects.filter(quiz=quiz)
+        questions = quiz.questions.all()
+    except:
+        questions = Question.objects.all()
+        instances = QuizInstance.objects.all()
+    for instance in instances:
+        classe = ','.join(map(lambda x: str(x[0]), instance.player.groups.all().values_list('name')))
+        instance_dic[instance.id] = {'Prénom': instance.player.first_name, 'Nom': instance.player.last_name, 'Classe': classe, 'Score': instance.score}
+        datas = UserResponse.objects.filter(quiz_instance=instance)
+
+        for data in datas:
+            user_answers = sorted(list(data.response.all().values_list('pk')))
+            question = Question.objects.get(pk=data.question.id)
+            correct_answers = sorted(list(question.choices.filter(correct=True).values_list('pk')))
+            out_user = [str(item) for t in user_answers for item in t]
+            out_correct = [str(item) for t in correct_answers for item in t]
+            # instance_dic[instance.id].update({data.question.id: out_user})
+            instance_dic[instance.id].update({data.question.id: ",".join(out_user), 'S' + str(data.question.id): get_score(out_user, out_correct)})
+
+    df = pd.DataFrame.from_dict(instance_dic, orient='index')
+
+    dic_question = {}
+    for data_question in questions:
+        data_answers = data_question.choices.filter(correct=True).values_list('pk')
+        out_correct = [str(item) for t in data_answers for item in t]
+        dic_question[data_question.id] = {'Question': data_question.question, 'Réponses': ",".join(out_correct)}
+    dfq = pd.DataFrame.from_dict(dic_question, orient='index')
+
+    with BytesIO() as b:
+        # Use the StringIO object as the filehandle.
+        with pd.ExcelWriter(b) as writer:
+            df.to_excel(writer, sheet_name='Player')
+            dfq.to_excel(writer, sheet_name='Questions')
+        # writer.save()
+        # Set up the Http response.
+        filename = 'export_results.xlsx'
+        response = HttpResponse(
+            b.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
+        # return redirect('poll:show-quiz-user-list', quiz_id=quiz_id)
 
 
 # AFFICHAGE D'UN JOUEUR ####################################################################
