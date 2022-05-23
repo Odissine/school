@@ -10,9 +10,13 @@
         </div>
         <div class="list-group list-group-numbered" type="1">
         {% for quiz in quizs %}
-        <a class="list-group-item list-group-item-action py-2" href="{% url 'poll:show-quiz' quiz_id=quiz.id %}">
+        <div class="list-group-item list-group-item-action py-2" onclick="location.href='{% url 'poll:show-quiz' quiz_id=quiz.id %}';">
             {{ forloop.counter }} - <span id="quiz_menu_{{ quiz.id }}">{{ quiz.nom }}</span>
-        </a>
+            <a href="{% url 'poll:show-quiz' quiz_id=quiz.id %}" class="btn btn-sm btn-success float-end mx-1"><i class="bi bi-list"></i> </a>
+            {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+            <a href="{% url 'poll:show-quiz-user-list' quiz_id=quiz.id %}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-eye"></i> </a>
+            {% endif %}
+        </div>
         {% endfor %}
         </div>
     </div>

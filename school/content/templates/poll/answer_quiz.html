@@ -1,17 +1,21 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
 {% load auth_extras %}
+{% load score_max %}
 {% block title %}School @ ENDTG - {{ title }}{% endblock %}
 {% block content %}
 <div class="row clear">
     <div class="col-12" id="quizs">
         {% if error %}
-        <div class="row mb-2">
-            <h4 class="col-12">Tu as déjà répondu  :)</h4>
+        <div class="row mb-2 text-center">
+            <h3 class="col-12">Tu as déjà répondu  :)</h3>
+            <p><a class="btn btn-sm btn-secondary" href="{% url 'poll:show-list' %}">Retourner à la liste des quizs</a></p>
         </div>
         {% else %}
-        <div class="row mb-2">
-            <h4 class="col-12">Merci d'avoir répondu au quiz !</h4>
+        <div class="row mb-2 text-center">
+            <h3 class="col-12 text-center">Merci d'avoir répondu au quiz !</h3>
+            <h4>Ton score est de : <span class="fs-2">{{ quiz_instance.score }}</span> / <span class="fs-5">{{ quiz|score_max }}</span> </h4>
+            <p><a class="btn btn-sm btn-secondary" href="{% url 'poll:show-list' %}">Retourner à la liste des quizs</a></p>
         </div>
         {% endif %}
 

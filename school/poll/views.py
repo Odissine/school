@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from .forms import *
 from .core import *
 from .models import Quiz, Question, Answer
@@ -11,6 +10,8 @@ from django.contrib import messages
 from django.forms.formsets import formset_factory
 from django.db import IntegrityError, transaction
 from django.contrib.auth.decorators import user_passes_test, login_required
+import pandas as pd
+from io import BytesIO
 
 
 # ##########################################################################################
@@ -41,50 +42,46 @@ def show_quiz(request, quiz_id):
 @login_required()
 def answer_quiz(request):
     context = {}
-
+    score = 0
     if request.method == 'POST':
-        # QuestionFormSet = modelform_factory(Question)
-        # quiz_id = request.POST.get('id_quiz')
-        # form = QuestionFormSet(request.POST)
-        # instances = form.save(commit=False)
-        # for instance in instances:
-        #     instance.save()
         quiz = Quiz.objects.get(pk=request.POST.get('id_quiz'))
         player = request.user
         quiz_player = QuizInstance.objects.filter(player=player, quiz=quiz)
-        # for rep in request.POST.getlist("reponse"):
-        #     question = Question.objects.get(choices=rep)
-        # for question in quiz.questions.all():
-            # print("Q", question.id)
-            # pass
-            # for reponse in question.choices.all():
-                # print("R", reponse.id)
-                # pass
 
         if len(quiz_player) == 0:
+            dic_answer = sort_answer(request.POST.getlist("reponse"), quiz)
             # Creation de l'instance
             quiz_instance = QuizInstance.objects.create(player=player, quiz=quiz)
 
             # Question ajouté a l'instance pour l'utilisateur
             for question in quiz.questions.all():
-                print(question)
                 user_reponse = UserResponse.objects.create(quiz_instance=quiz_instance, question=question)
+                for r in dic_answer[question.id]:
+                    answer = Answer.objects.get(pk=r)
+                    user_reponse.response.add(answer)
+                nb_correct_answer = len(question.choices.filter(correct=True))
+                lt = sorted(list(question.choices.filter(correct=True).values_list('pk')))
+                out = [item for t in lt for item in t]
+                if len(dic_answer[question.id]) < nb_correct_answer:
+                    if sorted(dic_answer[question.id]) == out:
+                        print(sorted(dic_answer[question.id]), out)
+                        score += 2
+                    if any(x in dic_answer[question.id] for x in out):
+                        print(sorted(dic_answer[question.id]), out)
+                        score += 1
 
-                for rep in request.POST.getlist("reponse"):
-                    answer = Answer.objects.get(pk=rep)
-                    if answer in question.choices.all():
-                        print(answer)
-                        user_reponse.response.add(answer)
+                if len(dic_answer[question.id]) == nb_correct_answer:
+                    if sorted(dic_answer[question.id]) == out:
+                        print(sorted(dic_answer[question.id]), out)
+                        score += 2
 
-                        if answer.correct is True:
-                            quiz_instance.score += 1
-                        else:
-                            quiz_instance.score -= 1
-                        print(quiz_instance.score)
-                        quiz_instance.save()
-
-            print("FINAL", quiz_instance.score)
-
+            print(score)
+            quiz_instance.score = score
+            quiz_instance.save()
+            context = {
+                'quiz_instance': quiz_instance,
+                'quiz': quiz,
+            }
         else:
             context = {
                 'error': True,
@@ -178,7 +175,6 @@ def question_list(request, quiz_id=None, question_id=None):
 
 # CREATION #################################################################################
 def question_create(request, quiz_id=None):
-
     if request.user.is_staff:
         title = "Créer une question"
         form = QuestionForm()
@@ -342,7 +338,7 @@ def question_delete_pic(request):
 def question_add(request, quiz_id):
     if request.POST:
         quiz = Quiz.objects.get(pk=quiz_id)
-        form = QuizQuestionForm(request.POST,instance=quiz)
+        form = QuizQuestionForm(request.POST, instance=quiz)
         if form.is_valid():
             form.save()
             messages.success(request, "Questions mises à jour !")
@@ -351,13 +347,13 @@ def question_add(request, quiz_id):
     messages.error(request, "Une erreur s'est produite !")
     return redirect('poll:question-list', quiz_id=quiz_id, question_id=None)
 
+
 # ##########################################################################################
 # REPONSES
 # ##########################################################################################
 
 # CREATIONS ################################################################################
 def answer_create(request, question_id=None):
-
     if request.user.is_staff:
         title = "Ajouter les réponses (choix)"
         form = AnswerForm()
@@ -563,3 +559,106 @@ def theme_edit(request, theme_id):
 # SUPPRESSION ##############################################################################
 def theme_delete(request, theme_id):
     pass
+
+
+# ##########################################################################################
+# USER
+# ##########################################################################################
+
+# AFFICHAGE DES JOUEURS ####################################################################
+def show_quiz_user_list(request, quiz_id=None):
+    title = "Liste des joueurs"
+    tri = "id"
+
+    if request.GET.get("tri"):
+        tri = request.GET.get('tri')
+        if tri == "quiz":
+            tri = "quiz"
+        elif tri == "pn":
+            tri = "player__first_name"
+        elif tri == "np":
+            tri = "player__last_name"
+        elif tri == "-score":
+            tri = "score"
+        elif tri == "classe":
+            tri = "player__groups__name"
+        else:
+            tri = "id"
+
+    try:
+        quiz = Quiz.objects.get(pk=quiz_id)
+        instances = QuizInstance.objects.filter(quiz=quiz).order_by(tri)
+    except:
+        instances = QuizInstance.objects.order_by(tri).all()
+    print(instances.query)
+    # instances = list(set(instances))
+    context = {
+        'instances': instances,
+        'title': title,
+    }
+    return render(request, "poll/show_quiz_user_list.html", context)
+
+
+def download_players(request, quiz_id=None):
+    instance_dic = {}
+    try:
+        quiz = Quiz.objects.get(pk=quiz_id)
+        instances = QuizInstance.objects.filter(quiz=quiz)
+        questions = quiz.questions.all()
+    except:
+        questions = Question.objects.all()
+        instances = QuizInstance.objects.all()
+    for instance in instances:
+        classe = ','.join(map(lambda x: str(x[0]), instance.player.groups.all().values_list('name')))
+        instance_dic[instance.id] = {'Prénom': instance.player.first_name, 'Nom': instance.player.last_name, 'Classe': classe, 'Score': instance.score}
+        datas = UserResponse.objects.filter(quiz_instance=instance)
+
+        for data in datas:
+            user_answers = sorted(list(data.response.all().values_list('pk')))
+            question = Question.objects.get(pk=data.question.id)
+            correct_answers = sorted(list(question.choices.filter(correct=True).values_list('pk')))
+            out_user = [str(item) for t in user_answers for item in t]
+            out_correct = [str(item) for t in correct_answers for item in t]
+            # instance_dic[instance.id].update({data.question.id: out_user})
+            instance_dic[instance.id].update({data.question.id: ",".join(out_user), 'S' + str(data.question.id): get_score(out_user, out_correct)})
+
+    df = pd.DataFrame.from_dict(instance_dic, orient='index')
+
+    dic_question = {}
+    for data_question in questions:
+        data_answers = data_question.choices.filter(correct=True).values_list('pk')
+        out_correct = [str(item) for t in data_answers for item in t]
+        dic_question[data_question.id] = {'Question': data_question.question, 'Réponses': ",".join(out_correct)}
+    dfq = pd.DataFrame.from_dict(dic_question, orient='index')
+
+    with BytesIO() as b:
+        # Use the StringIO object as the filehandle.
+        with pd.ExcelWriter(b) as writer:
+            df.to_excel(writer, sheet_name='Player')
+            dfq.to_excel(writer, sheet_name='Questions')
+        # writer.save()
+        # Set up the Http response.
+        filename = 'export_results.xlsx'
+        response = HttpResponse(
+            b.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
+        # return redirect('poll:show-quiz-user-list', quiz_id=quiz_id)
+
+
+# AFFICHAGE D'UN JOUEUR ####################################################################
+def show_player(request, player_id, quiz_id):
+    player = User.objects.get(pk=player_id)
+    quiz = Quiz.objects.get(pk=quiz_id)
+    instance = QuizInstance.objects.get(player=player, quiz=quiz)
+    reponses = UserResponse.objects.filter(quiz_instance=instance)
+
+    context = {
+        'player': player,
+        'quiz': quiz,
+        'instance': instance,
+        'reponses': reponses,
+    }
+    return render(request, "poll/show_player.html", context)

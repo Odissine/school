@@ -42,10 +42,15 @@ urlpatterns = [
     path('answer/edit/pic/<question_id>/<answer_id>', answer_edit_pic, name='answer-edit-pic'),
     path('answer/delete', answer_delete, name='answer-delete'),
 
-
-
+    # THEMES
     path('theme/create/', theme_create, name='theme-create'),
     path('theme/edit/<theme_id>', theme_edit, name='theme-edit'),
     path('theme/delete/<theme_id>', theme_delete, name='theme-delete'),
     path('theme/list/', theme_list, name='theme-list'),
+
+    # SHOW USER
+    path('user/list/<quiz_id>', show_quiz_user_list, name='show-quiz-user-list'),
+    path('user/show/<player_id>/<quiz_id>', show_player, name='show-player'),
+    path('user/download/<quiz_id>', download_players, name='download-players'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
