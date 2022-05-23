@@ -1446,3 +1446,9 @@ fieldset:not(:first-of-type) {
 .card-no-bg {
     background:none !important;
 }
+
+.boxsizingBorder {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}

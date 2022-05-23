@@ -53,11 +53,11 @@
         <div class="col-8 border-end border-primary">
             <div class="h5 oswald">
                 <i class="bi bi-arrow-right-short"></i>
-                <input id="question_input" name="question_input" class="border-0 bg-transparent question" type="text" value="{{ question.question }}" />
+                <input id="question_input" name="question_input" class="border-0 bg-transparent question" type="text" value="{{ question.question }}" style="width:85%" />
                 <a data-bs-toggle="modal" data-bs-target="#deleteQuestion" class="btn btn-sm btn-danger float-end"><i class="bi bi-trash"></i></a>
             </div>
             <div class="h5 oswald">
-                <textarea cols="100%" id="description_input" name="description_input" class="border-0 bg-transparent question">{{ question.description }}</textarea>
+                <textarea rows="4" id="description_input" name="description_input" class="border-0 bg-transparent question boxsizingBorder" style="width:100%">{{ question.description }}</textarea>
             </div>
             {% if question.question_pic != "" and question %}
             <div class="text-center col-12 my-3 rounded-3" id="picQuestionDiv">

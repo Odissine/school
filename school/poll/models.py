@@ -104,3 +104,6 @@ class UserResponse(models.Model):
     response = models.ManyToManyField(Answer, related_name="UserResponses")
     # time_taken = models.DateTimeField(auto_now_add=True)
     # time_taken_delta = models.DateTimeField(blank=True)
+    
+    def get_responses(self):
+        return ",".join([str(resp.id) for resp in self.response.all()])
