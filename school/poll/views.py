@@ -60,9 +60,19 @@ def answer_quiz(request):
                     answer = Answer.objects.get(pk=r)
                     user_reponse.response.add(answer)
                 nb_correct_answer = len(question.choices.filter(correct=True))
+                nb_answers = len(question.choices.all())
                 lt = sorted(list(question.choices.filter(correct=True).values_list('pk')))
                 out = [item for t in lt for item in t]
 
+                if sorted(dic_answer[question.id]) == out and (len(dic_answer[question.id]) < nb_answers or len(dic_answer[question.id]) == nb_correct_answer):
+                    score += 2
+                    print(question, 2)
+                elif any(x in dic_answer[question.id] for x in out) and len(dic_answer[question.id]) < nb_answers:
+                    score += 1
+                    print(question, 1)
+                else:
+                    print(question, 0)
+                '''
                 if len(dic_answer[question.id]) < nb_correct_answer:
                     if sorted(dic_answer[question.id]) == out:
                         score += 2
@@ -74,7 +84,7 @@ def answer_quiz(request):
                     if sorted(dic_answer[question.id]) == out:
                         score += 2
                         print(question.id, score)
-
+                '''
             quiz_instance.score = score
             quiz_instance.save()
             context = {
