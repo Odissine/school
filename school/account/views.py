@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.apps import apps
 from .core import get_moyenne_score, get_max_score
 from django.core import serializers
 from django.http import HttpResponse
@@ -14,7 +15,7 @@ from django.http import HttpResponse
 from io import BytesIO
 import xlsxwriter
 
-from games.models import *
+# from games.models import *
 
 
 class MyChangeFormPassword(PasswordChangeForm):
@@ -152,6 +153,8 @@ def user_list(request, order):
 @login_required
 @group_required('ADMIN')
 def export_user_excel(request):
+    letterScore = apps.get_model('games', 'LetterScore')
+    wordScore = apps.get_model('games', 'WordScore')
 
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output)
@@ -218,7 +221,7 @@ def export_user_excel(request):
         worksheet.write(line, 1, user.last_name)
         worksheet.write(line, 2, classe.name)
         for level in range(1, 6):
-            score = LetterScore.objects.filter(user=user, level=level).first()
+            score = letterScore.objects.filter(user=user, level=level).first()
             if score is not None:
                 score = score.score
             else:
@@ -226,7 +229,7 @@ def export_user_excel(request):
             worksheet.write(line, level + 2, score)
 
         for level in range(1,7):
-            score = WordScore.objects.filter(user=user, level=level).first()
+            score = wordScore.objects.filter(user=user, level=level).first()
             if score is not None:
                 score = score.score
             else:
@@ -248,6 +251,26 @@ def export_user_excel(request):
     # return the response
     return response
 
+
+@login_required
+@group_required('ADMIN')
+def export_user_csv(request):
+    letterScore = apps.get_model('games', 'LetterScore')
+    wordScore = apps.get_model('games', 'WordScore')
+
+    dic_user = {}
+    users = User.objects.all().order_by('last_name', 'first_name').distinct()
+    for user in users:
+        dic_user[user.id] = {'Prénom': user.first_name, 'Nom': user.last_name, 'Classe': user.groups.name}
+        letter_scores = letterScore.objects.filter(user=user)
+        max_level_letter = letterScore.objects.all().aggregate(Max('level'))
+        word_scores = wordScore.objects.filter(user=user)
+        max_level_word = wordScore.objects.all().aggregate(Max('level'))
+        print(max_level_letter)
+
+        response = HttpResponse(serializers.serialize('json', users), content_type='application/json')
+
+        return response
 
 @login_required
 @group_required('ADMIN')

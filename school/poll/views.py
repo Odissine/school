@@ -64,18 +64,14 @@ def answer_quiz(request):
                 out = [item for t in lt for item in t]
                 if len(dic_answer[question.id]) < nb_correct_answer:
                     if sorted(dic_answer[question.id]) == out:
-                        print(sorted(dic_answer[question.id]), out)
                         score += 2
                     if any(x in dic_answer[question.id] for x in out):
-                        print(sorted(dic_answer[question.id]), out)
                         score += 1
 
                 if len(dic_answer[question.id]) == nb_correct_answer:
                     if sorted(dic_answer[question.id]) == out:
-                        print(sorted(dic_answer[question.id]), out)
                         score += 2
 
-            print(score)
             quiz_instance.score = score
             quiz_instance.save()
             context = {
@@ -425,7 +421,6 @@ def answer_edit_correct(request, question_id, answer_id):
             if answer.correct is False:
                 # On remet tout à FALSE pour ne mettre que celle selectionnée à TRUE
                 if question.multiple is False:
-                    print("Une seule réponse")
                     for ans in answers:
                         ans.correct = False
                         ans.save()
@@ -590,7 +585,6 @@ def show_quiz_user_list(request, quiz_id=None):
         instances = QuizInstance.objects.filter(quiz=quiz).order_by(tri)
     except:
         instances = QuizInstance.objects.order_by(tri).all()
-    print(instances.query)
     # instances = list(set(instances))
     context = {
         'instances': instances,

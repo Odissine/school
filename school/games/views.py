@@ -196,11 +196,10 @@ def saveLetterProgress(request):
     group = request.user.groups.first()
     score = LetterScore.objects.filter(level=level, user=user).first()
     if not score:
-        instance = LetterScore.objects.create(level=level, user=user, group=group, score=count)
+        instance = LetterScore.objects.create(level=level, user=user, score=count)
         new_score = instance.score
     elif score.score < int(count):
         score.score = int(count)
-        score.group = request.user.groups.first()
         score.save()
         new_score = count
     else:

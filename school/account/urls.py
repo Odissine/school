@@ -13,5 +13,6 @@ urlpatterns = [
     path('user_list/<order>/', views.user_list, name='user-list'),
     path('export_users/', views.export_users, name='export-users'),
     path('export_user_excel/', views.export_user_excel, name='export-user-excel'),
+    path('export_user_csv/', views.export_user_csv, name='export-user-csv'),
     path('change_password/', views.change_password, name='change-password'),
 ]
