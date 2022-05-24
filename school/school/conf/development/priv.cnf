@@ -1,0 +1,6 @@
+# my.cnf
+[client]
+database = endtg
+user = endtg
+password = Azerty2+
+default-character-set = utf8

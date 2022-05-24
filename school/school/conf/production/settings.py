@@ -78,18 +78,26 @@ EMAIL_USE_SSL = True
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'ENDTG',
+    #     'USER': 'endtg',
+    #     'PASSWORD': 'admin',
+    #     'HOST': '192.168.1.228',   # Or an IP Address that your DB is hosted on
+    #     'PORT': '3306',
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'ENDTG',
-        'USER': 'endtg',
-        'PASSWORD': 'admin',
-        'HOST': '192.168.1.228',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'read_default_file': 'priv.cnf',
+        },
     }
+
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
+
 }
 
 

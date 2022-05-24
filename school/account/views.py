@@ -14,7 +14,7 @@ from django.http import HttpResponse
 
 from io import BytesIO
 import xlsxwriter
-
+import pandas as pd
 # from games.models import *
 
 
@@ -257,19 +257,58 @@ def export_user_excel(request):
 def export_user_csv(request):
     letterScore = apps.get_model('games', 'LetterScore')
     wordScore = apps.get_model('games', 'WordScore')
+    quizScore = apps.get_model('poll', 'QuizInstance')
+    quizModel = apps.get_model('poll', 'Quiz')
 
     dic_user = {}
+    quizs = quizModel.objects.all()
     users = User.objects.all().order_by('last_name', 'first_name').distinct()
     for user in users:
-        dic_user[user.id] = {'Prénom': user.first_name, 'Nom': user.last_name, 'Classe': user.groups.name}
+        classe = ','.join(map(lambda x: str(x[0]), user.groups.all().values_list('name')))
+        dic_user[user.id] = {'Prénom': user.first_name, 'Nom': user.last_name, 'Classe': classe}
         letter_scores = letterScore.objects.filter(user=user)
-        max_level_letter = letterScore.objects.all().aggregate(Max('level'))
         word_scores = wordScore.objects.filter(user=user)
+        max_level_letter = letterScore.objects.all().aggregate(Max('level'))
         max_level_word = wordScore.objects.all().aggregate(Max('level'))
-        print(max_level_letter)
 
-        response = HttpResponse(serializers.serialize('json', users), content_type='application/json')
+        for level in range(1, int(max_level_letter['level__max']) + 1):
+            try:
+                score_letter = letterScore.objects.get(user=user, level=level)
+                score_letter = score_letter.score
+            except:
+                score_letter = 0
 
+            dic_user[user.id].update({'L'+str(level): score_letter})
+
+        for level in range(1, int(max_level_word['level__max']) + 1):
+            try:
+                score_word = wordScore.objects.get(user=user, level=level)
+                score_word = score_word.score
+            except:
+                score_word = 0
+            dic_user[user.id].update({'M'+str(level): score_word})
+        i = 1
+        for quiz in quizs:
+            try:
+                quiz_score = quizScore.objects.get(player=user, quiz=quiz)
+                quiz_score = quiz_score.score
+            except:
+                quiz_score = 0
+            dic_user[user.id].update({'Q' + str(i): quiz_score})
+            i += 1
+
+    df = pd.DataFrame.from_dict(dic_user, orient='index')
+
+    with BytesIO() as b:
+        with pd.ExcelWriter(b) as writer:
+            df.to_excel(writer, sheet_name='Users')
+
+        filename = 'export_users.xlsx'
+        response = HttpResponse(
+            b.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
 
 @login_required

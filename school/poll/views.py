@@ -62,15 +62,18 @@ def answer_quiz(request):
                 nb_correct_answer = len(question.choices.filter(correct=True))
                 lt = sorted(list(question.choices.filter(correct=True).values_list('pk')))
                 out = [item for t in lt for item in t]
+
                 if len(dic_answer[question.id]) < nb_correct_answer:
                     if sorted(dic_answer[question.id]) == out:
                         score += 2
-                    if any(x in dic_answer[question.id] for x in out):
+                        print(question.id, score)
+                    elif any(x in dic_answer[question.id] for x in out):
                         score += 1
-
+                        print(question.id, score)
                 if len(dic_answer[question.id]) == nb_correct_answer:
                     if sorted(dic_answer[question.id]) == out:
                         score += 2
+                        print(question.id, score)
 
             quiz_instance.score = score
             quiz_instance.save()
