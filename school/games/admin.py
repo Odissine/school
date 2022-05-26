@@ -1,54 +1,107 @@
 from django.contrib import admin
+from import_export import resources, fields
 from .models import LetterScore, WordOne, Halo, AdditionScore, WordScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore
-
-# LETTER
-@admin.register(LetterScore)
-class LetterScoreAdmin(admin.ModelAdmin):
-    list_display = ['score', 'level', 'user']
+from import_export.admin import ImportMixin, ImportExportModelAdmin
+from import_export.widgets import ManyToManyWidget
+from django.contrib.auth.models import Group
 
 
-# WORDS
-@admin.register(WordOne)
-class WordOneFindAdmin(admin.ModelAdmin):
-    list_display = ['name', 'level', 'get_groups']
-    prepopulated_fields = {'slug': ('name',)}
-    search_fields = ['name']
-    list_filter = ['level']
-    ordering = ['name', 'level']
-
-    def get_groups(self, obj):
-        return ",".join([g.name for g in obj.group.all()])
+# RESOURCES
+class LetterScoreResource(resources.ModelResource):
+    class Meta:
+        model = LetterScore
 
 
-@admin.register(WordScore)
-class WordScoreAdmin(admin.ModelAdmin):
-    list_display = ['score', 'level', 'user']
+class AdditionScoreResource(resources.ModelResource):
+    class Meta:
+        model = AdditionScore
 
 
-@admin.register(Halo)
-class HaloAdmin(admin.ModelAdmin):
-    list_display = ['name', 'image']
+class SoustractionScoreResource(resources.ModelResource):
+    class Meta:
+        model = SoustractionScore
 
 
-# ADDITION
-@admin.register(AdditionScore)
-class AdditionScoreAdmin(admin.ModelAdmin):
-    list_display = ['score', 'user']
+class MultiplicationScoreResource(resources.ModelResource):
+    class Meta:
+        model = MultiplicationScore
 
 
-# ADDITION POSEE
-@admin.register(AdditionPoseeScore)
-class AdditionPoseeScoreAdmin(admin.ModelAdmin):
-    list_display = ['score', 'user']
+class AdditionPoseeScoreResource(resources.ModelResource):
+    class Meta:
+        model = AdditionPoseeScore
 
-# SOUSTRACTION
-@admin.register(SoustractionScore)
-class SoustractionScoreAdmin(admin.ModelAdmin):
-    list_display = ['score', 'user']
 
-# MULTIPLICATION
-@admin.register(MultiplicationScore)
-class MultiplicationScoreAdmin(admin.ModelAdmin):
-    list_display = ['score', 'user']
+class WordScoreResource(resources.ModelResource):
+    class Meta:
+        model = WordScore
 
-admin.register(AdditionScore, MultiplicationScore, SoustractionScore, AdditionPoseeScore, LetterScore, WordOne, WordScore)
+
+class WordOneResource(resources.ModelResource):
+    groups = fields.Field(column_name='groups', attribute='groups', widget=ManyToManyWidget(Group, field='id'))
+
+    class Meta:
+        model = WordOne
+        fields = ('id', 'name', 'slug', 'level', 'groups')
+
+
+class HaloResource(resources.ModelResource):
+    class Meta:
+        model = Halo
+
+
+# ADMIN
+class LetterScoreAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'score', 'level', 'user')
+    resource_class = LetterScoreResource
+
+
+class WordScoreAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'score', 'level', 'user')
+    resource_class = WordScoreResource
+
+
+class AdditionScoreAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'score', 'user')
+    resource_class = AdditionScoreResource
+
+
+class SoustractionScoreAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'score', 'user')
+    resource_class = SoustractionScoreResource
+
+
+class MultiplicationScoreAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'score', 'user')
+    resource_class = MultiplicationScoreResource
+
+
+class AdditionPoseeScoreAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'score', 'user')
+    resource_class = AdditionPoseeScoreResource
+
+
+class HaloAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'name', 'image')
+    resource_class = HaloResource
+
+
+class WordOneAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ('id', 'name', 'slug','level', 'get_groups')
+    resource_class = WordOneResource
+
+
+admin.site.register(LetterScore, LetterScoreAdmin)
+admin.site.register(WordScore, WordScoreAdmin)
+admin.site.register(WordOne, WordOneAdmin)
+admin.site.register(AdditionScore, AdditionScoreAdmin)
+admin.site.register(AdditionPoseeScore, AdditionPoseeScoreAdmin)
+admin.site.register(Halo, HaloAdmin)

@@ -141,6 +141,46 @@ def quiz_create(request):
         return redirect('poll:quiz-list')
 
 
+# EDITION #################################################################################
+def quiz_edit(request, quiz_id=None):
+    if request.user.is_staff:
+        try:
+            quiz = Quiz.objects.get(pk=quiz_id)
+            form = QuizForm(instance=quiz)
+        except:
+            quiz = None
+            form = QuizForm()
+        title = "Modifier un Quiz"
+        previous_page = reverse('poll:quiz-list')
+        formAction = 'poll:quiz-edit'
+
+        if request.method == 'POST':
+            form = QuizForm(request.POST, request.FILES, instance=quiz)
+
+            if form.is_valid():
+                obj = form.save()
+
+                message = "Quiz modifié !"
+                messages.success(request, message)
+                return redirect('poll:quiz-edit', quiz_id=obj.id)
+            else:
+                message = "Une erreur s'est produite"
+                messages.error(request, message)
+            return redirect('poll:quiz-edit', quiz_id=quiz_id)
+
+        context = {
+            'form': form,
+            'title': title,
+            'formAction': formAction,
+            'previous_page': previous_page,
+            'quiz': quiz,
+        }
+        return render(request, "poll/create_quiz.html", context)
+    else:
+        messages.error(request, "Vous n'avez pas les droits !")
+        return redirect('poll:quiz-list')
+
+
 # START ####################################################################################
 def quiz_start(request):
     pass

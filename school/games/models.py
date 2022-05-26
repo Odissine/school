@@ -31,6 +31,9 @@ class WordOne(models.Model):
     def __str__(self):
         return self.name
 
+    def get_groups(self):
+        return "\n".join([group.name for group in self.group.all()])
+
 
 class WordScore(models.Model):
     objects = models.Manager()

@@ -17,6 +17,7 @@ urlpatterns = [
 
     # QUIZ
     path('quiz/create', quiz_create, name='quiz-create'),
+    path('quiz/edit/<quiz_id>', quiz_edit, name='quiz-edit'),
     path('quiz/list', quiz_list, name='quiz-list'),
     path('quiz/start/<quiz_id>', quiz_start, name='quiz-start'),
 

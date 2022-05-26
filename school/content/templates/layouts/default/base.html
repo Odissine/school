@@ -537,7 +537,7 @@
   <script src="{% static 'js/main.js' %}"></script>
 {% if messages %}
   {% for message in messages %}
-    <div class="" id="toastPlacement" style="position:absolute; top:65px; width:100%;">
+    <div class="" id="toastPlacement" style="position:absolute; top:65px; width:100%; z-index:1;">
       {% if message.tags == 'error' %}
       <div class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert">
       <i class="bi bi-exclamation-octagon me-1"></i>
@@ -554,10 +554,18 @@
       $('.alert').addClass('show');
       $('.alert').show();
       $('.alert').removeClass('hide');
+
+      $('#toastPlacement').addClass('show');
+      $('#toastPlacement').show();
+      $('#toastPlacement').removeClass('hide');
+
       function hideMsg () {
           $('.alert').fadeOut();
           $('.alert').hide();
           $('.alert').removeClass('show');
+          $('#toastPlacement').fadeOut();
+          $('#toastPlacement').hide();
+          $('#toastPlacement').removeClass('show');
       };
       setTimeout(hideMsg,3000);
   )};
