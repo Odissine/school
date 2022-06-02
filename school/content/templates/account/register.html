@@ -18,7 +18,11 @@
        {% endfor %}
     {% endif %}
     {{ form|crispy }}
+    <div>
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Un mail sera envoyé à l'adresse mail correspondant à votre prénom + nom saisie (prenom.nom@endtg.com)</span>
 
+    </div>
     <div class="d-grid gap-2">
         <button type="submit" class="btn btn-success">CREER MON COMPTE</button>
     </div>

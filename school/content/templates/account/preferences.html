@@ -1,0 +1,149 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% load show_score %}
+{% block title %}School @ ENDTG - Profile{% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="card-body pt-3">
+        <ul class="nav nav-tabs nav-tabs-bordered">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-apercu">Aperçu</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Editer mon profil</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-password">Modifier mon mot de passe</button>
+            </li>
+        </ul>
+        <div class="tab-content pt-2">
+            <div class="tab-pane fade profile-apercu active show" id="profile-apercu">
+                {% if modify_password %}
+                    {% if success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Mot de passe modifié avec succès
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Une erreur est survenue, veuillez réessayer.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                    {% if modify_profile %}
+                    {% if modify_profile_success %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Profil modifié avec succès
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Une erreur est survenue, veuillez réessayer.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                {% endif %}
+                <h5 class="card-title">Détails</h5>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Prénom Nom</div>
+                    <div class="col-lg-9 col-md-8">{{ user.first_name }} {{ user.last_name }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Classe</div>
+                    <div class="col-lg-9 col-md-8">{{ user.groups.first }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Lettres</div>
+                    <div class="col-lg-9 col-md-8">{{ user|show_score:'lettre' }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Mots</div>
+                    <div class="col-lg-9 col-md-8">{{ user|show_score:'word' }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Addition</div>
+                    <div class="col-lg-9 col-md-8">{{ user|show_score:'addition' }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Addition Posee</div>
+                    <div class="col-lg-9 col-md-8">{{ user|show_score:'additionposee' }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Soustraction</div>
+                    <div class="col-lg-9 col-md-8">{{ user|show_score:'soustraction' }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Multiplication</div>
+                    <div class="col-lg-9 col-md-8">{{ user|show_score:'multiplication' }}</div>
+                </div>
+            </div>
+            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                <form method="POST" action="{% url 'account:preferences' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="first_name" class="col-md-4 col-lg-3 col-form-label">Prénom</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="first_name" type="text" class="form-control" id="first_name" value="{{ user.first_name }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="last_name" class="col-md-4 col-lg-3 col-form-label">Nom</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="last_name" type="text" class="form-control" id="last_name" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-md-4 col-lg-3 col-form-label">Classe</label>
+                        <div class="col-md-8 col-lg-9">
+                            {{ form.group }}
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Sauvegarder les modifications</button>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade pt-3" id="profile-password">
+                <form method="POST" action="{% url 'account:password-reset' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Mot de passe actuel</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="currentPassword" type="password" class="form-control" id="currentPassword">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nouveau mot de passe</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="newpassword" type="password" class="form-control" id="newPassword">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Confirmer le nouveau mot de passe</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 col-lg-3"></div>
+                        <div class="col-md-8 col-lg-9 text-danger fs-6"><i class="bi bi-exclamation-triangle"></i> Une fois votre mot de passe modifié, vous serez déconnecté(e) !<br/> Il faudra simplement vous reconnecter avec le nouveau mot de passe.</div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

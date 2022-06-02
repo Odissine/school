@@ -2,13 +2,14 @@ import os
 import warnings
 from django.utils.translation import ugettext_lazy as _
 from os.path import dirname
+from . import settings_private
 
 warnings.simplefilter('error', DeprecationWarning)
 
 BASE_DIR = dirname(dirname(dirname(dirname(os.path.abspath(__file__)))))
 CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 
-SECRET_KEY = 'django-insecure-omf4=vg)fg2r*e(gk5-ydqn(=5r+7*sj!pj!@j(380j1pg#-a('
+SECRET_KEY = settings_private.SECRET_KEY
 
 DEBUG = True
 ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118', 'endtg.pythonanywhere.com']
@@ -71,10 +72,12 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'support@endtg.com'
 DEFAULT_FROM_EMAIL = 'support@endtg.com'
-EMAIL_HOST_PASSWORD = 'Azerty2+'
+EMAIL_HOST_PASSWORD = settings_private.EMAIL_HOST_PASSWORD
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
+
+API_GMASS = settings_private.API_GMASS
 
 DATABASES = {
     'default': {
@@ -167,3 +170,6 @@ LOGGING = {
         },
     },
 }
+
+# GMAIL
+config_mail = settings_private.CONFIG_MAIL

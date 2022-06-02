@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from .forms import RegisterForm, UserLoginForm
+from .forms import RegisterForm, UserLoginForm, UserProfil
 from django.contrib.auth.models import Group, User
 from django.db.models import Max
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -8,9 +8,12 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.apps import apps
-from .core import get_moyenne_score, get_max_score
+from .core import get_moyenne_score, get_max_score, generate_random_token, send_mail
 from django.core import serializers
 from django.http import HttpResponse
+from .models import TokenLogin, Player
+from school.settings import DEBUG
+from django.utils.html import format_html
 
 from io import BytesIO
 import xlsxwriter
@@ -40,16 +43,38 @@ def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST or None)
         if form.is_valid():
-            user = form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            group_name = form.cleaned_data.get('group')
-            group = Group.objects.get(name=group_name)
-            user.groups.add(group)
+            username = form.get_username()
+            try:
+                user = User.objects.get(username=username)
+                messages.error(request, "Compte déjà existant : <b>" + str(username) + "</b> ! Merci de réessayer.")
+                return redirect('account:register')
+            except:
+                user = form.save()
+                group_name = form.cleaned_data.get('group')
+                group = Group.objects.get(name=group_name)
+                user.groups.add(group)
 
-            # user = authenticate(username=username, password=password)
-            # login(request, user)
-            return redirect('account:login')
+                Player.objects.create(user=user, confirm=False)
+
+                if DEBUG is True:
+                    href = "http://127.0.0.1:8000/account/validation"
+                    # href = "https://endtg.pythonanywhere.com/account/validation"
+                else:
+                    href = "https://endtg.pythonanywhere.com/account/validation"
+
+                email_html = "<br/><br/>Bonjour " + user.first_name + ",<br/><br/>"
+                email_html += "Vous venez de créer un compte sur le site <a href='http://endtg.pythonanywhere.com'>School @ ENDTG</a><br>"
+                email_html += "Cliquez sur le lien ci-dessous afin de valider votre inscription.<br/><br/>"
+                email_html += "<a href='" + href + "'>Validation du compte</a><br/><br/>"
+                email_html += "Si vous n'êtes pas à l'origine de cette demande, merci de bien vouloir trasnférer ce mail à l'adresse suivante : support@endtg.com.<br/><br/>"
+                email_html += "Equipe Support - School @ ENDTG"
+                print("User mail to user : ", user.email)
+                #   send_mail("School @ ENDTG - Bienvenue !", email_html, '', '', user.email, '')
+
+                # user = authenticate(username=username, password=password)
+                # login(request, user)
+                messages.success(request, "Compte créé avec succès ... Un mail de validation vous a été envoyé à l'adresse " + str(user.email) + ".")
+                return redirect('account:login')
         else:
             print(form.errors)
     else:
@@ -336,3 +361,147 @@ def export_users(request):
         raise
 
     return response
+
+
+@login_required()
+def help_view(request):
+    context = {}
+    return render(request, './account/help.html', context)
+
+
+@login_required()
+def pref_view(request):
+    form = UserProfil(request.user, request.POST or None, instance=request.user, initial={'group': request.user.groups.first()})
+    if request.POST:
+        if form.is_valid():
+            user = form.save()
+            group = Group.objects.get(pk=request.POST.get('group'))
+            user.groups.clear()
+            user.groups.add(group)
+            message = "Profil modifié avec succès !"
+            messages.success(request, message)
+            redirect('account:preferences')
+        else:
+            message = "Une erreur s'est produit lors de la mise à jour !"
+            messages.error(request, message)
+            redirect('account:preferences')
+    context = {
+        'form': form,
+    }
+    return render(request, './account/preferences.html', context)
+
+
+@login_required()
+def password_reset(request):
+    if request.POST:
+        password = request.POST.get("currentPassword")
+        newpassword = request.POST.get("newPassword")
+        confirmpassword = request.POST.get("renewPassword")
+        if request.user.check_password(password):
+            if newpassword == confirmpassword:
+                request.user.set_password(password)
+                request.user.save()
+                message = "Mot de passe modifié avec succès !"
+                messages.success(request, message)
+                redirect('account:preferences')
+            else:
+                message = "La confirmation du mot de passe ne correspond pas au mot de passe saisie !"
+                messages.error(request, message)
+                redirect('account:preferences')
+        else:
+            message = "L'ancien mot de passe n'est le bon !"
+            messages.error(request, message)
+    context = {
+    }
+    return render(request, './account/preferences.html', context)
+
+
+def lost_password(request):
+    form = UserLoginForm(request.POST or None)
+    if request.method == "POST":
+        username = request.POST['username']
+        try:
+            user = User.objects.get(pk=username)
+        except:
+            messages.error(request, "Un problème est survenu ... compte inexistant !")
+            return render(request, "account/forget.html")
+
+        token_mail = generate_random_token(40)
+        create_token = TokenLogin.objects.create(token=token_mail, user=user)
+
+        if DEBUG is True:
+            href = "http://127.0.0.1:8000/account/reset/" + str(user.id) + "/" + str(token_mail)
+        else:
+            href = "https://endtg.pythonaywhere.com/account/reset/" + str(user.id) + "/" + str(token_mail)
+
+        email_html = "<br/><br/>Bonjour " + user.first_name + ",<br/><br/>"
+        email_html += "Vous venez de faire une demande de réinitialisation de mot de passe sur le site <a href='http://endtg.pythonanywhere.com'>School @ ENDTG</a><br>"
+        email_html += "Cliquez sur le lien ci-dessous afin de pouvoir changer votre mot de passe <br/><br/>"
+        email_html += "<a href='" + href + "'>Changer son mot de passe</a><br/><br/>"
+        email_html += "Si vous n'êtes pas à l'origine de cette demande, veuillez ne pas tenir compte de ce mail.<br/><br/>"
+        email_html += "Equipe Support - School @ ENDTG"
+        print("User mail to user : ", user.email)
+        send_mail("School @ ENDTG - Mot de passe oublié", email_html, '', '', user.email, '')
+
+        messages.success(request, "Un email vient de vous être envoyé !")
+        return redirect("account:login")
+        # user = authenticate(request, username=username, password=password)
+
+    context = {
+        'form': form,
+    }
+    return render(request, "account/forget.html", context)
+
+
+def reset_password(request, user, token):
+    try:
+        user = User.objects.get(id=user)
+    except:
+        messages.error(request, "Vous n'êtes pas autorisé à modifier le mot de passe.")
+        return redirect("account:login")
+
+    try:
+        token = TokenLogin.objects.get(user=user, token=token)
+    except:
+        messages.error(request, "Vous n'êtes pas autorisé à modifier le mot de passe.")
+        return redirect("account:login")
+
+    if request.POST:
+        if request.POST.get('pass1') == request.POST.get('pass2') and request.POST.get('pass1') != "":
+            user = request.POST.get('user')
+            try:
+                user = User.objects.get(id=user)
+            except:
+                messages.error(request, "Vous n'êtes pas autorisé à modifier le mot de passe.")
+                return redirect("account:login")
+
+            user.set_password(request.POST.get('pass1'))
+            user.save()
+            token.delete()
+
+            if DEBUG is True:
+                href = "http://127.0.0.1:8000/account/login"
+                # href = "https://endtg.pythonanywhere.com/account/login"
+            else:
+                href = "https://endtg.pythonanywhere.com/account/login"
+
+            email_html = "<br/><br/>Bonjour " + user.first_name + ",<br/><br/>"
+            email_html += "Vous venez de modifier votre mot de passe pour accéder au site <a href='http://endtg.pythonanywhere.com'>School @ ENDTG</a><br>"
+            email_html += "Cliquez sur le lien ci-dessous afin de pouvoir vous identifier.<br/><br/>"
+            email_html += "<a href='" + href + "'>Identification</a><br/><br/>"
+            email_html += "Si vous n'êtes pas à l'origine de cette demande, veuillez nous contacter afin que l'on puisse vous réinitialiser votre mot de passe.<br/><br/>"
+            email_html += "Equipe Support - School @ ENDTG"
+            print("User mail to user : ", user.email)
+            send_mail("School @ ENDTG - Nouveau mot de passe", email_html, '', '', user.email, '')
+
+            messages.success(request, format_html("Votre mot de passe a bien été réinitialisé."))
+            return redirect("account:login")
+        else:
+            messages.error(request, format_html("Les mots de passe ne correspondent pas !<br> Veuillez réessayer."))
+            return redirect('account:reset', user.id, token.token)
+
+    context = {
+        'user_reset': user,
+        'token': token.token,
+    }
+    return render(request, "account/reset.html", context)

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User, Group
 from import_export import resources, fields
 from import_export.admin import ImportMixin, ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget
+from .models import TokenLogin, Player
 
 
 class MyUserAdmin(admin.ModelAdmin):
@@ -34,6 +35,18 @@ class GroupResource(resources.ModelResource):
         fields = ('id', 'name')
 
 
+class TokenLoginResource(resources.ModelResource):
+    class Meta:
+        model = TokenLogin
+        fields = ('id', 'token', 'user')
+
+
+class PlayerResource(resources.ModelResource):
+    class Meta:
+        model = Player
+        fields = ('id', 'confirm', 'user')
+
+
 # ADMIN
 class UserAdmin(ImportExportModelAdmin):
     ordering = ['last_name', 'first_name']
@@ -47,7 +60,21 @@ class GroupAdmin(ImportExportModelAdmin):
     resource_class = GroupResource
 
 
+class TokenLoginAdmin(ImportExportModelAdmin):
+    ordering = ['user']
+    list_display = ('token', 'user',)
+    resource_class = TokenLoginResource
+
+
+class PlayerAdmin(ImportExportModelAdmin):
+    ordering = ['user']
+    list_display = ('confirm', 'user',)
+    resource_class = PlayerResource
+
+
 admin.site.unregister(User)
 admin.site.unregister(Group)
 admin.site.register(User, UserAdmin)
 admin.site.register(Group, GroupAdmin)
+admin.site.register(TokenLogin, TokenLoginAdmin)
+admin.site.register(Player, PlayerAdmin)

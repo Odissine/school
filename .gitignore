@@ -128,3 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 db.sqlite3
+conf/
+../school/conf/development/settings_private.py
+../school/conf/production/settings_private.py
+../school/conf/development/priv.cnf
+../school/conf/production/priv.cnf
+# /school/school/conf/

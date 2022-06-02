@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .core import generate_username, generate_email
 from django_select2.forms import Select2Widget, ModelSelect2Widget, Select2MultipleWidget
 from django.forms import ModelMultipleChoiceField, ModelChoiceField
-
+from .models import *
 
 class UsernameChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -15,9 +15,13 @@ class UsernameChoiceField(forms.ModelChoiceField):
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Prénom', 'autocomplete': 'off'}))
     last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Nom', 'autocomplete': 'off'}))
-    group = forms.ModelChoiceField(queryset=Group.objects.all(), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe', widget=Select2Widget(attrs={'placeholder': "Classe", 'class': 'js-example-basic-single form-control select'}))
+    group = forms.ModelChoiceField(queryset=Group.objects.all().exclude(name__in=['ADMIN','ENSEIGNANT']), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe', widget=Select2Widget(attrs={'placeholder': "Classe", 'class': 'js-example-basic-single form-control select'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'}), label='')
+
+    def get_username(self):
+        username = generate_username(self.cleaned_data['first_name'], self.cleaned_data['last_name'])
+        return username
 
     def save(self, commit=True):
         instance = super(RegisterForm, self).save(commit=False)
@@ -44,10 +48,38 @@ class UserLoginForm(forms.ModelForm):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
         user = authenticate(username=username, password=password)
+
         if not user or not user.is_active:
             raise forms.ValidationError("Désolé, cet identifiant n'existe pas ! Essaye encore ... ou créé toi un compte :)")
+        else:
+            confirm = Player.objects.get(user=user)
+            if confirm.confirm is False:
+                raise forms.ValidationError("Désolé, le compte n'est pas encore validé ! <a href=''>Renvoyer le mail de validation ?</a>")
+
         return self.cleaned_data
 
     class Meta:
         model = User
         fields = ['username', 'password']
+
+
+class UserProfil(forms.ModelForm):
+
+    def __init__(self, user, *args, **kwargs):
+        super(UserProfil, self).__init__(*args, **kwargs)
+        admin_group = Group.objects.get(name="ADMIN")
+        if user.groups.first() == admin_group:
+            self.fields['group'].queryset = Group.objects.all()
+        else:
+            self.fields['group'].queryset = Group.objects.exclude(name__in=["ADMIN", "ENSEIGNANT"])
+
+    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='',
+                                 widget=forms.TextInput(attrs={'placeholder': 'Prénom', 'autocomplete': 'off'}))
+    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='',
+                                widget=forms.TextInput(attrs={'placeholder': 'Nom', 'autocomplete': 'off'}))
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'},
+                                   widget=Select2Widget(attrs={'class': 'js-example-basic-single form-control select', 'style': 'width:100%'}))
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'group')

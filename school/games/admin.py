@@ -17,11 +17,6 @@ class AdditionScoreResource(resources.ModelResource):
         model = AdditionScore
 
 
-class SoustractionScoreResource(resources.ModelResource):
-    class Meta:
-        model = SoustractionScore
-
-
 class MultiplicationScoreResource(resources.ModelResource):
     class Meta:
         model = MultiplicationScore
@@ -32,17 +27,22 @@ class AdditionPoseeScoreResource(resources.ModelResource):
         model = AdditionPoseeScore
 
 
+class SoustractionScoreResource(resources.ModelResource):
+    class Meta:
+        model = SoustractionScore
+
+
 class WordScoreResource(resources.ModelResource):
     class Meta:
         model = WordScore
 
 
 class WordOneResource(resources.ModelResource):
-    groups = fields.Field(column_name='groups', attribute='groups', widget=ManyToManyWidget(Group, field='id'))
+    groups = fields.Field(column_name='group', attribute='group', widget=ManyToManyWidget(Group, field='id'))
 
     class Meta:
         model = WordOne
-        fields = ('id', 'name', 'slug', 'level', 'groups')
+        fields = ('id', 'name', 'slug', 'level', 'group')
 
 
 class HaloResource(resources.ModelResource):
@@ -95,7 +95,7 @@ class HaloAdmin(ImportExportModelAdmin):
 
 class WordOneAdmin(ImportExportModelAdmin):
     ordering = ['id']
-    list_display = ('id', 'name', 'slug','level', 'get_groups')
+    list_display = ('id', 'name', 'slug', 'level', 'get_groups')
     resource_class = WordOneResource
 
 
@@ -103,5 +103,7 @@ admin.site.register(LetterScore, LetterScoreAdmin)
 admin.site.register(WordScore, WordScoreAdmin)
 admin.site.register(WordOne, WordOneAdmin)
 admin.site.register(AdditionScore, AdditionScoreAdmin)
+admin.site.register(SoustractionScore, SoustractionScoreAdmin)
+admin.site.register(MultiplicationScore, MultiplicationScoreAdmin)
 admin.site.register(AdditionPoseeScore, AdditionPoseeScoreAdmin)
 admin.site.register(Halo, HaloAdmin)
