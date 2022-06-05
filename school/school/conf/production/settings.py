@@ -1,6 +1,6 @@
 import os
 import warnings
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from os.path import dirname
 from . import settings_private
 
@@ -9,10 +9,10 @@ warnings.simplefilter('error', DeprecationWarning)
 BASE_DIR = dirname(dirname(dirname(dirname(os.path.abspath(__file__)))))
 CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 
-SECRET_KEY = 'django-insecure-omf4=vg)fg2r*e(gk5-ydqn(=5r+7*sj!pj!@j(380j1pg#-a('
+SECRET_KEY = settings_private.SECRET_KEY
 
 DEBUG = False
-ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118']
+ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118', 'endtg.pythonanywhere.com']
 
 SITE_ID = 1
 
@@ -26,12 +26,14 @@ INSTALLED_APPS = [
     'django_select2',
     'bootstrap5',
     'crispy_forms',
+    'mathfilters',
     'crispy_bootstrap5',
     # Application Apps
     'account',
     'main',
     'games',
     'poll',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -77,28 +79,24 @@ EMAIL_USE_SSL = True
 
 API_GMASS = settings_private.API_GMASS
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': settings_private.BDD_NAME, #
-        'USER': settings_private.BDD_USER,
-        'PASSWORD': settings_private.BDD_PASSWORD,
-        'HOST': settings_private.BDD_HOST,
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    #    'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     # },
+    #
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 3, }
     },
     # {
     #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -111,13 +109,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 ENABLE_USER_ACTIVATION = True
 DISABLE_USERNAME = False
-LOGIN_VIA_EMAIL = False
-LOGIN_VIA_EMAIL_OR_USERNAME = True
+LOGIN_VIA_EMAIL = True
+LOGIN_VIA_EMAIL_OR_USERNAME = False
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'account:login'
-USE_REMEMBER_ME = False
+USE_REMEMBER_ME = True
 
-RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = True
+RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = False
 ENABLE_ACTIVATION_AFTER_EMAIL_CHANGE = True
 
 SIGN_UP_FIELDS = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
@@ -134,17 +132,14 @@ TIME_ZONE = 'UTC'
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
+STATICFILES_DIRS = (
     os.path.join(CONTENT_DIR, 'static'),
-]
+)
 STATIC_ROOT = os.path.join(CONTENT_DIR, 'assets')
 
 MEDIA_ROOT = os.path.join(CONTENT_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# LOCALE_PATHS = [
-#     os.path.join(CONTENT_DIR, 'locale')
-# ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -169,3 +164,6 @@ LOGGING = {
         },
     },
 }
+
+# GMAIL
+config_mail = settings_private.CONFIG_MAIL
