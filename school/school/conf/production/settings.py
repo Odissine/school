@@ -83,12 +83,12 @@ API_GMASS = settings_private.API_GMASS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': 'priv.cnf',
+        'NAME': settings_private.BDD_NAME, #
+        'USER': settings_private.BDD_USER,
+        'PASSWORD': settings_private.BDD_PASSWORD,
+        'HOST': settings_private.BDD_HOST,
         },
-    }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
