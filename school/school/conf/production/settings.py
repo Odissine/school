@@ -67,11 +67,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'school.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'support@endtg.com'
-DEFAULT_FROM_EMAIL = 'support@endtg.com'
-EMAIL_HOST_PASSWORD = 'Azerty2+'
-EMAIL_PORT = 465
+EMAIL_HOST = settings_private.EMAIL_HOST
+EMAIL_HOST_USER = settings_private.EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = settings_private.EMAIL_DEFAULT
+EMAIL_HOST_PASSWORD = settings_private.EMAIL_HOST_PASSWORD
+EMAIL_PORT = settings_private.EMAIL_PORT
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
@@ -81,26 +81,12 @@ API_GMASS = settings_private.API_GMASS
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'ENDTG',
-    #     'USER': 'endtg',
-    #     'PASSWORD': 'admin',
-    #     'HOST': '192.168.1.228',   # Or an IP Address that your DB is hosted on
-    #     'PORT': '3306',
-    # },
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
             'read_default_file': 'priv.cnf',
         },
     }
-
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
-
 }
 
 

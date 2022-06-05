@@ -69,11 +69,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'school.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'support@endtg.com'
-DEFAULT_FROM_EMAIL = 'support@endtg.com'
+EMAIL_HOST = settings_private.EMAIL_HOST
+EMAIL_HOST_USER = settings_private.EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = settings_private.EMAIL_DEFAULT
 EMAIL_HOST_PASSWORD = settings_private.EMAIL_HOST_PASSWORD
-EMAIL_PORT = 465
+EMAIL_PORT = settings_private.EMAIL_PORT
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
