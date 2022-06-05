@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from .forms import RegisterForm, UserLoginForm, UserProfil
+from .forms import RegisterForm, UserLoginForm, UserProfil, SupportForm
 from django.contrib.auth.models import Group, User
 from django.db.models import Max
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.apps import apps
-from .core import get_moyenne_score, get_max_score, generate_random_token, send_mail
+from .core import get_moyenne_score, get_max_score, generate_random_token, send_mail, verify_mail_gmass
 from django.core import serializers
 from django.http import HttpResponse
 from .models import TokenLogin, Player
@@ -39,6 +39,19 @@ def home_view(request):
     return render(request, 'index.html')
 
 
+def support_view(request):
+    form = SupportForm(request.POST or None)
+    if request.method == 'POST':
+        print(form.errors)
+        if form.is_valid():
+            messages.success(request, "Message envoyé !")
+            return redirect('account:support')
+    context = {
+        'form': form,
+    }
+    return render(request, './account/support.html', context)
+
+
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST or None)
@@ -49,6 +62,9 @@ def register_view(request):
                 messages.error(request, "Compte déjà existant : <b>" + str(username) + "</b> ! Merci de réessayer.")
                 return redirect('account:register')
             except:
+                if verify_mail_gmass(username+"@endtg.com") is False:
+                    messages.error(request, "Vous devez d'abord avoir une adresse mail de l'établissement ! Veuillez contacter le support informatique (support@endtg.com).")
+                    return redirect('account:register')
                 user = form.save()
                 group_name = form.cleaned_data.get('group')
                 group = Group.objects.get(name=group_name)
@@ -88,14 +104,16 @@ def login_view(request):
 
     form = UserLoginForm(request.POST or None)
     if request.method == "POST":
-        user = User.objects.get(pk=request.POST['username'])
+        # user = User.objects.get(pk=request.POST['username'])
         # user.backend = 'django.contrib.auth.backends.ModelBackend'
         # user = form.login(request)
-        # username = request.POST['username']
-        username = user.username
-
+        username = request.POST['username']
+        # username = user.username
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        if '@' in username:
+            user = authenticate(request, email=username, password=password)
+        else:
+            user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             return redirect('main:index-view')
@@ -363,9 +381,7 @@ def export_users(request):
     return response
 
 
-@login_required()
 def help_view(request):
-    context = {}
     return render(request, './account/help.html', context)
 
 
@@ -380,11 +396,12 @@ def pref_view(request):
             user.groups.add(group)
             message = "Profil modifié avec succès !"
             messages.success(request, message)
-            redirect('account:preferences')
+            return redirect('account:preferences')
         else:
+            print(form.errors)
             message = "Une erreur s'est produit lors de la mise à jour !"
             messages.error(request, message)
-            redirect('account:preferences')
+            return redirect('account:preferences')
     context = {
         'form': form,
     }
@@ -403,11 +420,11 @@ def password_reset(request):
                 request.user.save()
                 message = "Mot de passe modifié avec succès !"
                 messages.success(request, message)
-                redirect('account:preferences')
+                return redirect('account:preferences')
             else:
                 message = "La confirmation du mot de passe ne correspond pas au mot de passe saisie !"
                 messages.error(request, message)
-                redirect('account:preferences')
+                return redirect('account:preferences')
         else:
             message = "L'ancien mot de passe n'est le bon !"
             messages.error(request, message)
@@ -418,13 +435,22 @@ def password_reset(request):
 
 def lost_password(request):
     form = UserLoginForm(request.POST or None)
+    user = None
     if request.method == "POST":
         username = request.POST['username']
-        try:
-            user = User.objects.get(pk=username)
-        except:
+        if '@' in username:
+            try:
+                user = User.objects.get(email=username)
+            except:
+                user = None
+        else:
+            try:
+                user = User.objects.get(username=username)
+            except:
+                user = None
+        if user is None:
             messages.error(request, "Un problème est survenu ... compte inexistant !")
-            return render(request, "account/forget.html")
+            return redirect('account:forget')
 
         token_mail = generate_random_token(40)
         create_token = TokenLogin.objects.create(token=token_mail, user=user)
@@ -432,7 +458,7 @@ def lost_password(request):
         if DEBUG is True:
             href = "http://127.0.0.1:8000/account/reset/" + str(user.id) + "/" + str(token_mail)
         else:
-            href = "https://endtg.pythonaywhere.com/account/reset/" + str(user.id) + "/" + str(token_mail)
+            href = "https://endtg.pythonanywhere.com/account/reset/" + str(user.id) + "/" + str(token_mail)
 
         email_html = "<br/><br/>Bonjour " + user.first_name + ",<br/><br/>"
         email_html += "Vous venez de faire une demande de réinitialisation de mot de passe sur le site <a href='http://endtg.pythonanywhere.com'>School @ ENDTG</a><br>"

@@ -3,5 +3,16 @@
 {% load auth_extras %}
 {% block title %}School @ ENDTG - Accueil{% endblock %}
 {% block content %}
-<h2>BRAVO</h2>
+<h2>AIDE</h2>
+<h4>Tu a oublié ton adresse mail ou ton nom d'utilisateur pour te connecter ?</h4>
+<div>Contacte le support en précisant ton prénom, ton nom et ta classe.<br>Je te communiquerais ces informations à l'école ou via un autre moyen de communication (SMS, Whats'App, ...) </div>
+<a class="btn btn-primary btn-sm" href="{% url 'account:support' %}">Contacter le support</a>
+<hr>
+<h4>Tu a oublié ton mot de passe ?</h4>
+<div>Tu peux le réinitialiser (en créer un nouveau) en cliquant sur le lien ci-contre.<br> Un mail te sera envoyer pour te permettre ensuite de changer le mot de passe facilement.</div>
+<a class="btn btn-success btn-sm" href="{% url 'account:forget' %}">Créer un nouveau mot de passe</a>
+<hr>
+<h4>Tu as recontré un problème sur le site ?</h4>
+<div>Je te propose d'en discuter ensemble à l'école ou bien tu peux, si tu t'en sens capable, décrire ton problème à l'aide du formulaire disponible en contactant le support.</div>
+<a class="btn btn-primary btn-sm" href="{% url 'account:support' %}">Contacter le support</a>
 {% endblock %}

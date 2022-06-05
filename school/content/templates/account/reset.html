@@ -7,7 +7,7 @@
 
 <div id="formContent" class=" row justify-content-md-center">
     <!-- Login Form -->
-    <form class="form-group col-6" action="" method="post" autocomplete="off">
+    <form id="form_reset" class="form-group col-6" action="" method="post" autocomplete="off">
         <input type="hidden" autocomplete="off"/>
         {% csrf_token %}
         <div class="form-outline mb-4">
@@ -33,6 +33,9 @@
 {% endblock %}
 {% block scripts %}
 <script>
+$("#form_reset").submit(function() {
+    $('body').toggleClass('loading');
+});
 function init() {
     // Clear forms here
     document.getElementById("pass1").value = "";

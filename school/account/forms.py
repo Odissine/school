@@ -7,15 +7,20 @@ from django_select2.forms import Select2Widget, ModelSelect2Widget, Select2Multi
 from django.forms import ModelMultipleChoiceField, ModelChoiceField
 from .models import *
 
+
 class UsernameChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s %s" % (obj.first_name, obj.last_name)
 
 
 class RegisterForm(UserCreationForm):
-    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Prénom', 'autocomplete': 'off'}))
-    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='', widget=forms.TextInput(attrs={'placeholder': 'Nom', 'autocomplete': 'off'}))
-    group = forms.ModelChoiceField(queryset=Group.objects.all().exclude(name__in=['ADMIN','ENSEIGNANT']), label='', required=True, error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe', widget=Select2Widget(attrs={'placeholder': "Classe", 'class': 'js-example-basic-single form-control select'}))
+    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='',
+                                 widget=forms.TextInput(attrs={'placeholder': 'Prénom', 'autocomplete': 'off'}))
+    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='',
+                                widget=forms.TextInput(attrs={'placeholder': 'Nom', 'autocomplete': 'off'}))
+    group = forms.ModelChoiceField(queryset=Group.objects.all().exclude(name__in=['ADMIN', 'ENSEIGNANT']), label='', required=True,
+                                   error_messages={'required': 'Merci de choisir votre classe'}, empty_label='Classe',
+                                   widget=Select2Widget(attrs={'placeholder': "Classe", 'class': 'js-example-basic-single form-control select'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}), label='')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'}), label='')
 
@@ -38,10 +43,13 @@ class RegisterForm(UserCreationForm):
 
 
 class UserLoginForm(forms.ModelForm):
-    # username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur", 'autofocus': 'None'}), label="", required=True)
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur ou adresse mail", 'autofocus': 'None'}),
+                               label="", required=True)
     # username = forms.ModelChoiceField(widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'form-control'}), queryset=User.objects.all(), label="Nom d'utilisateur", required=True, help_text="Merci d'indiquer votre nom d'utilisateur")
-    username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'autocomplete': 'off'}), label='Mot de passe')
+    # username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'autocomplete': 'off'}),
+                               label='Mot de passe')
+
     # username.widget.attrs.update({"autofocus": False})
 
     def clean(self):
@@ -83,3 +91,21 @@ class UserProfil(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'group')
+
+
+class SupportForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(SupportForm, self).__init__(*args, **kwargs)
+        self.fields['group'].queryset = Group.objects.exclude(name__in=["ADMIN", ])
+
+    sujet = forms.CharField(required=True, error_messages={'required': 'Merci de saisir un sujet'}, label='',
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sujet', 'autocomplete': 'off'}))
+    message = forms.CharField(required=True, error_messages={'required': 'Merci de saisir un message'}, label='',
+                              widget=forms.Textarea(attrs={'class': 'form-control', 'style': 'height:200px;', 'placeholder': 'Sujet', 'autocomplete': 'off'}))
+    first_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre prénom'}, label='',
+                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom', 'autocomplete': 'off'}))
+    last_name = forms.CharField(required=True, error_messages={'required': 'Merci de saisir votre nom de famille'}, label='',
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom', 'autocomplete': 'off'}))
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), label='', required=False, error_messages={'required': 'Merci de choisir votre classe'},
+                                   widget=Select2Widget(attrs={'class': 'js-example-basic-single form-control select', 'style': 'width:100%;'}))

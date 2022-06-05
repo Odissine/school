@@ -53,6 +53,16 @@
                 </div>
                 <hr>
                 <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Nom d'utilisateur</div>
+                    <div class="col-lg-9 col-md-8">{{ user.username }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email</div>
+                    <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                </div>
+                <hr>
+                <div class="row">
                     <div class="col-lg-3 col-md-4 label">Classe</div>
                     <div class="col-lg-9 col-md-8">{{ user.groups.first }}</div>
                 </div>
@@ -88,12 +98,12 @@
                 </div>
             </div>
             <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-                <form method="POST" action="{% url 'account:preferences' %}">
+                <form method="POST" action="{% url 'account:preferences' %}" id="edit_profile">
                     {% csrf_token %}
                     <div class="row mb-3">
                         <label for="first_name" class="col-md-4 col-lg-3 col-form-label">Prénom</label>
                         <div class="col-md-8 col-lg-9">
-                            <input name="first_name" type="text" class="form-control" id="first_name" value="{{ user.first_name }}">
+                            <input name="first_name" required type="text" class="form-control" id="first_name" value="{{ user.first_name }}">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -103,12 +113,18 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <label for="username" class="col-md-4 col-lg-3 col-form-label">Nom d'utilisateur</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="username" disabled type="text" class="form-control" id="username" value="{{ user.username }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label class="col-md-4 col-lg-3 col-form-label">Classe</label>
                         <div class="col-md-8 col-lg-9">
                             {{ form.group }}
                         </div>
                     </div>
-                    <div class="text-center">
+                    <div class="text-end">
                         <button type="submit" class="btn btn-primary">Sauvegarder les modifications</button>
                     </div>
                 </form>
@@ -128,18 +144,18 @@
                             <input name="newpassword" type="password" class="form-control" id="newPassword">
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row">
                         <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Confirmer le nouveau mot de passe</label>
                         <div class="col-md-8 col-lg-9">
                             <input name="renewpassword" type="password" class="form-control" id="renewPassword">
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4 col-lg-3"></div>
-                        <div class="col-md-8 col-lg-9 text-danger fs-6"><i class="bi bi-exclamation-triangle"></i> Une fois votre mot de passe modifié, vous serez déconnecté(e) !<br/> Il faudra simplement vous reconnecter avec le nouveau mot de passe.</div>
-                    </div>
-                    <div class="text-center">
+                    <div class="text-end">
                         <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                    </div>
+                    <div class="row mt-3 text-end">
+                        <div class="col-md-4 col-lg-3"></div>
+                        <div class="col-md-8 col-lg-9 text-danger fs-6"><i class="bi bi-exclamation-triangle"></i> Une fois votre mot de passe modifié, vous serez déconnecté(e) !<br/> Vous devrez vous reconnecter avec le nouveau mot de passe.</div>
                     </div>
                 </form>
             </div>

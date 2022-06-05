@@ -1,0 +1,41 @@
+{% extends 'layouts/default/base.html' %}
+{% load i18n %}
+{% load auth_extras %}
+{% block title %}School @ ENDTG - Support{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h2>Contacter le support</h2>
+<form id="form_support" method="POST" autocomplete="off" action="{% url 'account:support' %}">
+    {% csrf_token %}
+    <div class="form-floating mb-3">
+        {{ form.sujet }}
+        <label for="id_sujet">Sujet</label>
+    </div>
+    <div class="form-floating mb-3">
+        {{ form.message }}
+        <label for="id_message">Message</label>
+    </div>
+    <div class="row g-2">
+        <div class="form-floating mb-3 col-6">
+            {{ form.first_name }}
+            <label for="id_first_name">Prénom</label>
+        </div>
+        <div class="form-floating mb-3 col-6">
+            {{ form.last_name }}
+            <label for="id_last_name">Nom</label>
+        </div>
+    </div>
+    <div class="form-floating mb-3">
+            {{ form.group }}
+            <label for="id_group">Classe</label>
+        </div>
+    <div class="mt-2">
+        <button id="sent_mail" type="submit" class="btn btn-success form-control">ENVOYER</button>
+    </div>
+</form>
+<script>
+    $("#form_support").submit(function() {
+        $('body').toggleClass('loading');
+    });
+</script>
+{% endblock %}

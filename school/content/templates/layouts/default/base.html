@@ -51,6 +51,7 @@
   <script src="{% static 'js/jquery-ui.min.js' %}"></script>
   <script>
       $(document).ready(function() {
+
         $('.js-example-basic-single').select2();
 
         $("#color-a").click(function() {
@@ -281,14 +282,8 @@
         </li>
         {% else %}
         <li class="nav-item pe-3">
-          <a class="nav-link nav-icon" href="{% url 'account:register' %}">
-            <i class="bi bi-person-plus-fill"></i>
-            <span>Créer un compte</span>
-          </a>
-        </li>
-        <li class="nav-item pe-3">
           <a class="nav-link nav-icon" href="{% url 'account:login' %}">
-            <i class="bi bi-unlock-fill"></i>
+            <i class="bi bi-box-arrow-in-right"></i>
             <span>S'identifier</span>
           </a>
         </li>
@@ -524,7 +519,7 @@
       <!-- You can delete the links only if you purchased the pro version. -->
       <!-- Licensing information: https://bootstrapmade.com/license/ -->
       <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Créé par <a href="mailto:cyril.henry@gmail.com">Cyril HENRY</a>
+      Créé par <a href="{% url 'account:support' %}">Cyril HENRY</a> | <a href="{% url 'account:help' %}"><i class="bi bi-life-preserver"></i> Besoin d'aide ?</a>
     </div>
   </footer><!-- End Footer -->
   <!--
@@ -579,5 +574,12 @@
   </script>
   {% endfor %}
   {% endif %}
+<div class="modal-loading">
+  <div class="text-center" style="position: absolute; top: 50%;left:50%; ">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+      <span class="sr-only"></span>
+    </div>
+  </div>
+</div>
 </body>
 </html>
