@@ -11,7 +11,7 @@ CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 
 SECRET_KEY = settings_private.SECRET_KEY
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118', 'endtg.pythonanywhere.com']
 
 SITE_ID = 1
@@ -79,13 +79,18 @@ EMAIL_USE_SSL = True
 
 API_GMASS = settings_private.API_GMASS
 
+# Database
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': settings_private.BDD_NAME, #
+        'USER': settings_private.BDD_USER,
+        'PASSWORD': settings_private.BDD_PASSWORD,
+        'HOST': settings_private.BDD_HOST,
+        },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
