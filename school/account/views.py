@@ -382,6 +382,7 @@ def export_users(request):
 
 
 def help_view(request):
+    context = {}
     return render(request, './account/help.html', context)
 
 
