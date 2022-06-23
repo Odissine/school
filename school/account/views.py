@@ -19,6 +19,8 @@ from io import BytesIO
 import xlsxwriter
 import pandas as pd
 # from games.models import *
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MyChangeFormPassword(PasswordChangeForm):
@@ -104,10 +106,12 @@ def login_view(request):
 
     form = UserLoginForm(request.POST or None)
     if request.method == "POST":
+
         # user = User.objects.get(pk=request.POST['username'])
         # user.backend = 'django.contrib.auth.backends.ModelBackend'
         # user = form.login(request)
         username = request.POST['username']
+        logger.info(str(username) + " tente de se connecter ...")
         # username = user.username
         password = request.POST['password']
         if '@' in username:
@@ -116,6 +120,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            logger.info(str(username) + " s'est connecté(e)")
             return redirect('main:index-view')
             # return render(request, './account/success.html')
         else:

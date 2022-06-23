@@ -149,12 +149,30 @@ MEDIA_URL = '/media/'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+LOG_CONNEXION = os.path.join(LOG_DIR, 'connexion.log')
+open(LOG_CONNEXION, 'a').close()
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(name)-12s %(levelname)-8s %(message)s'
+        },
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+        },
+        'connexion_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': LOG_CONNEXION,
         },
     },
     'root': {
@@ -162,10 +180,9 @@ LOGGING = {
         'level': 'WARNING',
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'WARNING'),
-            'propagate': False,
+        'accounts.views': {
+            'level': 'INFO',
+            'handlers': ['connexion_file'],
         },
     },
 }
