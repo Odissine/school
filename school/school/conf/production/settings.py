@@ -169,9 +169,6 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
         'connexion_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
@@ -180,7 +177,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'accounts.views': {
+        'account.views': {
             'level': 'INFO',
             'handlers': ['connexion_file'],
         },
