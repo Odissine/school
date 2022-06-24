@@ -179,10 +179,6 @@ LOGGING = {
             'filename': LOG_CONNEXION,
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
     'loggers': {
         'accounts.views': {
             'level': 'INFO',
