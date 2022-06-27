@@ -115,10 +115,18 @@ def login_view(request):
         # username = user.username
         password = request.POST['password']
         if '@' in username:
-            user = authenticate(request, email=username, password=password)
+            try:
+                user = User.objects.get(email=username)
+            except:
+                user = None
+            # user = authenticate(request, email=username, password=password)
         else:
+            try:
+                user = User.objects.get(username=username)
+            except:
+                user = None
             user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user is not None and user.check_password(password):
             login(request, user)
             logger.info(str(username) + " s'est connecté(e)")
             return redirect('main:index-view')
