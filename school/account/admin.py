@@ -68,7 +68,7 @@ class TokenLoginAdmin(ImportExportModelAdmin):
 
 class PlayerAdmin(ImportExportModelAdmin):
     ordering = ['user']
-    list_display = ('confirm', 'user',)
+    list_display = ('confirm', 'user', 'prev_group')
     resource_class = PlayerResource
 
 

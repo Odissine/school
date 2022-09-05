@@ -6,6 +6,7 @@ from .core import generate_username, generate_email
 from django_select2.forms import Select2Widget, ModelSelect2Widget, Select2MultipleWidget
 from django.forms import ModelMultipleChoiceField, ModelChoiceField
 from .models import *
+from school.settings import IS_PRODUCTION
 
 
 class UsernameChoiceField(forms.ModelChoiceField):
@@ -43,10 +44,12 @@ class RegisterForm(UserCreationForm):
 
 
 class UserLoginForm(forms.ModelForm):
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur ou adresse mail", 'autofocus': 'None'}),
+    if IS_PRODUCTION is True:
+        username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur ou adresse mail", 'autofocus': 'None'}),
                                label="", required=True)
-    # username = forms.ModelChoiceField(widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'form-control'}), queryset=User.objects.all(), label="Nom d'utilisateur", required=True, help_text="Merci d'indiquer votre nom d'utilisateur")
-    # username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
+    else:
+        # username = forms.ModelChoiceField(widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'form-control'}), queryset=User.objects.all(), label="Nom d'utilisateur", required=True, help_text="Merci d'indiquer votre nom d'utilisateur")
+        username = UsernameChoiceField(label="Utilisateur", queryset=User.objects.all(), widget=Select2Widget(attrs={'placeholder': "Nom d'utilisateur", 'class': 'js-example-basic-single form-control select'}), required=True)
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'autocomplete': 'off'}),
                                label='Mot de passe')
 

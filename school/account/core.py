@@ -4,6 +4,7 @@ import ssl
 import string
 from django.utils.text import slugify
 from games.models import WordScore, LetterScore
+from account.models import Player
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -136,3 +137,11 @@ def verify_mail_gmass(email):
         return True
     else:
         return False
+
+
+def get_prev_group(user):
+    try:
+        prev_group = Player.objects.get(user=user).prev_group
+    except:
+        prev_group = None
+    return prev_group

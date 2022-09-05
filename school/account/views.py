@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegisterForm, UserLoginForm, UserProfil, SupportForm
@@ -8,11 +10,11 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.apps import apps
-from .core import get_moyenne_score, get_max_score, generate_random_token, send_mail, verify_mail_gmass
+from .core import get_moyenne_score, get_max_score, generate_random_token, send_mail, verify_mail_gmass, get_prev_group
 from django.core import serializers
 from django.http import HttpResponse
 from .models import TokenLogin, Player
-from school.settings import DEBUG
+from school.settings import DEBUG, IS_PRODUCTION
 from django.utils.html import format_html
 
 from io import BytesIO
@@ -114,6 +116,7 @@ def login_view(request):
         logger.info(str(username) + " tente de se connecter ...")
         # username = user.username
         password = request.POST['password']
+
         if '@' in username:
             try:
                 user = User.objects.get(email=username)
@@ -122,9 +125,14 @@ def login_view(request):
             # user = authenticate(request, email=username, password=password)
         else:
             try:
-                user = User.objects.get(username=username)
+                if IS_PRODUCTION is True:
+                    user = User.objects.get(username=username)
+                else:
+                    user = User.objects.get(pk=username)
+                    username = user.username
             except:
                 user = None
+            print(user, username)
             user = authenticate(request, username=username, password=password)
         if user is not None and user.check_password(password):
             login(request, user)
@@ -135,7 +143,7 @@ def login_view(request):
             messages.error(request, "Erreur d'authentification ! Merci de réessayer.")
             return redirect('account:login')
 
-    return render(request, './account/login.html', {'form': form})
+    return render(request, './account/login.html', {'form': form, 'is_prod': IS_PRODUCTION})
 
 
 @login_required
@@ -395,7 +403,7 @@ def export_users(request):
 
 
 def help_view(request):
-    context = {}
+    context = {'is_prod': IS_PRODUCTION}
     return render(request, './account/help.html', context)
 
 
@@ -418,6 +426,7 @@ def pref_view(request):
             return redirect('account:preferences')
     context = {
         'form': form,
+        'is_prod': IS_PRODUCTION,
     }
     return render(request, './account/preferences.html', context)
 
@@ -545,3 +554,29 @@ def reset_password(request, user, token):
         'token': token.token,
     }
     return render(request, "account/reset.html", context)
+
+
+@login_required()
+@group_required('ADMIN', 'ENSEIGNANT')
+def changement_classe(request):
+    next_classe = {'CP': 'CE1', 'CE1': 'CE2', 'CE2': 'CM1', 'CM1': 'CM2', 'CM2': 'ELEVE'}
+    classes = Group.objects.filter(name__in=['CP', 'CE1', 'CE2', 'CM1', 'CM2'])
+    for classe in classes:
+        eleves = User.objects.filter(groups=classe)
+        for eleve in eleves:
+            if not get_prev_group(eleve) is None:
+                player = Player.objects.get(user=eleve)
+                if player.date.year < datetime.datetime.now().year:
+                    player.prev_group = next_classe[classe.name]
+                    player.date = datetime.datetime.now()
+                    player.save()
+                    print("Changement de classe %s > %s (Player existant)" % (classe.name, next_classe[classe.name]))
+                else:
+                    print("Changement de classe déjà fait %s > %s (Player existant)" % (classe.name, next_classe[classe.name]))
+            else:
+                next_group = Group.objects.get(name=next_classe[classe.name])
+                Player.objects.create(user=eleve, confirm=True, prev_group=next_group)
+                print("Changement de classe %s > %s (nouveau Player)" % (classe.name, next_classe[classe.name]))
+
+    messages.success(request, format_html("Le changement de classe a été réalisé avec succès pour tous les élèves !"))
+    return redirect("main:index-view")

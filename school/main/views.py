@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Avg, Max, Min
 from games.models import LetterScore, WordScore, AdditionScore, AdditionPoseeScore, SoustractionScore, MultiplicationScore, WordOne
 from main.core import get_purcent
-
+from school.settings import IS_PRODUCTION
 
 def index_view(request):
     context_header = {'title': ''}
@@ -54,6 +54,7 @@ def index_view(request):
                    'score_soustraction_purcent': score_soustraction_purcent,
                    'score_multiplication_purcent': score_multiplication_purcent,
                    'nb_mots': nb_mots,
+                   'is_prod': IS_PRODUCTION,
                    }
     else:
         context = {'context_header': context_header, }

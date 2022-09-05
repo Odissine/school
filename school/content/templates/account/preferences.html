@@ -11,12 +11,14 @@
             <li class="nav-item">
                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-apercu">Aperçu</button>
             </li>
+            {% if is_prod is True %}
             <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Editer mon profil</button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-password">Modifier mon mot de passe</button>
             </li>
+            {% endif %}
         </ul>
         <div class="tab-content pt-2">
             <div class="tab-pane fade profile-apercu active show" id="profile-apercu">

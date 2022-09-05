@@ -13,7 +13,10 @@
         <button type="submit" class="btn btn-success">Connexion</button>
     </div>
     <div class="text-end py-3">
-        <a class="link" href="{% url 'account:forget' %}">Mot de passe oublié ?</a> | <a href="{% url 'account:register' %}">Créer un compte</a>
+        {% if is_prod is True %}
+        <a class="link" href="{% url 'account:forget' %}">Mot de passe oublié ?</a> |
+        <a href="{% url 'account:register' %}">Créer un compte</a>
+        {% endif %}
     </div>
 </form>
 </div>
