@@ -79,12 +79,22 @@ EMAIL_USE_SSL = True
 
 API_GMASS = settings_private.API_GMASS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
+BDD_PYTHONANYWHERE = {'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': settings_private.BDD_NAME,
+    'USER': settings_private.BDD_USER,
+    'PASSWORD': settings_private.BDD_PASSWORD,
+    'HOST': settings_private.BDD_HOST,
+    }
 }
+
+BDD_LOCAL = {'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+DATABASES = BDD_LOCAL
 
 
 # Password validation

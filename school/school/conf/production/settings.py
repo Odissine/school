@@ -82,19 +82,21 @@ API_GMASS = settings_private.API_GMASS
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': settings_private.BDD_NAME, #
-    #     'USER': settings_private.BDD_USER,
-    #     'PASSWORD': settings_private.BDD_PASSWORD,
-    #    'HOST': settings_private.BDD_HOST,
-    #    },
+BDD_PYTHONANYWHERE = {'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': settings_private.BDD_NAME,
+    'USER': settings_private.BDD_USER,
+    'PASSWORD': settings_private.BDD_PASSWORD,
+    'HOST': settings_private.BDD_HOST,
+    }
 }
+
+BDD_LOCAL = {'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+DATABASES = BDD_PYTHONANYWHERE
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
