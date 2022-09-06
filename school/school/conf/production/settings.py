@@ -88,6 +88,7 @@ BDD_PYTHONANYWHERE = {'default': {
     'USER': settings_private.BDD_USER,
     'PASSWORD': settings_private.BDD_PASSWORD,
     'HOST': settings_private.BDD_HOST,
+    'PORT': settings_private.BDD_PORT,
     }
 }
 
