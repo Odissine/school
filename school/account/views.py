@@ -567,15 +567,23 @@ def changement_classe(request):
             if not get_prev_group(eleve) is None:
                 player = Player.objects.get(user=eleve)
                 if player.date.year < datetime.datetime.now().year:
-                    player.prev_group = next_classe[classe.name]
+                    player.prev_group = classe
                     player.date = datetime.datetime.now()
                     player.save()
+
+                    eleve.groups.clear()
+                    next_group.user_set.add(eleve)
+                    eleve.save()
                     print("Changement de classe %s > %s (Player existant)" % (classe.name, next_classe[classe.name]))
                 else:
                     print("Changement de classe déjà fait %s > %s (Player existant)" % (classe.name, next_classe[classe.name]))
             else:
                 next_group = Group.objects.get(name=next_classe[classe.name])
-                Player.objects.create(user=eleve, confirm=True, prev_group=next_group)
+                prev_group = classe
+                Player.objects.create(user=eleve, confirm=True, prev_group=prev_group)
+                eleve.groups.clear()
+                next_group.user_set.add(eleve)
+                eleve.save()
                 print("Changement de classe %s > %s (nouveau Player)" % (classe.name, next_classe[classe.name]))
 
     messages.success(request, format_html("Le changement de classe a été réalisé avec succès pour tous les élèves !"))
