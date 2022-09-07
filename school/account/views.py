@@ -112,7 +112,7 @@ def login_view(request):
         # user = User.objects.get(pk=request.POST['username'])
         # user.backend = 'django.contrib.auth.backends.ModelBackend'
         # user = form.login(request)
-        username = request.POST['username']
+        username = request.POST['username'].lower()
         logger.info(str(username) + " tente de se connecter ...")
         # username = user.username
         password = request.POST['password']
