@@ -145,7 +145,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    CONTENT_DIR / "static",
+    os.path.join(CONTENT_DIR, 'static'),
     '/home/endtg/school/school/content/static/',
 ]
     # os.path.join(CONTENT_DIR, 'static'),
