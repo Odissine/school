@@ -71,9 +71,9 @@ def wordOne(request):
     wordListFormatted = []
     for elem in wordList:
         if int(level) < 4:
-            wordListFormatted.append(str(elem.name.lower()))
+            wordListFormatted.append(str(elem.name))
         else:
-            wordListFormatted.append(str(elem.name.capitalize()))
+            wordListFormatted.append(str(elem.name))
     wordListFormatted = json.dumps(wordListFormatted)
 
     if not wordScore:
