@@ -62,7 +62,7 @@ def wordOne(request):
 
     user = request.user
     wordScore = WordScore.objects.filter(user=user, level=level).first()
-    if int(level) < 4:
+    if int(level) < 5:
         filterLevel = level
     else:
         filterLevel = int(level) - 3
