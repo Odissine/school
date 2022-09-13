@@ -136,3 +136,5 @@ conf/
 ../school/conf/development/priv.cnf
 ../school/conf/production/priv.cnf
 # /school/school/conf/
+.idea
+./idea
