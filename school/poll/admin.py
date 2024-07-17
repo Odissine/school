@@ -27,6 +27,12 @@ class QuizResource(resources.ModelResource):
         fields = ("id", "nom", "questions", "status", "published", "date_added", "date_modified")
 
 
+class QuizInstanceResource(resources.ModelResource):
+    class Meta:
+        model = QuizInstance
+        fields = ("player", "quiz", "complete")
+
+
 class QuestionOrderResource(resources.ModelResource):
     class Meta:
         model = QuestionOrder
@@ -35,12 +41,6 @@ class QuestionOrderResource(resources.ModelResource):
 class UserResponseResource(resources.ModelResource):
     class Meta:
         model = UserResponse
-
-
-class QuizInstanceResource(resources.ModelResource):
-    class Meta:
-        model = QuizInstance
-
 
 # ADMIN
 class AnswerAdmin(ImportExportModelAdmin):
@@ -61,6 +61,12 @@ class QuizAdmin(ImportExportModelAdmin):
     resource_class = QuizResource
 
 
+class QuizInstanceAdmin(ImportExportModelAdmin):
+    ordering = ['id']
+    list_display = ("id", "player", "quiz", "complete")
+    resource_class = QuizInstanceResource
+    
+
 class QuestionOrderAdmin(ImportExportModelAdmin):
     ordering = ['id']
     list_display = ("id", "order", "question", "quiz")
@@ -72,20 +78,12 @@ class UserResponseAdmin(ImportExportModelAdmin):
     list_display = ("id", "quiz_instance", "question", "get_responses")
     resource_class = UserResponseResource
 
-
-class QuizInstanceAdmin(ImportExportModelAdmin):
-    ordering = ['id']
-    list_display = ("id", "player", "quiz", "score", "start_quiz")
-    resource_class = QuizInstanceResource
-
-
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(QuestionOrder, QuestionOrderAdmin)
 admin.site.register(UserResponse, UserResponseAdmin)
 admin.site.register(QuizInstance, QuizInstanceAdmin)
-
 '''
 class AnswerAdmin(ImportMixin, admin.ModelAdmin):
     class AnswerResource(resources.ModelResource):

@@ -31,7 +31,7 @@ urlpatterns = [
     path('account/', include(('account.urls', 'account'), namespace='account')),
     path('games/', include(('games.urls', 'games'), namespace='games')),
     path('quiz/', include(('poll.urls', 'quiz'), namespace='quiz')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

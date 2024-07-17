@@ -54,8 +54,8 @@ class Quiz(models.Model):
         (3, 'Close'),
     )
     nom = models.CharField(max_length=200, null=False)
-    theme = models.ForeignKey(Theme, null=True, on_delete=models.CASCADE)
-    questions = models.ManyToManyField(Question, related_name='Quizs')
+    theme = models.ForeignKey(Theme, null=True, on_delete=models.CASCADE, blank=True)
+    questions = models.ManyToManyField(Question, related_name='Questions')
     status = models.IntegerField(choices=STATUS_CHOICES, default=1)
     published = models.DateTimeField(null=True)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -77,6 +77,7 @@ class Quiz(models.Model):
 
 
 class QuestionOrder(models.Model):
+    objects = None
     order = models.IntegerField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
@@ -88,7 +89,7 @@ class QuizInstance(models.Model):
     A combination of user response and a quiz template.
     """
     player = models.ForeignKey(User, on_delete=models.CASCADE)
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='Quizs')
     start_quiz = models.DateTimeField(auto_now_add=True)
     score = models.IntegerField(default=0)
     complete = models.BooleanField(default=False)

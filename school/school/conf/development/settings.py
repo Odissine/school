@@ -2,17 +2,16 @@ import os
 import warnings
 from django.utils.translation import ugettext_lazy as _
 from os.path import dirname
-from . import settings_private
 
 warnings.simplefilter('error', DeprecationWarning)
 
 BASE_DIR = dirname(dirname(dirname(dirname(os.path.abspath(__file__)))))
 CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 
-SECRET_KEY = settings_private.SECRET_KEY
+SECRET_KEY = 'django-insecure-omf4=vg)fg2r*e(gk5-ydqn(=5r+7*sj!pj!@j(380j1pg#-a('
 
 DEBUG = True
-ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118', 'endtg.pythonanywhere.com']
+ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118', '192.168.1.120']
 
 SITE_ID = 1
 
@@ -69,33 +68,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'school.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = settings_private.EMAIL_HOST
-EMAIL_HOST_USER = settings_private.EMAIL_HOST_USER
-DEFAULT_FROM_EMAIL = settings_private.EMAIL_DEFAULT
-EMAIL_HOST_PASSWORD = settings_private.EMAIL_HOST_PASSWORD
-EMAIL_PORT = settings_private.EMAIL_PORT
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'support@endtg.com'
+DEFAULT_FROM_EMAIL = 'support@endtg.com'
+EMAIL_HOST_PASSWORD = 'Azerty2+'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-API_GMASS = settings_private.API_GMASS
-
-BDD_PYTHONANYWHERE = {'default': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': settings_private.BDD_NAME,
-    'USER': settings_private.BDD_USER,
-    'PASSWORD': settings_private.BDD_PASSWORD,
-    'HOST': settings_private.BDD_HOST,
-    'PORT': settings_private.BDD_PORT,
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-BDD_LOCAL = {'default': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-DATABASES = BDD_LOCAL
 
 
 # Password validation
@@ -155,30 +141,12 @@ MEDIA_URL = '/media/'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-LOG_DIR = os.path.join(BASE_DIR, 'logs')
-LOG_CONNEXION = os.path.join(LOG_DIR, 'connexion.log')
-open(LOG_CONNEXION, 'a').close()
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'console': {
-            'format': '%(name)-12s %(levelname)-8s %(message)s'
-        },
-        'file': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-        }
-    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-        },
-        'connexion_file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': LOG_CONNEXION,
         },
     },
     'root': {
@@ -186,12 +154,10 @@ LOGGING = {
         'level': 'WARNING',
     },
     'loggers': {
-        'accounts.views': {
-            'level': 'INFO',
-            'handlers': ['connexion_file'],
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'WARNING'),
+            'propagate': False,
         },
     },
 }
-
-# GMAIL
-config_mail = settings_private.CONFIG_MAIL

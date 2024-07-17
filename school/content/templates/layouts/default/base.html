@@ -51,7 +51,6 @@
   <script src="{% static 'js/jquery-ui.min.js' %}"></script>
   <script>
       $(document).ready(function() {
-
         $('.js-example-basic-single').select2();
 
         $("#color-a").click(function() {
@@ -265,27 +264,8 @@
 -->
         <!-- End Messages Nav -->
         {% if user.is_authenticated %}
-        <li class="nav-item pe-3 dropdown">
-            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="{% static 'img/profile.png' %}" alt="Profile" class="rounded-circle">
-              <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.first_name }} {{ request.user.last_name }}</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
-              <li class="dropdown-header"><h6>{{ request.user.first_name }} {{ request.user.last_name }}</h6> <span>{{ request.user.groups.first }}</span></li>
-              <li> <hr class="dropdown-divider"></li>
-              <li> <a class="dropdown-item d-flex align-items-center" href="{% url 'account:preferences' %}"> <i class="bi bi-gear"></i> <span>Préférences</span> </a></li>
-              <li> <hr class="dropdown-divider"></li>
-              <li> <a class="dropdown-item d-flex align-items-center" href="{% url 'account:help' %}"> <i class="bi bi-question-circle"></i> <span>Besoin d'aide ?</span> </a></li>
-              <li> <hr class="dropdown-divider"></li>
-              <li> <a class="dropdown-item d-flex align-items-center" href="{% url 'account:logout' %}"> <i class="bi bi-box-arrow-right"></i> <span>Se déconnecter</span> </a></li>
-            </ul>
-        </li>
-        {% else %}
         <li class="nav-item pe-3">
-          <a class="nav-link nav-icon" href="{% url 'account:login' %}">
-            <i class="bi bi-box-arrow-in-right"></i>
-            <span>S'identifier</span>
-          </a>
+            <span class="d-none d-md-block ps-2">{{ request.user.first_name }} {{ request.user.last_name }}</span>
         </li>
         {% endif %}
 <!--
@@ -350,6 +330,24 @@
         </li>
 -->
         <!-- End Profile Nav -->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link nav-icon" href="{% url 'account:logout' %}">
+            <i class="bi bi-lock-fill"></i>
+          </a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link nav-icon" href="{% url 'account:register' %}">
+            <i class="bi bi-person-plus-fill"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-icon" href="{% url 'account:login' %}">
+            <i class="bi bi-unlock-fill"></i>
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </nav><!-- End Icons Navigation -->
   </header><!-- End Header -->
@@ -403,41 +401,7 @@
           </li>
         </ul>
       </li><!-- End Jeux Nav -->
-      {% endif %}
-      {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
-          <i class="bi bi-journal-text"></i><span>Administration</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="admin-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{% url 'games:create_word_list' %}">
-              <i class="bi bi-circle"></i><span>Ajouter des mots</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'games:create_halo' %}">
-              <i class="bi bi-circle"></i><span>Créer un halo</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'account:user-list' 'la' %}">
-              <i class="bi bi-circle"></i><span>Liste des utilisateurs</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'games:export-words' %}">
-              <i class="bi bi-circle"></i><span>Export des mots</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'account:change-classe' %}">
-              <i class="bi bi-circle"></i><span>Changement de classes des élèves</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li class="nav-item">
+	  <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#quiz-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-question-circle"></i><span>Quiz</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -472,6 +436,37 @@
           {% endif %}
         </ul>
       </li>
+      {% endif %}
+      {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+          <i class="bi bi-journal-text"></i><span>Administration</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="admin-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'games:create_word_list' %}">
+              <i class="bi bi-circle"></i><span>Ajouter des mots</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:create_halo' %}">
+              <i class="bi bi-circle"></i><span>Créer un halo</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'account:user-list' 'la' %}">
+              <i class="bi bi-circle"></i><span>Liste des utilisateurs</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'games:export-words' %}">
+              <i class="bi bi-circle"></i><span>Export des mots</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+	  {% endif %}
+	  <!--
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#color-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-journal-text"></i><span>Couleurs</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -499,8 +494,8 @@
           </li>
         </ul>
       </li>
+	  -->
       <!-- End Admin Nav -->
-      {% endif %}
       <li class="nav-heading" id="change-color"></li>
     </ul>
   </aside><!-- End Sidebar-->
@@ -524,7 +519,7 @@
       <!-- You can delete the links only if you purchased the pro version. -->
       <!-- Licensing information: https://bootstrapmade.com/license/ -->
       <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Créé par <a href="{% url 'account:support' %}">Cyril HENRY</a> | <a href="{% url 'account:help' %}"><i class="bi bi-life-preserver"></i> Besoin d'aide ?</a>
+      Créé par <a href="mailto:cyril.henry@gmail.com">Cyril HENRY</a>
     </div>
   </footer><!-- End Footer -->
   <!--
@@ -544,7 +539,7 @@
   <script src="{% static 'js/main.js' %}"></script>
 {% if messages %}
   {% for message in messages %}
-    <div class="" id="toastPlacement" style="position:absolute; top:65px; width:100%; z-index:1;">
+    <div class="" id="toastPlacement" style="position:absolute; top:65px; width:100%; z-index:100;">
       {% if message.tags == 'error' %}
       <div class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert">
       <i class="bi bi-exclamation-octagon me-1"></i>
@@ -561,30 +556,15 @@
       $('.alert').addClass('show');
       $('.alert').show();
       $('.alert').removeClass('hide');
-
-      $('#toastPlacement').addClass('show');
-      $('#toastPlacement').show();
-      $('#toastPlacement').removeClass('hide');
-
       function hideMsg () {
           $('.alert').fadeOut();
           $('.alert').hide();
           $('.alert').removeClass('show');
-          $('#toastPlacement').fadeOut();
-          $('#toastPlacement').hide();
-          $('#toastPlacement').removeClass('show');
       };
       setTimeout(hideMsg,3000);
   )};
   </script>
   {% endfor %}
   {% endif %}
-<div class="modal-loading">
-  <div class="text-center" style="position: absolute; top: 50%;left:50%; ">
-    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-      <span class="sr-only"></span>
-    </div>
-  </div>
-</div>
 </body>
 </html>

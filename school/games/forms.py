@@ -12,7 +12,6 @@ class WordFormOneList(forms.Form):
         ("1", "Niveau 1"),
         ("2", "Niveau 2"),
         ("3", "Niveau 3"),
-        ("4", "Niveau 4"),
     )
     mots = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20}), required=True)
     group = forms.ModelMultipleChoiceField(

@@ -8,6 +8,9 @@
 @font-face {
   font-family: "Oswald";
   src: url('fonts/Oswald-Regular.ttf') format('truetype');
+  
+  font-family: "Hallant";
+  src: url('fonts/Halant-Regular.ttf') format('truetype');
 }
 
 /*--------------------------------------------------------------
@@ -1160,7 +1163,7 @@ h1, h2, h3, h4, h5, h6 {
 -----------------------------------------------------------*/
 
 #letter {
-    font-family: 'PT Mono', monospace;
+    font-family: 'Hallant', monospace;
 }
 .key_up {
     box-sizing: border-box;
@@ -1451,62 +1454,4 @@ fieldset:not(:first-of-type) {
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
             box-sizing: border-box;
-}
-
-.spin .spinner {
-  left: -.6em;
-  top: .4em;
-  width: 2.5em;
-  display: block;
-  position: absolute;
-}
-
-/* spinner animation */
-@keyframes spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* The actual spinner element is a pseudo-element */
-.spin .spinner::before {
-  content: "";
-  width: 1.5em; /* Size of the spinner */
-  height: 1.5em; /* Change as desired */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  border: solid .35em #999; /* Thickness/color of spinner track */
-  border-bottom-color: #555; /* Color of variant spinner piece */
-  animation: .8s linear infinite spinner; /* speed of spinner */
-  transform: translate(-50%, -50%);
-  will-change: transform;
-}
-
-.modal-loading {
-    display:    none;
-    position:   fixed;
-    z-index:    1000;
-    top:        0;
-    left:       0;
-    height:     100%;
-    width:      100%;
-    background: rgba( 255, 255, 255, .8 )
-    50% 50%
-    no-repeat;
-}
-body.loading {
-    overflow: hidden;
-}
-body.loading .modal-loading {
-    display: block;
-}
-
-body {
-  background-color: #e1e1e1;
 }

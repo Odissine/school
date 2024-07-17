@@ -6,17 +6,18 @@
 {% block content %}
 <div class="testbox">
 <h2>IDENTIFICATION</h2>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</ul>
+{% endif %}
 <form method="POST" action="">
     {% csrf_token %}
     {{ form|crispy }}
     <div class="d-grid gap-2">
         <button type="submit" class="btn btn-success">Connexion</button>
-    </div>
-    <div class="text-end py-3">
-        {% if is_prod is True %}
-        <a class="link" href="{% url 'account:forget' %}">Mot de passe oublié ?</a> |
-        <a href="{% url 'account:register' %}">Créer un compte</a>
-        {% endif %}
     </div>
 </form>
 </div>

@@ -18,7 +18,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Jeux de Lettres</h5>
                         <p class="card-text">Pour mieux connaître son clavier... <br/>Plusieurs niveaux disponibles. A vous de jouer, vous avez 1 minute pour saisir un maximum de lettres.</p>
-                        <div class="progress mt-3" data-bs-original-title="{{ score_letter }} / {{ max_score_letter }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                        <div class="progress mt-3" data-bs-original-title="{{ score_letter }} / {{ max_score_letter}}" data-bs-toggle="tooltip" data-bs-placement="top">
                             <div class="progress-bar-striped {% if score_letter < max_score_letter|mul:20|div:100 %}bg-danger{% elif score_letter > max_score_letter|mul:80|div:100 %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" style="width: {{ score_letter_purcent }}%" aria-valuenow="{{ score_letter}}" aria-valuemin="0" aria-valuemax="{{ max_score_letter }}"></div>
                         </div>
                     </div>
@@ -193,10 +193,7 @@
 {% endif %}
 {% else %}
 <div class="my-2 h1">Bienvenue !</div>
-<div class="text-center h4 mt-4">Afin de pouvoir profiter de l'ensemble des fonctionnalités du site, <a href="{% url 'account:login' %}">identifiez-vous</a>
-    {% if is_prod is True %}
-    ou <a href="{% url 'account:register' %}">créez un compte</a>{% endif %}
-    !</div>
+<div class="text-center h4 mt-4">Afin de pouvoir profiter de l'ensemble des fonctionnalités du site, <a href="{% url 'account:login' %}">identifiez-vous</a> ou <a href="{% url 'account:register' %}">créez un compte</a> !</div>
 {% endif %}
 <!--
 {% if request.user|has_group:"CP" %}

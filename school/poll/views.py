@@ -20,9 +20,14 @@ from io import BytesIO
 
 # SHOW LISTING ##################################################################################
 def show_list(request):
-    quizs = Quiz.objects.all()
+    quizs = Quiz.objects.filter(status=2).exclude(Quizs__complete=True, Quizs__player=request.user)
+    quizs_disabled_list = []
+    quizs_disabled = Quiz.objects.filter(status=2, Quizs__complete=True, Quizs__player=request.user)
+    for quiz_disabled in quizs_disabled:
+        quizs_disabled_list.append({'id': quiz_disabled.id, 'quiz': quiz_disabled.nom, 'score': QuizInstance.objects.filter(quiz=quiz_disabled, player=request.user).first().score})
     context = {
         'quizs': quizs,
+        'quizs_disabled': quizs_disabled_list,
     }
     return render(request, "poll/show_list.html", context)
 
@@ -32,6 +37,10 @@ def show_quiz(request, quiz_id):
         quiz = Quiz.objects.get(pk=quiz_id)
     except:
         messages.error(request, "Ce quiz n'existe pas ;)")
+        return redirect('poll:show-list')
+    quiz_player = QuizInstance.objects.filter(player=request.user, quiz=quiz)
+    if len(quiz_player) > 0:
+        messages.error(request, "Tu as déjà fait ce Quiz ;)")
         return redirect('poll:show-list')
     context = {
         'quiz': quiz,
@@ -60,32 +69,54 @@ def answer_quiz(request):
                     answer = Answer.objects.get(pk=r)
                     user_reponse.response.add(answer)
                 nb_correct_answer = len(question.choices.filter(correct=True))
-                nb_answers = len(question.choices.all())
                 lt = sorted(list(question.choices.filter(correct=True).values_list('pk')))
                 out = [item for t in lt for item in t]
-
-                if sorted(dic_answer[question.id]) == out and (len(dic_answer[question.id]) < nb_answers or len(dic_answer[question.id]) == nb_correct_answer):
+                choices = get_answers(question)
+                corrects = get_correct_answers(question)
+                user_responses = get_user_responses(quiz_instance, question)
+                
+                # if len(dic_answer[question.id]) < nb_correct_answer:
+                #     if sorted(dic_answer[question.id]) == out:
+                #         print(sorted(dic_answer[question.id]), out)
+                #         score += 2
+                #     if any(x in dic_answer[question.id] for x in out):
+                #         print(sorted(dic_answer[question.id]), out)
+                #         score += 1
+                # if len(dic_answer[question.id]) == nb_correct_answer:
+                #     if sorted(dic_answer[question.id]) == out:
+                #         print(sorted(dic_answer[question.id]), out)
+                #        score += 2
+                
+                score = score + get_score(user_responses, corrects)
+                '''
+                if len(user_responses) == len(choices) and len(corrects) < len(choices):
+                    print("Tout faux")
+                    continue
+                if user_responses == corrects:
+                    print("Tout bon")
                     score += 2
-                    print(question, 2)
-                elif any(x in dic_answer[question.id] for x in out) and len(dic_answer[question.id]) < nb_answers:
+                    continue
+                if all(item in corrects for item in user_responses):
+                    print("Une bonne réponse (pas assez de réponse)")
                     score += 1
-                    print(question, 1)
-                else:
-                    print(question, 0)
-                '''
-                if len(dic_answer[question.id]) < nb_correct_answer:
-                    if sorted(dic_answer[question.id]) == out:
-                        score += 2
-                        print(question.id, score)
-                    elif any(x in dic_answer[question.id] for x in out):
-                        score += 1
-                        print(question.id, score)
-                if len(dic_answer[question.id]) == nb_correct_answer:
-                    if sorted(dic_answer[question.id]) == out:
-                        score += 2
-                        print(question.id, score)
-                '''
+                    continue
+                if all(item in user_responses for item in corrects):
+                    print("Une bonne réponse (trop de réponse)")
+                    score += 1
+                    continue
+                # any(item in user_responses for item in corrects)
+                if any(item in user_responses for item in corrects):
+                    print("Pas tout a fait juste mais bon nombre de réponse")
+                    score += 1
+                    continue
+                if not any(item in user_responses for item in corrects):
+                    print("Aucune bonne réponse")
+                    continue
+                '''   
+                    
+            print(score)
             quiz_instance.score = score
+            quiz_instance.complete = True
             quiz_instance.save()
             context = {
                 'quiz_instance': quiz_instance,
@@ -134,46 +165,6 @@ def quiz_create(request):
             'title': title,
             'formAction': formAction,
             'previous_page': previous_page,
-        }
-        return render(request, "poll/create_quiz.html", context)
-    else:
-        messages.error(request, "Vous n'avez pas les droits !")
-        return redirect('poll:quiz-list')
-
-
-# EDITION #################################################################################
-def quiz_edit(request, quiz_id=None):
-    if request.user.is_staff:
-        try:
-            quiz = Quiz.objects.get(pk=quiz_id)
-            form = QuizForm(instance=quiz)
-        except:
-            quiz = None
-            form = QuizForm()
-        title = "Modifier un Quiz"
-        previous_page = reverse('poll:quiz-list')
-        formAction = 'poll:quiz-edit'
-
-        if request.method == 'POST':
-            form = QuizForm(request.POST, request.FILES, instance=quiz)
-
-            if form.is_valid():
-                obj = form.save()
-
-                message = "Quiz modifié !"
-                messages.success(request, message)
-                return redirect('poll:quiz-edit', quiz_id=obj.id)
-            else:
-                message = "Une erreur s'est produite"
-                messages.error(request, message)
-            return redirect('poll:quiz-edit', quiz_id=quiz_id)
-
-        context = {
-            'form': form,
-            'title': title,
-            'formAction': formAction,
-            'previous_page': previous_page,
-            'quiz': quiz,
         }
         return render(request, "poll/create_quiz.html", context)
     else:
@@ -474,6 +465,7 @@ def answer_edit_correct(request, question_id, answer_id):
             if answer.correct is False:
                 # On remet tout à FALSE pour ne mettre que celle selectionnée à TRUE
                 if question.multiple is False:
+                    print("Une seule réponse")
                     for ans in answers:
                         ans.correct = False
                         ans.save()
@@ -609,6 +601,18 @@ def theme_delete(request, theme_id):
     pass
 
 
+def reset_quiz_player(request, player, quiz):
+    try:
+        quiz_instance = QuizInstance.objects.get(player__pk=player, quiz__pk=quiz)
+    except:
+        messages.error(request, "Cette instance n'existe pas !")
+        return redirect('poll:show-quiz-user-list', quiz_id=None)
+    player = User.objects.get(pk=player)
+    quiz_instance.delete()
+    message = "Quiz réinitialisé avec succès pour " + player.first_name + " " + player.last_name
+    messages.success(request, message)
+    return redirect('poll:show-quiz-user-list', quiz_id=None)
+
 # ##########################################################################################
 # USER
 # ##########################################################################################
@@ -617,7 +621,8 @@ def theme_delete(request, theme_id):
 def show_quiz_user_list(request, quiz_id=None):
     title = "Liste des joueurs"
     tri = "id"
-
+    quiz = None
+    
     if request.GET.get("tri"):
         tri = request.GET.get('tri')
         if tri == "quiz":
@@ -638,10 +643,12 @@ def show_quiz_user_list(request, quiz_id=None):
         instances = QuizInstance.objects.filter(quiz=quiz).order_by(tri)
     except:
         instances = QuizInstance.objects.order_by(tri).all()
+    print(instances.query)
     # instances = list(set(instances))
     context = {
         'instances': instances,
         'title': title,
+        'quiz': quiz,
     }
     return render(request, "poll/show_quiz_user_list.html", context)
 
@@ -655,20 +662,26 @@ def download_players(request, quiz_id=None):
     except:
         questions = Question.objects.all()
         instances = QuizInstance.objects.all()
+    
     for instance in instances:
         classe = ','.join(map(lambda x: str(x[0]), instance.player.groups.all().values_list('name')))
         instance_dic[instance.id] = {'Prénom': instance.player.first_name, 'Nom': instance.player.last_name, 'Classe': classe, 'Score': instance.score}
         datas = UserResponse.objects.filter(quiz_instance=instance)
-
+        
+        new_score = 0
         for data in datas:
             user_answers = sorted(list(data.response.all().values_list('pk')))
             question = Question.objects.get(pk=data.question.id)
             correct_answers = sorted(list(question.choices.filter(correct=True).values_list('pk')))
             out_user = [str(item) for t in user_answers for item in t]
             out_correct = [str(item) for t in correct_answers for item in t]
+            new_score = new_score + get_score(out_user, out_correct)
             # instance_dic[instance.id].update({data.question.id: out_user})
             instance_dic[instance.id].update({data.question.id: ",".join(out_user), 'S' + str(data.question.id): get_score(out_user, out_correct)})
-
+        
+        instance.score = new_score
+        instance.save()
+        
     df = pd.DataFrame.from_dict(instance_dic, orient='index')
 
     dic_question = {}
@@ -685,7 +698,7 @@ def download_players(request, quiz_id=None):
             dfq.to_excel(writer, sheet_name='Questions')
         # writer.save()
         # Set up the Http response.
-        filename = 'export_results.xlsx'
+        filename = 'ExportResultats_'+ str(quiz.id) + '_' + str(quiz.nom) + '.xlsx'
         response = HttpResponse(
             b.getvalue(),
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -709,3 +722,18 @@ def show_player(request, player_id, quiz_id):
         'reponses': reponses,
     }
     return render(request, "poll/show_player.html", context)
+
+
+def quiz_change_status(request, quiz, status):
+    try:
+        quiz = Quiz.objects.get(pk=quiz)
+        quiz.status = int(status)
+        quiz.save()
+        messages.success(request, "Status modifié !")
+        return redirect('poll:show-quiz-user-list', quiz_id=None)
+        
+    except:
+        messages.error(request, "Ce quiz n'existe pas ;)")
+        return redirect('poll:show-quiz-user-list', quiz_id=None)
+        print("Aucun quiz avec cet ID")
+        

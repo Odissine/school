@@ -1,18 +1,17 @@
 import os
 import warnings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from os.path import dirname
-from . import settings_private
 
 warnings.simplefilter('error', DeprecationWarning)
 
 BASE_DIR = dirname(dirname(dirname(dirname(os.path.abspath(__file__)))))
 CONTENT_DIR = os.path.join(BASE_DIR, 'content')
 
-SECRET_KEY = settings_private.SECRET_KEY
+SECRET_KEY = 'django-insecure-omf4=vg)fg2r*e(gk5-ydqn(=5r+7*sj!pj!@j(380j1pg#-a('
 
-DEBUG = True
-ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118', 'endtg.pythonanywhere.com']
+DEBUG = False
+ALLOWED_HOSTS = ['192.168.1.145', 'localhost', '127.0.0.1', '192.168.1.118']
 
 SITE_ID = 1
 
@@ -26,14 +25,12 @@ INSTALLED_APPS = [
     'django_select2',
     'bootstrap5',
     'crispy_forms',
-    'mathfilters',
     'crispy_bootstrap5',
     # Application Apps
     'account',
     'main',
     'games',
     'poll',
-    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -69,46 +66,42 @@ TEMPLATES = [
 WSGI_APPLICATION = 'school.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = settings_private.EMAIL_HOST
-EMAIL_HOST_USER = settings_private.EMAIL_HOST_USER
-DEFAULT_FROM_EMAIL = settings_private.EMAIL_DEFAULT
-EMAIL_HOST_PASSWORD = settings_private.EMAIL_HOST_PASSWORD
-EMAIL_PORT = settings_private.EMAIL_PORT
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'support@endtg.com'
+DEFAULT_FROM_EMAIL = 'support@endtg.com'
+EMAIL_HOST_PASSWORD = 'Azerty2+'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-
-API_GMASS = settings_private.API_GMASS
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-BDD_PYTHONANYWHERE = {'default': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': settings_private.BDD_NAME,
-    'USER': settings_private.BDD_USER,
-    'PASSWORD': settings_private.BDD_PASSWORD,
-    'HOST': settings_private.BDD_HOST,
-    'PORT': settings_private.BDD_PORT,
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'ENDTG',
+        'USER': 'endtg',
+        'PASSWORD': 'admin',
+        'HOST': '192.168.1.228',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
 }
 
-BDD_LOCAL = {'default': {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-DATABASES = BDD_PYTHONANYWHERE
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     # {
-    #    'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     # },
-    #
     {
-         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 3, }
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     # {
     #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -121,13 +114,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 ENABLE_USER_ACTIVATION = True
 DISABLE_USERNAME = False
-LOGIN_VIA_EMAIL = True
-LOGIN_VIA_EMAIL_OR_USERNAME = False
+LOGIN_VIA_EMAIL = False
+LOGIN_VIA_EMAIL_OR_USERNAME = True
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'account:login'
-USE_REMEMBER_ME = True
+USE_REMEMBER_ME = False
 
-RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = False
+RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = True
 ENABLE_ACTIVATION_AFTER_EMAIL_CHANGE = True
 
 SIGN_UP_FIELDS = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
@@ -143,52 +136,39 @@ LANGUAGE_CODE = 'fr'
 TIME_ZONE = 'UTC'
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(CONTENT_DIR, 'static'),
-    '/home/endtg/school/school/content/static/',
 ]
-    # os.path.join(CONTENT_DIR, 'static'),
-
 STATIC_ROOT = os.path.join(CONTENT_DIR, 'assets')
 
 MEDIA_ROOT = os.path.join(CONTENT_DIR, 'media')
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
+# LOCALE_PATHS = [
+#     os.path.join(CONTENT_DIR, 'locale')
+# ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-LOG_DIR = os.path.join(BASE_DIR, 'logs')
-LOG_CONNEXION = os.path.join(LOG_DIR, 'connexion.log')
-open(LOG_CONNEXION, 'a').close()
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'console': {
-            'format': '%(name)-12s %(levelname)-8s %(message)s'
-        },
-        'file': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-        }
-    },
     'handlers': {
-        'connexion_file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': LOG_CONNEXION,
+        'console': {
+            'class': 'logging.StreamHandler',
         },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
     },
     'loggers': {
-        'account.views': {
-            'level': 'INFO',
-            'handlers': ['connexion_file'],
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'WARNING'),
+            'propagate': False,
         },
     },
 }
-
-# GMAIL
-config_mail = settings_private.CONFIG_MAIL

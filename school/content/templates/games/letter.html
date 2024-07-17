@@ -139,13 +139,12 @@ $(document).ready(function(){
             $('#myModal').modal('show');
             console.log($('#inputBestScore').val())
             console.log(count)
-
             if ($('#inputBestScore').val() < count) {
                 $('h5.modal-title').html('BRAVO ! Tu as battu ton score !');
                 $('div.modal-header').attr("class", "modal-header bg-success");
             } else {
                 $('h5.modal-title').html('DOMMAGE ! N\'abandonnes pas !');
-                $('div.modal-header').attr("class", "modal-header bg-warning");
+                $('div.modal-header').attr("class", "modal-header bg-warning text-black");
             }
 
         } else {

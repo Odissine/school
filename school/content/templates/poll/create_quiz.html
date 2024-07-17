@@ -1,51 +1,48 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
 {% load auth_extras %}
-{% block title %}School @ ENDTG - {{ title }} {% endblock %}
+{% block title %}School @ ENDTG - {{ title }}{% endblock %}
+
 {% block content %}
 <style>
     #msform fieldset:not(:first-of-type) {
         display: none;
     }
 </style>
-{% if quiz %}
-<form action="{% url 'poll:quiz-edit' quiz_id=quiz.id %}" method="POST" class="col-12" enctype='multipart/form-data' id='msform'>
-{% else %}
 <form action="{% url 'poll:quiz-create' %}" method="POST" class="col-12" enctype='multipart/form-data' id='msform'>
-{% endif %}
     {% csrf_token %}
     <div class="mb-2 row">
-        <div class="col-2">
+        <div class="col-1">
             <label>{{ form.nom.label }}</label>
         </div>
-        <div class="col-10">
+        <div class="col-11">
             {{ form.nom }}
         </div>
     </div>
     <div class="mb-2 row">
-        <div class="col-2">
+        <div class="col-1">
             <label>{{ form.theme.label }}</label>
         </div>
-        <div class="col-10">
+        <div class="col-11">
             {{ form.theme }}
         </div>
     </div>
     <div class="mb-2 row">
-        <div class="col-2">
+        <div class="col-1">
             <label>{{ form.questions.label }}</label>
         </div>
-        <div class="col-10">
+        <div class="col-11">
             {{ form.questions }}
         </div>
     </div>
     <div class="mb-2 row">
-        <div class="col-2">
+        <div class="col-1">
             <label>{{ form.status.label }}</label>
         </div>
-        <div class="col-10">
+        <div class="col-11">
             {{ form.status }}
         </div>
     </div>
-    <input type="submit" value="{% if quiz %}Modifier {% else %}Ajouter{% endif %}" class="btn btn-success">
+    <input type="submit" value="Ajouter" class="btn btn-success">
 </form>
 {% endblock %}

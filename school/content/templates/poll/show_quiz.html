@@ -241,6 +241,13 @@
         current_fs.hide("slide", { direction: "down" }, function() {
             previous_fs.show("slide", { direction: "up" });
         });
+		questionAll = $("#questionProgress").data("all");
+		questionProgress = $("#questionProgress").data("id") - 1;
+		$("#questionProgress").html(questionProgress + " / " + questionAll);
+		$("#questionProgress").data("id", questionProgress);
+		progressBar = questionProgress * 100 / questionAll;
+		$("#questionProgress").attr("aria-valuenow", progressBar);
+		$("#questionProgress").css("width", progressBar + "%");
     });
 
 </script>

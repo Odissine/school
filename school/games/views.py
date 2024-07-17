@@ -62,7 +62,7 @@ def wordOne(request):
 
     user = request.user
     wordScore = WordScore.objects.filter(user=user, level=level).first()
-    if int(level) < 5:
+    if int(level) < 4:
         filterLevel = level
     else:
         filterLevel = int(level) - 3
@@ -71,9 +71,9 @@ def wordOne(request):
     wordListFormatted = []
     for elem in wordList:
         if int(level) < 4:
-            wordListFormatted.append(str(elem.name))
+            wordListFormatted.append(str(elem.name.lower()))
         else:
-            wordListFormatted.append(str(elem.name))
+            wordListFormatted.append(str(elem.name.capitalize()))
     wordListFormatted = json.dumps(wordListFormatted)
 
     if not wordScore:
@@ -97,15 +97,20 @@ def saveWordOneProgress(request):
     count = request.POST.get("score")
     user = request.user
     score = WordScore.objects.filter(level=level, user=user).first()
+    print("");
+    print("MOTS : ", user, "Level:", level, "Score:", count)
     if not score:
         instance = WordScore.objects.create(level=level, user=user, score=count)
         new_score = instance.score
+        print("New Score", new_score)
     elif score.score < int(count):
         score.score = int(count)
         score.save()
         new_score = count
+        print("Best Score", new_score)
     else:
         new_score = score.score
+        print("Score egal ou inferieur", new_score)
 
     return JsonResponse({"Score": new_score, "Level": level})
 
@@ -175,10 +180,12 @@ def letter(request):
 
     user = request.user
     letterScore = LetterScore.objects.filter(user=user, level=level).first()
+    
     if not letterScore:
         letterScore = 0
     else:
         letterScore = letterScore.score
+    print(user, letterScore)
     context_header = {'title': 'Jeux de Lettres'}
 
     context = {'level': level,
@@ -195,15 +202,21 @@ def saveLetterProgress(request):
     user = request.user
     group = request.user.groups.first()
     score = LetterScore.objects.filter(level=level, user=user).first()
+    print("");
+    print("LETTRE : ", user, "Level:", level, "Classe:", group, "Score:", count)
     if not score:
         instance = LetterScore.objects.create(level=level, user=user, score=count)
         new_score = instance.score
+        print("New Score", new_score)
     elif score.score < int(count):
         score.score = int(count)
+        score.group = request.user.groups.first()
         score.save()
         new_score = count
+        print("Best Score", new_score)
     else:
         new_score = score.score
+        print("Score egal ou inferieur", new_score)
 
     return JsonResponse({"Score": new_score, "Level": level})
 
@@ -258,15 +271,20 @@ def saveAdditionProgress(request):
     count = request.POST.get("score")
     user = request.user
     score = AdditionScore.objects.filter(user=user).first()
+    print("")
+    print("ADDITION : ", user, "Score:", count)
     if not score:
         instance = AdditionScore.objects.create(user=user, score=count)
         new_score = instance.score
+        print("New Score ", new_score)
     elif score.score < int(count):
         score.score = int(count)
         score.save()
         new_score = count
+        print("Best Score ", new_score)
     else:
         new_score = score.score
+        print("Egal ou inferieur ", new_score)
 
     return JsonResponse({"Score": new_score})
 
@@ -276,15 +294,20 @@ def saveAdditionPoseeProgress(request):
     count = request.POST.get("score")
     user = request.user
     score = AdditionPoseeScore.objects.filter(user=user).first()
+    print("")
+    print("ADDITION POSEE : ", user, "Score:", count)
     if not score:
         instance = AdditionPoseeScore.objects.create(user=user, score=count)
         new_score = instance.score
+        print("New score ", new_score)
     elif score.score < int(count):
         score.score = int(count)
         score.save()
         new_score = count
+        print("Best Score ", new_score)
     else:
         new_score = score.score
+        print("Egal ou inferieur ", new_score)
 
     return JsonResponse({"Score": new_score})
 
@@ -294,6 +317,7 @@ def saveAdditionPoseeProgress(request):
 def multiplication(request):
     user = request.user
     multiplicationScore = MultiplicationScore.objects.filter(user=user).first()
+    
     if not multiplicationScore:
         multiplicationScore = 0
     else:
@@ -308,15 +332,20 @@ def saveMultiplicationProgress(request):
     count = request.POST.get("score")
     user = request.user
     score = MultiplicationScore.objects.filter(user=user).first()
+    print("")
+    print("MULTIPLICATION : ", user, "Score:", count)
     if not score:
         instance = MultiplicationScore.objects.create(user=user, score=count)
         new_score = instance.score
+        print("New Score ", new_score)
     elif score.score < int(count):
         score.score = int(count)
         score.save()
         new_score = count
+        print("Egal ou inferieur ", new_score)
     else:
         new_score = score.score
+        print("Egal ou inferieur ", new_score)
 
     return JsonResponse({"Score": new_score})
 
@@ -340,6 +369,7 @@ def saveSoustractionProgress(request):
     count = request.POST.get("score")
     user = request.user
     score = SoustractionScore.objects.filter(user=user).first()
+    print("SOUSTRACTION : ", user, "Score:", count)
     if not score:
         instance = SoustractionScore.objects.create(user=user, score=count)
         new_score = instance.score

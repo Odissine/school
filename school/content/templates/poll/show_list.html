@@ -5,33 +5,41 @@
 {% block content %}
 <div class="row clear">
     <div class="col-12" id="quizs">
-        <div class="row mb-2">
-            <h4 class="col-12">Liste des quizs</h4>
+        <div class="row my-2">
+            <h4 class="col-12">Liste des nouveaux quizs</h4>
         </div>
         <div class="list-group list-group-numbered" type="1">
-        {% for quiz in quizs %}
-            {% if quiz.status == 2 %}
-        <div class="list-group-item list-group-item-action py-2" onclick="location.href='{% url 'poll:show-quiz' quiz_id=quiz.id %}';">
-            <span class="badge bg-success">Public</span> {{ forloop.counter }} - <span id="quiz_menu_{{ quiz.id }}">{{ quiz.nom }}</span>
-            <a href="{% url 'poll:show-quiz' quiz_id=quiz.id %}" class="btn btn-sm btn-success float-end mx-1"><i class="bi bi-list"></i> </a>
-            {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-            <a href="{% url 'poll:show-quiz-user-list' quiz_id=quiz.id %}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-eye"></i> </a>
-            {% endif %}
+			{% if quizs|length == 0 %}Aucun nouveau quiz{% endif %}
+			{% for quiz in quizs %}
+			<div class="list-group-item list-group-item-action py-2" onclick="location.href='{% url 'poll:show-quiz' quiz_id=quiz.id %}';">
+				{{ forloop.counter }} - <span id="quiz_menu_{{ quiz.id }}">{{ quiz.nom }}</span>
+				<a href="{% url 'poll:show-quiz' quiz_id=quiz.id %}" class="btn btn-sm btn-success float-end mx-1"><i class="bi bi-list"></i> </a>
+				{% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+				<a title='Voir' href="{% url 'poll:show-quiz-user-list' quiz_id=quiz.id %}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-eye"></i> </a>
+				<a title='Brouillon' href="{% url 'poll:quiz-change-status' quiz=quiz.id status=1%}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-file-earmark-binary"></i> </a>
+				<a title='Public' href="{% url 'poll:quiz-change-status' quiz=quiz.id status=2 %}" class="btn btn-sm btn-success float-end mx-1"><i class="bi bi-bookmark-check"></i> </a>
+				<a title='Clos' href="{% url 'poll:quiz-change-status' quiz=quiz.id status=3 %}" class="btn btn-sm btn-warning float-end mx-1"><i class="bi bi-door-closed"></i> </a>
+				{% endif %}
+			</div>
+			{% endfor %}
+		</div>
+		<div class="row my-2">
+            <h4 class="col-12">Liste des quizs terminés</h4>
         </div>
-            {% elif quiz.status == 1 %}
-        <div class="list-group-item disabled py-2">
-            <span class="badge bg-warning text-dark">Draft</span> {{ forloop.counter }} - <span>{{ quiz.nom }}</span>
-        </div>
-            {% else %}
-        <div class="list-group-item py-2" style="cursor:default;">
-            <span class="badge bg-danger">Closed</span> {{ forloop.counter }} - <span id="quiz_menu_{{ quiz.id }}">{{ quiz.nom }}</span>
-            {% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
-            <a style="z-index:1;" href="{% url 'poll:show-quiz-user-list' quiz_id=quiz.id %}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-eye"></i> </a>
-            {% endif %}
-        </div>
-            {% endif %}
-        {% endfor %}
-        </div>
+        <div class="list-group list-group-numbered" type="1">
+		{% for quiz in quizs_disabled %}
+			<div class="list-group-item py-2">
+				<span>{{ quiz.quiz }}</span>
+				<span class="float-end">{{ quiz.score }}</span>
+				{% if request.user|has_group:"ADMIN" or request.user|has_group:"ENSEIGNANT" %}
+				<a title='Voir' href="{% url 'poll:show-quiz-user-list' quiz_id=quiz.id %}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-eye"></i> </a>
+				<a title='Brouillon' href="{% url 'poll:quiz-change-status' quiz=quiz.id status=1%}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-file-earmark-binary"></i> </a>
+				<a title='Public' href="{% url 'poll:quiz-change-status' quiz=quiz.id status=2 %}" class="btn btn-sm btn-success float-end mx-1"><i class="bi bi-bookmark-check"></i> </a>
+				<a title='Clos' href="{% url 'poll:quiz-change-status' quiz=quiz.id status=3 %}" class="btn btn-sm btn-warning float-end mx-1"><i class="bi bi-door-closed"></i> </a>
+				{% endif %}
+			</div>
+		{% endfor %}
+		</div>
     </div>
 </div>
 {% endblock %}

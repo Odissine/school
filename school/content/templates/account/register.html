@@ -1,12 +1,12 @@
 {% extends 'layouts/default/base.html' %}
 {% load i18n %}
 {% load auth_extras %}
-{% block title %}School @ ENDTG - Création de compte{% endblock %}
+{% block title %}School @ ENDTG - Accueil{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="testbox">
 <h2>Création du compte</h2>
-<form method="POST" autocomplete="off" id="register">
+<form method="POST" autocomplete="off">
     {% csrf_token %}
     {% if form.errors %}
        {% for field in form %}
@@ -18,19 +18,9 @@
        {% endfor %}
     {% endif %}
     {{ form|crispy }}
+
     <div class="d-grid gap-2">
         <button type="submit" class="btn btn-success">CREER MON COMPTE</button>
     </div>
-    <div class="mt-2">
-        <i class="bi bi-info-circle"></i>
-        <span>Pour créer un compte dans l'application School@ENDTG, vous devez d'abord avoir une adresse mail de l'école (@endtg.com)<br>Si ce n'est pas encore le cas, veuillez contacter le support.</span>
-        <a class="btn btn-primary btn-sm" href="{% url 'account:support' %}">Contacter le support</a>
-    </div>
 </form>
-<script>
-$("#register").submit(function() {
-    $('body').toggleClass('loading');
-});
-</script>
-
 {% endblock %}

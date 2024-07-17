@@ -8,8 +8,8 @@
     <div class="modal fade" tabindex="-1" id="myModal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-danger" style="color:white !important;">
-                    <h5 class="modal-title">Temps écoulé !</h5>
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title fw-bold">Temps écoulé !</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
                 <div class="modal-body" style="color:#333 !important;">
@@ -51,9 +51,11 @@
                         <option {% if level == '2' %} selected {% endif %} value="2">Niveau 2</option>
                         <option {% if level == '3' %} selected {% endif %} value="3">Niveau 3</option>
                         <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
-                        <!--
                         <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
                         <option {% if level == '6' %} selected {% endif %} value="6">Niveau 6</option>
+                        <!--
+                        <option {% if level == '4' %} selected {% endif %} value="4">Niveau 4</option>
+                        <option {% if level == '5' %} selected {% endif %} value="5">Niveau 5</option>
                         -->
                     </select>
                 </div>
@@ -152,7 +154,7 @@ $(document).ready(function(){
                 $('div.modal-header').attr("class", "modal-header bg-success");
             } else {
                 $('h5.modal-title').html('DOMMAGE ! N\'abandonnes pas !');
-                $('div.modal-header').attr("class", "modal-header bg-warning");
+                $('div.modal-header').attr("class", "modal-header bg-warning text-black");
             }
 
         } else {

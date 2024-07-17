@@ -13,8 +13,8 @@
         </div>
         {% else %}
         <div class="row mb-2 text-center">
-            <h3 class="col-12 text-center">Merci d'avoir répondu au quiz !</h3>
-            <h4>Ton score est de : <span class="fs-2">{{ quiz_instance.score }}</span> / <span class="fs-5">{{ quiz|score_max }}</span> </h4>
+            <h2 class="col-12 text-center">Merci d'avoir répondu au quiz !</h2>
+            <!-- <h4>Ton score est de : <span class="fs-2">{{ quiz_instance.score }}</span> / <span class="fs-5">{{ quiz|score_max }}</span> </h4> -->
             <p><a class="btn btn-sm btn-secondary" href="{% url 'poll:show-list' %}">Retourner à la liste des quizs</a></p>
         </div>
         {% endif %}
