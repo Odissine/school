@@ -8,8 +8,8 @@
     <div class="modal fade" tabindex="-1" id="myModal">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-danger" style="color:white !important;">
-                    <h5 class="modal-title">Temps écoulé !</h5>
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title fw-bold">Temps écoulé !</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
                 <div class="modal-body" style="color:#333 !important;">
@@ -154,7 +154,7 @@ $(document).ready(function(){
                 $('div.modal-header').attr("class", "modal-header bg-success");
             } else {
                 $('h5.modal-title').html('DOMMAGE ! N\'abandonnes pas !');
-                $('div.modal-header').attr("class", "modal-header bg-warning");
+                $('div.modal-header').attr("class", "modal-header bg-warning text-black");
             }
 
         } else {

@@ -42,7 +42,7 @@
         </div>
         <div class="card card-no-bg">
             <div class="card-body p-0">
-                {% for question in quiz|random_questions %}
+                {% for question in quiz.questions.all %}
                 <fieldset class="p-4" style="max-width:720px; margin:0 auto;" data-id="field_{{ question.id }}">
                     <question>
                         <span class="h5">{{ forloop.counter }} - {{ question.question }}</span>
@@ -241,6 +241,13 @@
         current_fs.hide("slide", { direction: "down" }, function() {
             previous_fs.show("slide", { direction: "up" });
         });
+		questionAll = $("#questionProgress").data("all");
+		questionProgress = $("#questionProgress").data("id") - 1;
+		$("#questionProgress").html(questionProgress + " / " + questionAll);
+		$("#questionProgress").data("id", questionProgress);
+		progressBar = questionProgress * 100 / questionAll;
+		$("#questionProgress").attr("aria-valuenow", progressBar);
+		$("#questionProgress").css("width", progressBar + "%");
     });
 
 </script>

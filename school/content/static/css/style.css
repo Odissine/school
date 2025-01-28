@@ -8,6 +8,9 @@
 @font-face {
   font-family: "Oswald";
   src: url('fonts/Oswald-Regular.ttf') format('truetype');
+  
+  font-family: "Hallant";
+  src: url('fonts/Halant-Regular.ttf') format('truetype');
 }
 
 /*--------------------------------------------------------------
@@ -1160,7 +1163,7 @@ h1, h2, h3, h4, h5, h6 {
 -----------------------------------------------------------*/
 
 #letter {
-    font-family: 'PT Mono', monospace;
+    font-family: 'Hallant', monospace;
 }
 .key_up {
     box-sizing: border-box;

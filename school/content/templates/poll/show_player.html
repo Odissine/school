@@ -9,12 +9,18 @@
     <div class="col-12" id="quizs">
         <div class="row mb-2">
             <h4 class="col-8">{{ player.first_name }} {{ player.last_name }}</h4>
+			{% if quiz %}
+			<div class="col-4 text-end"><a class="btn btn-secondary" href="{% url 'poll:show-quiz-user-list' quiz_id=quiz.id %}">Retour à la liste</a></div>
+			{% else %}
             <div class="col-4 text-end"><a class="btn btn-secondary" href="{% url 'poll:show-quiz-user-list' quiz_id=None %}">Retour à la liste</a></div>
-            <h5 class="col-10">{{ quiz.nom }}</h5>
+			{% endif %}
+        </div>
+		<div class="row my-2">
+			<h5 class="col-10">{{ quiz.nom }}</h5>
             <h5 class="col-2 text-end">{{ instance.score }} / {{ quiz|score_max }}</h5>
         </div>
         <div class="card card-no-bg">
-            <div class="card-body p-0">
+            <div class="card-body p-2">
                 {% for question in reponses.all %}
                     <div>{{ question.question }} <i class="bi bi-info-circle" style="cursor:pointer;" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="{% if question.question.question_pic %}<img width='150' src='/media/{{ question.question.question_pic }}' />{% else %}{{ question.question.description }}{% endif %}"></i></div>
                     <div class="row">

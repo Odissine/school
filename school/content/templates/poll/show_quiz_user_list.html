@@ -42,6 +42,7 @@
             &nbsp;
             <label class="badge bg-primary rounded-pill">{{ instance.score }}</label>
             </span>
+			<span><a href="{% url 'poll:reset-quiz-player' player=instance.player.pk quiz=instance.quiz.pk %}" class="btn btn-sm btn-primary float-end mx-1"><i class="bi bi-arrow-clockwise"></i> </a></span>
         </li>
         {% endfor %}
         </ul>

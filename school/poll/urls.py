@@ -19,7 +19,9 @@ urlpatterns = [
     path('quiz/create', quiz_create, name='quiz-create'),
     path('quiz/list', quiz_list, name='quiz-list'),
     path('quiz/start/<quiz_id>', quiz_start, name='quiz-start'),
-
+    path('quiz/reset/<player>/<quiz>', reset_quiz_player, name='reset-quiz-player'),
+    path('quiz/change/<quiz>/<status>', quiz_change_status, name='quiz-change-status'),
+    
     # QUESTIONS
     path('question/list/<quiz_id>/<question_id>', question_list, name='question-list'),
     path('question/list/<question_id>', question_list, name='question-list'),
